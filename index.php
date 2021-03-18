@@ -4,11 +4,9 @@ ob_start();
 include_once('app/Database.php');
 include_once('app/App.php');
 include_once('app/Auth.php');
-include_once('app/User.php');
 
 $app = new \app\App();
 $authen = new \app\Auth();
-$user = new \app\User();
 
 if ($authen->loggedIn()) {
     header('location: home.php?p=mywork&tab=main');
