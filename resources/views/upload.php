@@ -66,7 +66,7 @@
                 </div>
                 <div class="m-2">
                     <label class="form-label">Responsible Person</label>
-                    <select class="form-control choices-of-rp" name="user_id">
+                    <select class="form-control choices-of-rp" name="rp_id">
                         <option value="">Select Responsible Person</option>
                         <?php
                         foreach ($app->getActUser() as $act) {
@@ -131,10 +131,11 @@
                     <thead>
                     <tr class="border-bottom-0">
                         <th style="width: 5%;"></th>
-                        <th style="width: 30%;">Filename</th>
-                        <th style="width: 25%;">Form</th>
+                        <th style="width: 35%;">Filename</th>
+                        <th style="width: 20%;">Form</th>
                         <th style="width: 20%;">Area</th>
                         <th style="width: 15%;">Responsible Person</th>
+                        <th style="width: 10%;">Uploaded</th>
                         <th style="width: 5%;">Status</th>
                     </tr>
                     </thead>

@@ -98,81 +98,6 @@ $(document).ready(function () {
         });
 
 
-
-        $("form#formFileUpload").submit(function (event) {
-            event.preventDefault();
-            var btn = this;
-            var form_id = $('.choices-of-form').val();
-            $('.btn-upload-file').prop('disabled', true);
-            $('.btn-upload-file-text').text(' Uploading...');
-            var formData = new FormData($(this)[0]);
-            $.ajax({
-                url: 'resources/ajax/uploadFile.php?form_id='+form_id,
-                type: 'POST',
-                dataType: 'html',
-                data: formData,
-                async: true,
-                cache: false,
-                contentType: false,
-                processData: false,
-                xhr: function () {
-                    var xhr = new window.XMLHttpRequest();
-                    xhr.upload.addEventListener("progress", function (evt) {
-                        if (evt.lengthComputable) {
-                            var percentComplete = evt.loaded / evt.total;
-                            percentComplete = parseInt(percentComplete * 100);
-                            console.log(percentComplete);
-                            $(".upload_percent").text(+' ' + percentComplete + "%");
-                        }
-                    }, false);
-                    return xhr;
-                },
-                success: function (returndata) {
-                    /*alert(returndata);*/
-                    if (returndata === 'uploaded') {
-                        window.notyf.open({
-                            type: 'success',
-                            message: '<strong>File uploaded </strong>successfully',
-                            duration: '5000',
-                            ripple: true,
-                            dismissible: true,
-                            position: {
-                                x: 'center',
-                                y: 'top'
-                            }
-                        });
-
-                        $("#status").text('');
-                        $("#fileToUpload").val('');
-                        $('.btn-upload-file-text').text(' Upload');
-                        $(".upload_percent").text('');
-                        $('.btn-upload-file').prop('disabled', false);
-                        //tbl_latest_upload.row($(btn).parents('tr')).remove().draw(false);
-                    } else {
-                        window.notyf.open({
-                            type: 'error',
-                            message: 'Something went wrong please try again.',
-                            duration: '5000',
-                            ripple: true,
-                            dismissible: true,
-                            position: {
-                                x: 'center',
-                                y: 'top'
-                            }
-                        });
-
-                        $(".upload_percent").text('');
-                        $('.btn-upload-file-text').text(' Upload');
-                        $('.btn-upload-file').prop('disabled', false);
-                    }
-                }
-            });
-        });
-
-        function clearFileInput() {
-            $("#fileToUpload").val('');
-        }
-
         $('#tbl_uploadedFiles thead tr').clone(true).appendTo('#tbl_uploadedFiles thead');
         $('#tbl_uploadedFiles thead tr:eq(1) th').each(function (i) {
             if (i !== 0) {
@@ -196,7 +121,7 @@ $(document).ready(function () {
             orderCellsTop: true,
             fixedHeader: true,
             order: [
-                [1, "asc"]
+                [5, "desc"]
             ],
             columnDefs: [{
                 orderable: false,
@@ -275,6 +200,13 @@ $(document).ready(function () {
                     "targets": 5,
                     "data": null,
                     "render": function (data, type, row) {
+                      return data['date_uploaded'];
+                    },
+                },
+                {
+                    "targets": 6,
+                    "data": null,
+                    "render": function (data, type, row) {
                         if(data['original_filename']!==''){
                             if(data['is_reviewed']=='for review'){
                                 return '<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For Review</div>'
@@ -291,6 +223,80 @@ $(document).ready(function () {
             ],
 
         });
+
+        $("form#formFileUpload").submit(function (event) {
+            event.preventDefault();
+            var btn = this;
+            var form_id = $('.choices-of-form').val();
+            $('.btn-upload-file').prop('disabled', true);
+            $('.btn-upload-file-text').text(' Uploading...');
+            var formData = new FormData($(this)[0]);
+            $.ajax({
+                url: 'resources/ajax/uploadFile.php?form_id='+form_id,
+                type: 'POST',
+                dataType: 'html',
+                data: formData,
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                xhr: function () {
+                    var xhr = new window.XMLHttpRequest();
+                    xhr.upload.addEventListener("progress", function (evt) {
+                        if (evt.lengthComputable) {
+                            var percentComplete = evt.loaded / evt.total;
+                            percentComplete = parseInt(percentComplete * 100);
+                            console.log(percentComplete);
+                            $(".upload_percent").text(+' ' + percentComplete + "%");
+                        }
+                    }, false);
+                    return xhr;
+                },
+                success: function (returndata) {
+                    /*alert(returndata);*/
+                    if (returndata === 'uploaded') {
+                        window.notyf.open({
+                            type: 'success',
+                            message: '<strong>File uploaded </strong>successfully',
+                            duration: '5000',
+                            ripple: true,
+                            dismissible: true,
+                            position: {
+                                x: 'center',
+                                y: 'top'
+                            }
+                        });
+
+                        $("#status").text('');
+                        $("#fileToUpload").val('');
+                        $('.btn-upload-file-text').text(' Upload');
+                        $(".upload_percent").text('');
+                        $('.btn-upload-file').prop('disabled', false);
+                        tbl_uploadedFiles.ajax.reload();
+                    } else {
+                        window.notyf.open({
+                            type: 'error',
+                            message: 'Something went wrong please try again.',
+                            duration: '5000',
+                            ripple: true,
+                            dismissible: true,
+                            position: {
+                                x: 'center',
+                                y: 'top'
+                            }
+                        });
+
+                        $(".upload_percent").text('');
+                        $('.btn-upload-file-text').text(' Upload');
+                        $('.btn-upload-file').prop('disabled', false);
+                    }
+                }
+            });
+        });
+
+        function clearFileInput() {
+            $("#fileToUpload").val('');
+        }
 
     }
 
