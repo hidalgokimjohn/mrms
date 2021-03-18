@@ -2625,80 +2625,36 @@ WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.
     public function getUploadedFiles(){
         $mysql = $this->connectDatabase();
 
-        $area_id= "'".implode("','", $this->area_id)."'";
-        $cycle_id= "'".implode("','", $this->cycle_id)."'";
+       // $area_id= "'".implode("','", $this->area_id)."'";
+       // $cycle_id= "'".implode("','", $this->cycle_id)."'";
 
         $q="SELECT
-            form_uploaded.original_filename,
-            form_uploaded.generated_filename,
-            tbl_user_coverage_ncddp.fk_psgc_mun as area_id,
-            tbl_user_coverage_ncddp.fk_cycle_id as fk_id,
-            form_target.ft_guid,
-            form_uploaded.file_id,
-            tbl_user_coverage_ncddp.id_number,
-            form_uploaded.with_findings,
-            form_uploaded.date_uploaded,
-            form_uploaded.file_path,
-            lib_form.form_name,
-            lib_activity.activity_name,
-            COALESCE (
+                form_uploaded.original_filename,
+                form_uploaded.generated_filename,
+                form_target.ft_guid,
+                form_uploaded.file_id,
+                form_uploaded.with_findings,
+                form_uploaded.date_uploaded,
+                form_uploaded.file_path,
+                lib_form.form_name,
+                lib_activity.activity_name,
+                form_uploaded.rp_id,
+                form_uploaded.is_reviewed,
+                COALESCE (
                     lib_barangay.brgy_name,
                     lib_municipality.mun_name,
                     lib_cadt.cadt_name,
                     'n/a'
-                ) AS area,
-            form_uploaded.is_reviewed,
-            lib_cadt.cadt_name,
-            lib_municipality.mun_name,
-            lib_barangay.brgy_name,
-            form_uploaded.rp_id
+                ) AS area
             FROM
-            form_uploaded
+                form_uploaded
             INNER JOIN form_target ON form_target.ft_guid = form_uploaded.fk_ft_guid
             INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
             LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
-            INNER JOIN tbl_user_coverage_ncddp ON tbl_user_coverage_ncddp.fk_psgc_mun = form_target.fk_psgc_mun AND tbl_user_coverage_ncddp.fk_cycle_id = form_target.fk_cycle
-            WHERE tbl_user_coverage_ncddp.fk_psgc_mun IN ($area_id) AND tbl_user_coverage_ncddp.fk_cycle_id IN ($cycle_id) AND form_uploaded.is_deleted=0
-            GROUP BY form_uploaded.file_id
-            UNION
-            SELECT
-            form_uploaded.original_filename,
-            form_uploaded.generated_filename,
-            tbl_user_coverage_ipcdd.fk_cadt_id as area_id,
-            tbl_user_coverage_ipcdd.fk_cycle_id as fk_id ,
-            form_target.ft_guid,
-            form_uploaded.file_id,
-            tbl_user_coverage_ipcdd.id_number,
-            form_uploaded.with_findings,
-            form_uploaded.date_uploaded,
-            form_uploaded.file_path,
-            lib_form.form_name,
-            lib_activity.activity_name,
-            COALESCE (
-                    lib_barangay.brgy_name,
-                    lib_municipality.mun_name,
-                    lib_cadt.cadt_name,
-                    'n/a'
-                ) AS area,
-            form_uploaded.is_reviewed,
-            lib_cadt.cadt_name,
-            lib_municipality.mun_name,
-            lib_barangay.brgy_name,
-            form_uploaded.rp_id
-            FROM
-            form_uploaded
-            INNER JOIN form_target ON form_target.ft_guid = form_uploaded.fk_ft_guid
-            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
-            INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
-            LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
-            LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
-            LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
-            INNER JOIN tbl_user_coverage_ipcdd ON tbl_user_coverage_ipcdd.fk_cadt_id = form_target.fk_cadt AND tbl_user_coverage_ipcdd.fk_cycle_id = form_target.fk_cycle
-            WHERE tbl_user_coverage_ipcdd.fk_cadt_id IN ($area_id) AND tbl_user_coverage_ipcdd.fk_cycle_id IN ($cycle_id) AND form_uploaded.is_deleted=0
-            GROUP BY form_uploaded.file_id";
+            WHERE form_uploaded.is_deleted = 0 AND  (form_uploaded.rp_id='$_SESSION[id_number]' OR form_uploaded.uploaded_by='$_SESSION[username]')";
         $result = $mysql->query($q) or die($mysql->error);
         if($result->num_rows>0){
             while($row = $result->fetch_assoc()){
@@ -2720,7 +2676,7 @@ WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.
                 view_tbl_user_coverage.area_id
                 FROM
                 view_tbl_user_coverage
-                WHERE view_tbl_user_coverage.id_number='$_SESSION[id_number]'";
+                WHERE view_tbl_user_coverage.id_number='16-10371'";
         $result = $mysql->query($q) or die($mysql->error);
         if($result->num_rows>0){
             while($row = $result->fetch_assoc()){
