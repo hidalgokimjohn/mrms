@@ -175,7 +175,7 @@ $(document).ready(function () {
 
         $('#tbl_uploadedFiles thead tr').clone(true).appendTo('#tbl_uploadedFiles thead');
         $('#tbl_uploadedFiles thead tr:eq(1) th').each(function (i) {
-
+            if (i !== 0) {
                 var title = $(this).text();
                 $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
                 $('input', this).on('keyup change', function (e) {
@@ -183,6 +183,13 @@ $(document).ready(function () {
                         tbl_uploadedFiles.column(i).search(this.value).draw();
                     }
                 });
+
+            }else{
+                var title = $(this).text();
+                $(this).html('<a href="#uploadModal" data-toggle="modal">\n' +
+                    '                <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span></button>\n' +
+                    '            </a>');
+            }
 
         });
         var tbl_uploadedFiles = $('#tbl_uploadedFiles').DataTable({
@@ -219,6 +226,13 @@ $(document).ready(function () {
                 "targets": 0,
                 "data": null,
                 "render": function (data, type, row) {
+                    return '<a href="#" class="btn btn-outline-danger btn-pill"><span class="fa fa-times"></span></a>';
+                },
+            },
+                {
+                "targets": 1,
+                "data": null,
+                "render": function (data, type, row) {
                     if(data['original_filename']!==null){
 
                         return '<a href="http://crg-kcapps-svr.entdswd.local'+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
@@ -228,7 +242,7 @@ $(document).ready(function () {
                 },
             },
                 {
-                    "targets": 1,
+                    "targets": 2,
                     "data": null,
                     "render": function (data, type, row) {
                         if(data['original_filename']!==''){
@@ -240,7 +254,7 @@ $(document).ready(function () {
                     },
                 },
                 {
-                    "targets": 2,
+                    "targets": 3,
                     "data": null,
                     "render": function (data, type, row) {
                         if(data['original_filename']!==''){
@@ -251,14 +265,14 @@ $(document).ready(function () {
                     },
                 },
                 {
-                    "targets": 3,
+                    "targets": 4,
                     "data": null,
                     "render": function (data, type, row) {
                         return data['rp'];
                     },
                 },
                 {
-                    "targets": 4,
+                    "targets": 5,
                     "data": null,
                     "render": function (data, type, row) {
                         if(data['original_filename']!==''){
