@@ -127,7 +127,7 @@
     <div class="col-sm-12 col-md-12 col-xl-8">
         <div class="card mb-3">
             <div class="table-responsive">
-                <table id="tbl_searchFileResult" class="table table-striped table-hover" style="width:100%">
+                <table id="tbl_uploadedFiles" class="table table-striped table-hover" style="width:100%">
                     <thead>
                     <tr class="border-bottom-0">
                         <th style="width: 25%;">Filename</th>
