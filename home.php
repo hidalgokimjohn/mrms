@@ -118,6 +118,8 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
                                 ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
+                                ($_GET['p'] == 'upload') ? include('resources/views/upload.php') : '';
+
                                 //dqa module
                                 $getModality = '';
                                 if (isset($_GET['modality']) && ($_GET['modality'] == 'ipcdd_drom')) {

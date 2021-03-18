@@ -97,6 +97,54 @@ $(document).ready(function () {
 
         });
 
+        $('#tbl_uploadedFiles').on('click', 'tbody td .delete-file', function (e) {
+            var file_id = $(this).attr('data-file-id');
+            var form_id = $(this).attr('data-form-id');
+            var r = confirm('Are you want to remove this finding?');
+            if (r) {
+                window.notyf.open({
+                    type: 'success',
+                    message: 'File successfully deleted',
+                    duration: '5000',
+                    ripple: true,
+                    dismissible: true,
+                    position: {
+                        x: 'right',
+                        y: 'top'
+                    }
+                });
+            }
+            /*file_id = $(this).attr('data-file-id');
+            fk_ft = $(this).attr('data-fk-ft');
+            btn = this;
+            swal({
+                title: "Are you sure?",
+                text: "You will not be able to recover this file!",
+                type: "warning",
+
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Yes, delete it!",
+                closeOnConfirm: false
+            }, function () {
+                $.ajax({
+                    url: 'ajax/mod_upload/del_file.php',
+                    type: 'POST',
+                    data: {
+                        "file_id": file_id,
+                        "fk_guid": fk_ft
+                    },
+                    success: function (returndata) {
+                        if (returndata == 'deleted') {
+                            swal("Deleted!", "Your file has been deleted.", "success");
+                            tbl_latest_upload.row($(btn).parents('tr')).remove().draw(false);
+                        } else {
+                            swal("Error!", "Something went wrong or unable to delete the file. Maybe it is already reviewed.", "error");
+                        }
+                    }
+                });
+            });*/
+        })
 
         $('#tbl_uploadedFiles thead tr').clone(true).appendTo('#tbl_uploadedFiles thead');
         $('#tbl_uploadedFiles thead tr:eq(1) th').each(function (i) {
@@ -151,7 +199,7 @@ $(document).ready(function () {
                 "targets": 0,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<a href="#" class="btn btn-outline-danger btn-pill"><span class="fa fa-times"></span></a>';
+                    return '<a href="#" class="btn btn-outline-danger btn-pill delete-file" data-file-id="'+data['file_id']+'" data-form-id="'+data['ft_guid']+'"><span class="fa fa-times"></span></a>';
                 },
             },
                 {
