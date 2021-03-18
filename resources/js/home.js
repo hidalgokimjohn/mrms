@@ -172,6 +172,112 @@ $(document).ready(function () {
         function clearFileInput() {
             $("#fileToUpload").val('');
         }
+
+        $('#tbl_uploadedFiles thead tr').clone(true).appendTo('#tbl_uploadedFiles thead');
+        $('#tbl_uploadedFiles thead tr:eq(1) th').each(function (i) {
+
+                var title = $(this).text();
+                $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+                $('input', this).on('keyup change', function (e) {
+                    if (tbl_uploadedFiles.column(i).search() !== this.value) {
+                        tbl_uploadedFiles.column(i).search(this.value).draw();
+                    }
+                });
+
+        });
+        var tbl_uploadedFiles = $('#tbl_uploadedFiles').DataTable({
+            orderCellsTop: true,
+            fixedHeader: true,
+            order: [
+                [1, "asc"]
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: 0
+            }],
+            dom: '<<t>ip>',
+            //dom: '<"html5buttons">bitpr',
+            ajax: {
+                url: "resources/ajax/tbl_uploadedFiles.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                cache: false,
+                dataType: 'json',
+                error: function () {
+                    $("post_list_processing").css("display", "none");
+                }
+            },
+            language: {
+                "emptyTable": "<b>No records <found class=''></found></b>"
+            },
+            initComplete: function(settings, json) {
+                $('.dataTables_paginate').addClass('p-3');
+                $('.dataTables_info').addClass('p-3');
+            },
+            columnDefs: [{
+                "targets": 0,
+                "data": null,
+                "render": function (data, type, row) {
+                    if(data['original_filename']!==null){
+
+                        return '<a href="http://crg-kcapps-svr.entdswd.local'+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
+                    }else{
+                        return '<strong>Not Yet Uploaded</strong>'
+                    }
+                },
+            },
+                {
+                    "targets": 1,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if(data['original_filename']!==''){
+                            return data['form_name']+"<br/>"+'<small>Activity: '+data['activity_name']+'</small>';
+                        }else{
+                            return '<strong>Not Yet Uploaded</strong>'
+                        }
+
+                    },
+                },
+                {
+                    "targets": 2,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if(data['original_filename']!==''){
+                            return '<span title="'+data['cadt_name']+', '+data['mun_name']+'">'+data['area']+'</span>';
+                        }else{
+                            return '<strong class="text-danger">Not Yet Uploaded</strong>'
+                        }
+                    },
+                },
+                {
+                    "targets": 3,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return data['rp'];
+                    },
+                },
+                {
+                    "targets": 4,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if(data['original_filename']!==''){
+                            if(data['is_reviewed']=='for review'){
+                                return '<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For Review</div>'
+                            }else if(data['is_reviewed']=='reviewed'){
+                                return '<div class="badge bg-primary"><span class="fa fa-check-circle"></span> Reviewed</div>'
+                            }else{
+                                return '-';
+                            }
+                        }else{
+                            return '<strong>Not Yet Uploaded</strong>'
+                        }
+                    },
+                }
+            ],
+
+        });
+
     }
 
     if(p=='user_coverage'){
