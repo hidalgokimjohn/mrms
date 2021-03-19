@@ -83,7 +83,7 @@ if (!$auth->loggedIn()) {
                             <a class="dropdown-item" href="#"><i class="align-middle mr-1" data-feather="settings"></i> Settings & Privacy</a>
                             <a class="dropdown-item" href="https://kalahi-caraga-kb.tawk.help/" target="_blank"><i class="align-middle mr-1" data-feather="help-circle"></i> Help Center</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="login/logout.php">Log out</a>
+                            <a class="dropdown-item" href="logout.php">Log out</a>
                         </div>
                     </li>
                 </ul>
