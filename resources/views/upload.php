@@ -3,7 +3,7 @@
         <div class="modal-content p-3">
             <form method="post" name="fileUpload" id="formFileUpload" enctype="multipart/form-data">
                 <div class="m-2">
-                    <label class="form-label">Area</label>
+                    <label class="form-label m-0">Area</label>
                     <select class="form-control choices-of-cadt" name="area_id">
                         <option value="">Select Area</option>
                         <?php
@@ -15,7 +15,7 @@
                     </select>
                 </div>
                 <div class="m-2">
-                    <label class="form-label">Cycle</label>
+                    <label class="form-label m-0">Cycle</label>
                     <select class="form-control choices-of-cycle" name="cycle_id">
                         <option value="">Select Cycle</option>
                         <optgroup label="IPCDD DROM">
@@ -53,19 +53,20 @@
                     </select>
                 </div>
                 <div class="m-2">
-                    <label class="form-label">Activity</label>
+                    <label class="form-label m-0">Activity</label>
                     <select class="form-control choices-of-activity" name="activity_id">
                         <option value="">Select Activity</option>
                     </select>
                 </div>
                 <div class="m-2">
-                    <label class="form-label">Form</label>
+                    <label class="form-label m-0">Form</label>
                     <select class="form-control choices-of-form" name="form_id">
                         <option value="">Select Form</option>
                     </select>
                 </div>
                 <div class="m-2">
-                    <label class="form-label">Responsible Person</label>
+                    <label class="form-label m-0">Responsible Person<br/> <small><i>(Choose the assigned AC/CEF for this document)</i></small></label>
+
                     <select class="form-control choices-of-rp" name="rp_id">
                         <option value="">Select Responsible Person</option>
                         <?php

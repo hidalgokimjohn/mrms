@@ -633,7 +633,7 @@ document.addEventListener("DOMContentLoaded", function () {
         let finding_id = document.querySelector('#removeFinding');
         if (finding_id) {
             //confirm remove
-            var r = confirm('Are you want to remove this finding?');
+            var r = confirm('Are you sure you want to delete this MOV?');
             if (r) {
                 $.ajax({
                     type: "post",

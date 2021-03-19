@@ -748,6 +748,40 @@ WHERE
         }
     }
 
+    public function deleteFile($file_id,$form_id)
+    {
+        $mysql = $this->connectDatabase();
+        $file_id = $mysql->escape_string($file_id);
+        $q = "UPDATE `form_uploaded` SET `is_deleted`='1',`date_deleted`=NOW() WHERE (`file_id`='$file_id' AND is_reviewed='for review')";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($mysql->affected_rows > 0) {
+            $this->deductActualCount($form_id);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function deductActualCount($form_id)
+    {
+        $mysql = $this->connectDatabase();
+        $form_id = $mysql->escape_string($form_id);
+        $q = "SELECT
+            form_target.actual
+        FROM
+            form_target
+            WHERE form_target.ft_guid='$form_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        $row = $result->fetch_assoc();
+        $val = $row['actual'] - 1;
+        $q = "UPDATE `form_target` SET `actual` = '$val' WHERE `ft_guid` = '$form_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result) {
+            return true;
+        }
+    }
+
+
     public function updateDqaList()
     {
         $mysql = $this->connectDatabase();
@@ -2645,7 +2679,8 @@ WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.
                     lib_municipality.mun_name,
                     lib_cadt.cadt_name,
                     'n/a'
-                ) AS area
+                ) AS area,
+                form_uploaded.host
             FROM
                 form_uploaded
             INNER JOIN form_target ON form_target.ft_guid = form_uploaded.fk_ft_guid
