@@ -27,21 +27,10 @@
                     </li>
                 </ul>
             </li>
-            <li class="sidebar-item <?php $app->sidebar_active('dashboards', $_GET['p']); ?>">
-                <a data-target="#dashboards" data-toggle="collapse"
-                   class="sidebar-link <?php $app->sidebar_collapsed('dashboards', $_GET['p']); ?>">
-                    <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboards</span>
+            <li class="sidebar-item <?php $app->sidebar_active('act_coverage', $_GET['p']); ?>">
+                <a class="sidebar-link" href="home.php?p=act_coverage">
+                    <i class="align-middle" data-feather="globe"></i> <span class="align-middle">Coverage</span>
                 </a>
-                <ul id="dashboards"
-                    class="sidebar-dropdown list-unstyled collapse <?php $app->sidebar_showList('dashboards', $_GET['p']); ?>"
-                    data-parent="#sidebar">
-                    <li class="sidebar-item <?php $app->sidebar_active('af_cbrc', $_GET['modality']); ?>"><a
-                                class="sidebar-link" href="home.php?p=dashboards&modality=af_cbrc">KC-AF CBRC</a>
-                    </li>
-                    <li class="sidebar-item <?php $app->sidebar_active('ipcdd_drom', $_GET['modality']); ?>"><a
-                                class="sidebar-link" href="home.php?p=dashboards&modality=ipcdd_drom">IPCDD DROM</a>
-                    </li>
-                </ul>
             </li>
             <li class="sidebar-item <?php $app->sidebar_active('upload', $_GET['p']); ?>">
                 <a class="sidebar-link" href="home.php?p=upload">

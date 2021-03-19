@@ -124,6 +124,18 @@ $(document).ready(function () {
                                 }
                             });
                             tbl_uploadedFiles.ajax.reload();
+                        }else{
+                            window.notyf.open({
+                                type: 'error',
+                                message: '<strong>Sorry</strong>, reviewed documents can\'t be removed.',
+                                duration: '5000',
+                                ripple: true,
+                                dismissible: true,
+                                position: {
+                                    x: 'center',
+                                    y: 'top'
+                                }
+                            });
                         }
                     }
                 });
@@ -183,7 +195,11 @@ $(document).ready(function () {
                 "targets": 0,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<a href="#" class="btn btn-outline-danger btn-pill delete-file" data-file-id="'+data['file_id']+'" data-form-id="'+data['ft_guid']+'"><span class="fa fa-times"></span></a>';
+                    if(data['is_reviewed']=='for review'){
+                        return '<a href="#" class="btn btn-outline-danger btn-pill delete-file" data-file-id="'+data['file_id']+'" data-form-id="'+data['ft_guid']+'"><span class="fa fa-times"></span></a>'
+                    }else{
+                        return '<a href="#" class="btn btn-outline-danger disabled btn-pill delete-file" data-file-id="'+data['file_id']+'" data-form-id="'+data['ft_guid']+'"><span class="fa fa-times"></span></a>'
+                    }
                 },
             },
                 {
