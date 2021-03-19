@@ -100,50 +100,34 @@ $(document).ready(function () {
         $('#tbl_uploadedFiles').on('click', 'tbody td .delete-file', function (e) {
             var file_id = $(this).attr('data-file-id');
             var form_id = $(this).attr('data-form-id');
-            var r = confirm('Are you want to remove this finding?');
+            var r = confirm('Are you sure you want to delete this MOV');
             if (r) {
-                window.notyf.open({
-                    type: 'success',
-                    message: 'File successfully deleted',
-                    duration: '5000',
-                    ripple: true,
-                    dismissible: true,
-                    position: {
-                        x: 'right',
-                        y: 'top'
-                    }
-                });
-            }
-            /*file_id = $(this).attr('data-file-id');
-            fk_ft = $(this).attr('data-fk-ft');
-            btn = this;
-            swal({
-                title: "Are you sure?",
-                text: "You will not be able to recover this file!",
-                type: "warning",
-
-                showCancelButton: true,
-                confirmButtonColor: "#DD6B55",
-                confirmButtonText: "Yes, delete it!",
-                closeOnConfirm: false
-            }, function () {
                 $.ajax({
-                    url: 'ajax/mod_upload/del_file.php',
-                    type: 'POST',
+                    type: "post",
+                    url: "resources/ajax/deleteFile.php",
                     data: {
                         "file_id": file_id,
-                        "fk_guid": fk_ft
+                        "form_id": form_id
                     },
-                    success: function (returndata) {
-                        if (returndata == 'deleted') {
-                            swal("Deleted!", "Your file has been deleted.", "success");
-                            tbl_latest_upload.row($(btn).parents('tr')).remove().draw(false);
-                        } else {
-                            swal("Error!", "Something went wrong or unable to delete the file. Maybe it is already reviewed.", "error");
+                    dataType: 'html',
+                    success: function (data) {
+                        if (data == 'deleted') {
+                            window.notyf.open({
+                                type: 'success',
+                                message: '<strong>File deleted</strong>',
+                                duration: '5000',
+                                ripple: true,
+                                dismissible: true,
+                                position: {
+                                    x: 'center',
+                                    y: 'top'
+                                }
+                            });
+                            tbl_uploadedFiles.ajax.reload();
                         }
                     }
                 });
-            });*/
+            }
         })
 
         $('#tbl_uploadedFiles thead tr').clone(true).appendTo('#tbl_uploadedFiles thead');
@@ -208,7 +192,7 @@ $(document).ready(function () {
                 "render": function (data, type, row) {
                     if(data['original_filename']!==null){
 
-                        return '<a href="http://crg-kcapps-svr.entdswd.local'+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
+                        return '<a href="'+data['host']+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
                     }else{
                         return '<strong>Not Yet Uploaded</strong>'
                     }
