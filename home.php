@@ -60,9 +60,13 @@ if (!$auth->loggedIn()) {
     ?>
     <div class="main">
         <nav class="navbar navbar-expand navbar-light navbar-bg p-3">
-            <a class="sidebar-toggle d-flex">
+            <?php
+            if($_SESSION['user_lvl']=='RPMO'){
+                echo '<a class="sidebar-toggle d-flex">
                 <i class="hamburger align-self-center"></i>
-            </a>
+            </a>';
+            }
+            ?>
             <img src="resources/img/logo/kclogos.jpg" height="36">
             <div class="navbar-collapse collapsed">
                 <ul class="navbar-nav navbar-align">
@@ -70,7 +74,6 @@ if (!$auth->loggedIn()) {
                         <a class="nav-icon dropdown-toggle d-inline-block d-sm-none" href="#" data-toggle="dropdown">
                             <i class="align-middle" data-feather="settings"></i>
                         </a>
-
                         <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-toggle="dropdown">
                             <img src="<?php echo $_SESSION['avatar_path']; ?>" class="avatar img-fluid rounded mr-1"
                                  alt="userImage"/> <span
@@ -118,7 +121,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
                                 ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
-                                ($_GET['p'] == 'upload') ? include('resources/views/upload.php') : '';
+                                ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
 
                                 //dqa module
                                 $getModality = '';
@@ -168,11 +171,14 @@ if (!$auth->loggedIn()) {
                             }
 
                             if($_SESSION['user_lvl']=='ACT'){
-                                ($_GET['p'] == 'upload') ? include('resources/views/upload.php') : '';
+                                echo '<div class="row">';
+                                include('resources/views/actMenu.php');
+                                ($_GET['p'] == 'act' && $_GET['m']=='main') ? include('resources/views/actMain.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='upload') ? include('resources/views/upload.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView.php') : '';
+                                echo '</div>';
                             }
-
                         }
-
                         ?>
                     </div>
                 </div>
