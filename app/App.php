@@ -17,6 +17,8 @@ class App
     public $tot_target;
     public $area_id;
     public $cycle_id;
+    public $username;
+    public $avatar;
 
     public function connectDatabase()
     {
@@ -436,13 +438,13 @@ class App
         $mysql = $this->connectDatabase();
         $modalityGroup = $mysql->real_escape_string($modalityGroup);
         $q = $mysql->prepare("SELECT
-	lib_category.id,
-	lib_category.category_name
-FROM
-	lib_category
-	INNER JOIN lib_modality ON lib_category.fk_modality = lib_modality.id 
-WHERE
-	lib_modality.modality_group = ? ORDER BY lib_category.id ASC");
+            lib_category.id,
+            lib_category.category_name
+        FROM
+            lib_category
+            INNER JOIN lib_modality ON lib_category.fk_modality = lib_modality.id 
+        WHERE
+            lib_modality.modality_group = ? ORDER BY lib_category.id ASC");
         $q->bind_param('s', $modalityGroup);
         $q->execute();
         $result = $q->get_result();
@@ -724,8 +726,7 @@ WHERE
     public function addFile()
     {
         $mysql = $this->connectDatabase();
-        $ceac = new Ceac();
-        $f_guid = $ceac->v4();
+        $f_guid = $this->v4();
         $ft_guid = $mysql->real_escape_string($_POST['ftGuid']);
         $dqa_id = $mysql->real_escape_string($_POST['dqaId']);
         $file_id = $mysql->real_escape_string($_POST['fileId']);
@@ -849,8 +850,7 @@ WHERE
     public function createDqa()
     {
         $mysql = $this->connectDatabase();
-        $ceac = new Ceac();
-        $dqa_gui = $ceac->v4();
+        $dqa_gui = $this->v4();
 
         if (strlen($_POST['municipality']) == 9) {
             $q = $mysql->prepare("INSERT INTO `tbl_dqa` (`dqa_guid`, `fk_psgc_mun`, `fk_cycle`, `title`, `responsible_person`, `conducted_by`, `created_at`,`dqa_status`)
@@ -1525,14 +1525,14 @@ WHERE
     {
         $mysql = $this->connectDatabase();
         $q = "SELECT
-tbl_person_info.first_name,
-tbl_person_info.last_name,
-tbl_person_info.avatar_path
-FROM
-tbl_users
-INNER JOIN tbl_user_coverage_ipcdd ON tbl_user_coverage_ipcdd.id_number = tbl_users.id_number
-INNER JOIN tbl_person_info ON tbl_person_info.fk_id_number = tbl_users.id_number
-WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.fk_cycle_id='$cycle_id' AND tbl_person_info.office_name='ACT'";
+                tbl_person_info.first_name,
+                tbl_person_info.last_name,
+                tbl_person_info.avatar_path
+                FROM
+                tbl_users
+                INNER JOIN tbl_user_coverage_ipcdd ON tbl_user_coverage_ipcdd.id_number = tbl_users.id_number
+                INNER JOIN tbl_person_info ON tbl_person_info.fk_id_number = tbl_users.id_number
+                WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.fk_cycle_id='$cycle_id' AND tbl_person_info.office_name='ACT'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -2200,11 +2200,6 @@ WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.
         echo json_encode($json_data, JSON_PRETTY_PRINT);
     }
 
-    public function getUserCoverage(){
-        $mysql = $this->connectDatabase();
-        $q="";
-    }
-
     public function tbl_users(){
         $mysql = $this->connectHREDatabase();
         $q="SELECT * FROM kcpis.view_active_staff";
@@ -2711,7 +2706,7 @@ WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.
                 view_tbl_user_coverage.area_id
                 FROM
                 view_tbl_user_coverage
-                WHERE view_tbl_user_coverage.id_number='16-10371'";
+                WHERE view_tbl_user_coverage.id_number='$_SESSION[id_number]'";
         $result = $mysql->query($q) or die($mysql->error);
         if($result->num_rows>0){
             while($row = $result->fetch_assoc()){
@@ -2726,4 +2721,146 @@ WHERE tbl_user_coverage_ipcdd.fk_cadt_id='$cadt_id' AND tbl_user_coverage_ipcdd.
         }
     }
 
+    public function actActivityProg($cycle,$area_id,$cat_id){
+        $mysql = $this->connectDatabase();
+        $cycle = $mysql->real_escape_string($cycle);
+        $area_id = $mysql->real_escape_string($area_id);
+        $q="SELECT
+            lib_activity.activity_name,
+            FORMAT(SUM(form_target.actual)/SUM(form_target.target)*100,2) AS progress,
+            lib_activity.fk_category
+            FROM
+            form_target
+            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+            INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id') AND lib_activity.fk_category='$cat_id'
+            GROUP BY lib_activity.id";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            while ($row = $result->fetch_assoc()){
+                $data[] = $row;
+            }
+            return $data;
+        }else{
+            return false;
+        }
+    }
+
+    public function actCategoryProg($cycle,$area_id){
+        $mysql = $this->connectDatabase();
+        $cycle = $mysql->real_escape_string($cycle);
+        $area_id = $mysql->real_escape_string($area_id);
+        $q="SELECT
+            lib_activity.fk_category,
+            lib_category.category_name,
+            lib_category.stage_no,
+            lib_category.acronym
+            FROM
+            form_target
+            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+            INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+            INNER JOIN lib_category ON lib_category.id = lib_activity.fk_category
+            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id')
+            GROUP BY lib_activity.fk_category";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            while ($row = $result->fetch_assoc()){
+                $data[] = $row;
+            }
+            return $data;
+        }else{
+            return false;
+        }
+    }
+
+    public function getUserCoverage(){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+            view_tbl_user_coverage.area_name,
+            view_tbl_user_coverage.modality_group,
+            view_tbl_user_coverage.batch,
+            view_tbl_user_coverage.cycle_name,
+            view_tbl_user_coverage.cycle_id,
+            view_tbl_user_coverage.area_id,
+            view_tbl_user_coverage.`status`,
+            cycles.`year`
+            FROM
+            view_tbl_user_coverage
+            INNER JOIN cycles ON cycles.id = view_tbl_user_coverage.cycle_id
+            LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = view_tbl_user_coverage.area_id
+            LEFT JOIN lib_cadt ON lib_cadt.id = view_tbl_user_coverage.area_id
+            WHERE view_tbl_user_coverage.id_number='$_SESSION[id_number]'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            while($row = $result->fetch_assoc())
+                $data[] = $row;
+            return $data;
+        }else{
+            return false;
+        }
+    }
+
+    public function areaProgress($cycle_id,$area_id){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+                format(((sum(`form_target`.`actual`) / sum(`form_target`.`target`)) * 100),2) as progress
+                FROM
+                form_target
+                WHERE form_target.fk_cycle='$cycle_id' AND (form_target.fk_psgc_mun='$area_id' OR form_target.fk_cadt='$area_id')";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+           $row = $result->fetch_assoc();
+           return $row['progress'];
+        }else{
+            return false;
+        }
+    }
+    public function getACTMembers_avatar($cycle_id,$area_id){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+            view_tbl_user_coverage.username,
+            view_tbl_user_coverage.avatar_path
+            FROM
+            view_tbl_user_coverage where view_tbl_user_coverage.status='active'
+            AND view_tbl_user_coverage.cycle_id='$cycle_id' AND view_tbl_user_coverage.area_id='$area_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+           while($row = $result->fetch_assoc()){
+               $data[] = $row;
+           }
+            return $data;
+        }else{
+            return false;
+        }
+    }
+    public function actView_areaInfo($cycle_id,$area_id){
+        $mysql = $this->connectDatabase();
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $area_id = $mysql->real_escape_string($area_id);
+        $q="SELECT
+                view_tbl_user_coverage.area_name,
+                view_tbl_user_coverage.modality_group,
+                view_tbl_user_coverage.batch,
+                view_tbl_user_coverage.cycle_name,
+                view_tbl_user_coverage.cycle_id,
+                view_tbl_user_coverage.area_id,
+                view_tbl_user_coverage.`status`,
+                cycles.`year`
+            FROM
+                view_tbl_user_coverage
+            INNER JOIN cycles ON cycles.id = view_tbl_user_coverage.cycle_id
+            LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = view_tbl_user_coverage.area_id
+            LEFT JOIN lib_cadt ON lib_cadt.id = view_tbl_user_coverage.area_id
+            WHERE
+                view_tbl_user_coverage.id_number = '$_SESSION[id_number]'
+            AND view_tbl_user_coverage.cycle_id = '$cycle_id'
+            AND view_tbl_user_coverage.area_id = '$area_id' LIMIT 1";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            $row = $result->fetch_assoc();
+            return $row;
+        }else{
+            return false;
+        }
+    }
 }

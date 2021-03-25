@@ -13,7 +13,7 @@ $(document).ready(function () {
         new Choices(document.querySelector(".editChoicesAc"));
     }
 
-    if(p=='upload'){
+    if(p=='act'){
         var choiceTypeOfCadt = new Choices(".choices-of-cadt", {
             shouldSort: false
         });
