@@ -102,7 +102,7 @@ if (!$auth->loggedIn()) {
                                 <i class="far fa-fw fa-bell"></i>
                             </div>
                             <div class="alert-message">
-                                <strong>NOTICE #001: </strong> Sample alert! <strong>4PM Today. </strong> Char lang
+                                <strong>NOTICE #001:  </strong> Last uploading of MOVs will be close <strong>on or before December 15, 2021</strong>. Thank you! <i><strong> - From the M&E and the Management. <br>See the attachment. <a href="#">Click here to download</a> </strong></i>
                             </div>
                         </div>-->
                     </div>
@@ -176,6 +176,9 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'act' && $_GET['m']=='main') ? include('resources/views/actMain.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='upload') ? include('resources/views/upload.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
                                 echo '</div>';
                             }
                         }

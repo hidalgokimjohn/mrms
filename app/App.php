@@ -2726,7 +2726,10 @@ WHERE
         $cycle = $mysql->real_escape_string($cycle);
         $area_id = $mysql->real_escape_string($area_id);
         $q="SELECT
+            lib_activity.id,
             lib_activity.activity_name,
+            form_target.fk_cycle,
+            COALESCE(form_target.fk_psgc_mun,form_target.fk_cadt) as area_id,
             FORMAT(SUM(form_target.actual)/SUM(form_target.target)*100,2) AS progress,
             lib_activity.fk_category
             FROM
