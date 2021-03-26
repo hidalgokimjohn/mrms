@@ -16,9 +16,17 @@
             <a class="list-group-item list-group-item-action <?php echo $app->sidebar_active('activity_logs', $_GET['m']); ?>" href="home.php?p=act&m=activity_logs" role="tab">
                 Activity Logs
             </a>
-            <a class="list-group-item list-group-item-action <?php echo $app->sidebar_active('search', $_GET['m']); ?>" href="home.php?p=act&m=search" role="tab">
+            <div class="list-group-item list-group-item-action dropdown show">
+            <a  class="text-primary" data-toggle="dropdown" data-display="static">
                 Search
+                <div class="dropdown-menu dropdown-menu-right">
+                    <a class="dropdown-item" href="#">Action</a>
+                    <a class="dropdown-item" href="#">Another action</a>
+                    <a class="dropdown-item" href="#">Something else here</a>
+                </div>
             </a>
+            </div>
+
         </div>
     </div>
 </div>

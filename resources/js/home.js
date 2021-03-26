@@ -13,7 +13,7 @@ $(document).ready(function () {
         new Choices(document.querySelector(".editChoicesAc"));
     }
 
-    if(p=='act'){
+    if(m=='upload'){
         var choiceTypeOfCadt = new Choices(".choices-of-cadt", {
             shouldSort: false
         });
@@ -346,6 +346,18 @@ $(document).ready(function () {
             $("#fileToUpload").val('');
         }
 
+
+    }
+
+    if(m=='view_more'){
+        const modalViewActivity = document.getElementById('modalViewActivity');
+
+        if (modalViewActivity) {
+            modalViewActivity.addEventListener('show.bs.modal', function (e) {
+                var activity_name = $(e.relatedTarget).data('activity-name');
+                $('.activity_title').text(activity_name);
+            });
+        }
     }
 
     if(p=='user_coverage'){
