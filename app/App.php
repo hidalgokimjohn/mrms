@@ -1623,41 +1623,42 @@ WHERE
         }
     }
 
-    public function myWorkDashboard_ipcddDrom($status)
+    public function myWorkDashboard_ipcddDrom($area_id,$cycle_id)
     {
         $mysql = $this->connectDatabase();
-        $status = $mysql->real_escape_string($status);
-        $q = "SELECT
-        lib_cadt.cadt_name,
-        lib_cycle.cycle_name,
-        Sum(form_target.target) AS target,
-        Sum(form_target.actual) AS actual,
-        CONCAT(
-                    FORMAT(
-                        Sum(form_target.actual) / Sum(form_target.target) * 100,
-                        2
-                    ),
-                    '%'
-                ) AS uploadStatus,
-        cycles.id as cycle_id,
-        lib_cadt.id as cadt_id,
-        form_target.fk_psgc_mun
-        FROM
-                form_target
-            INNER JOIN cycles ON cycles.id = form_target.fk_cycle
-            INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
-            INNER JOIN tbl_user_coverage_ipcdd ON tbl_user_coverage_ipcdd.fk_cadt_id = form_target.fk_cadt
-            INNER JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
-            INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
-        WHERE
-                cycles.`status` = '$status'
-            AND tbl_user_coverage_ipcdd.status='$status'
-            AND tbl_user_coverage_ipcdd.id_number = '$_SESSION[id_number]'
-            AND form_target.target > 0
-           
-        GROUP BY
-                form_target.fk_cadt,
-                form_target.fk_cycle";
+        //$status = $mysql->real_escape_string($status);
+        $area_id = $mysql->real_escape_string($area_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+            $q = "SELECT
+                    lib_cadt.cadt_name,
+                    lib_cycle.cycle_name,
+                    Sum(form_target.target) AS target,
+                    Sum(form_target.actual) AS actual,
+                    Sum(form_target.reviewed) AS reviewed,
+                    CONCAT(
+                        FORMAT(
+                            Sum(form_target.actual) / Sum(form_target.target) * 100,
+                            2
+                        ),
+                        '%'
+                    ) AS uploadStatus,
+                    cycles.id AS cycle_id,
+                    form_target.fk_cadt AS cadt_id,
+                    form_target.fk_psgc_mun
+                FROM
+                    form_target
+                INNER JOIN cycles ON cycles.id = form_target.fk_cycle
+                INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
+                INNER JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
+                INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
+                WHERE
+        
+                    form_target.fk_cycle='$cycle_id'
+                AND (
+                    form_target.fk_cadt = '$area_id'
+                    OR form_target.fk_psgc_mun = '$area_id'
+                )
+                AND form_target.target > 0";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -1671,6 +1672,7 @@ WHERE
         }
     }
 
+
     public function countReviewedByUsername($area_id, $area_id2, $cycle_id)
     {
         $mysql = $this->connectDatabase();
@@ -1682,7 +1684,7 @@ WHERE
                 tbl_dqa_list
             INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_list.ft_guid
             WHERE
-                tbl_dqa_list.added_by = '$_SESSION[username]'
+                tbl_dqa_list.added_by = '$_SESSION[id_number]'
             AND (
                 form_target.fk_cadt = '$area_id'
                 OR form_target.fk_psgc_mun = '$area_id2'

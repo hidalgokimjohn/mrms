@@ -155,17 +155,23 @@
                                 <tbody>
                                     <?php
 
-                                    foreach ($app->myWorkDashboard_ipcddDrom('active') as $item) {
-                                        echo '<tr>';
-                                        echo '<td><a target="_blank" href="home.php?p=act&m=view_more&cycle='.$item['cycle_id'].'&area='.$item['cadt_id'].'">' . $item['cadt_name'] . '</a></td>';
-                                        echo '<td class="text-capitalize">' . $item['cycle_name'] . '</td>';
-                                        echo '<td>' . $item['reviewedOverActual'] . '%</td>';
-                                        //echo '<td>'.$item['reviewed'].'/'.$item['actual'].'=<strong>'.$item['reviewedOverActual'].'</strong></td>';
-                                        echo '<td>' . $item['findings'] . '</td>';
-                                        echo '<td>' . $item['complied'] . ' / ' . $item['findings'] . '</td>';
-                                        echo '<td><strong>' . $item['uploadStatus'] . '</strong></td>';
-                                        echo '</tr>';
+                                    $userCoverage = $app->getUserCoverage();
+                                    if($userCoverage){
+                                        foreach ($userCoverage as $uc){
+                                            foreach ($app->myWorkDashboard_ipcddDrom($uc['area_id'],$uc['cycle_id']) as $item) {
+                                                echo '<tr>';
+                                                echo '<td><a target="_blank" href="home.php?p=act&m=view_more&cycle='.$item['cycle_id'].'&area='.$item['cadt_id'].'">' . $item['cadt_name'] . '</a></td>';
+                                                echo '<td class="text-capitalize">' . $item['cycle_name'] . '</td>';
+                                                echo '<td>' . $item['reviewedOverActual'] . '%</td>';
+/*                                                echo '<td>'.$item['reviewed'].'/'.$item['actual'].'=<strong>'.$item['reviewedOverActual'].'</strong></td>';*/
+                                                echo '<td>' . $item['findings'] . '</td>';
+                                                echo '<td>' . $item['complied'] . ' / ' . $item['findings'] . '</td>';
+                                                echo '<td><strong>' . $item['uploadStatus'] . '</strong></td>';
+                                                echo '</tr>';
+                                            }
+                                        }
                                     }
+
                                     ?>
                                 </tbody>
                             </table>
