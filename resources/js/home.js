@@ -349,13 +349,148 @@ $(document).ready(function () {
 
     }
 
+    var tbl_actFiles='';
+
+    $('#tbl_actFiles thead tr').clone(true).appendTo('#tbl_actFiles thead');
+    $('#tbl_actFiles thead tr:eq(1) th').each(function (i) {
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+        $('input', this).on('keyup change', function (e) {
+            if (tbl_actFiles.column(i).search() !== this.value) {
+                tbl_actFiles.column(i).search(this.value).draw();
+            }
+        });
+        /*   if (i !== 0) {
+
+
+           }else{
+               var title = $(this).text();
+               $(this).html('<a href="#uploadModal" data-toggle="modal">\n' +
+                   '                <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span></button>\n' +
+                   '            </a>');
+           }*/
+
+    });
+
     if(m=='view_more'){
         const modalViewActivity = document.getElementById('modalViewActivity');
 
+
         if (modalViewActivity) {
             modalViewActivity.addEventListener('show.bs.modal', function (e) {
+                var activity_id = $(e.relatedTarget).data('activity-id');
                 var activity_name = $(e.relatedTarget).data('activity-name');
+                var cycle_id = $(e.relatedTarget).data('cycle-id');
+                var area_id = $(e.relatedTarget).data('area-id');
+
                 $('.activity_title').text(activity_name);
+                tbl_actFiles = $('#tbl_actFiles').DataTable({
+                    orderCellsTop: true,
+                    bDestroy: true,
+                    order: [
+                        [4, "desc"]
+                    ],
+                    columnDefs: [{
+                        orderable: false,
+                        targets: 0
+                    }],
+                    dom: '<<t>ip>',
+                    //dom: '<"html5buttons">bitpr',
+                    ajax: {
+                        url: "resources/ajax/tbl_actFiles.php?activity_id="+activity_id+"&cycle_id="+cycle_id+"&area_id="+area_id,
+                        type: "POST",
+                        processData: false,
+                        contentType: false,
+                        cache: false,
+                        dataType: 'json',
+                        error: function () {
+                            $("post_list_processing").css("display", "none");
+                        }
+                    },
+                    language: {
+                        "emptyTable": "<b>No records <found class=''></found></b>"
+                    },
+                    initComplete: function(settings, json) {
+                        $('.dataTables_paginate').addClass('p-3');
+                        $('.dataTables_info').addClass('p-3');
+                    },
+                    createdRow: function( row, data, dataIndex){
+                        if( data['original_filename'] == null){
+                            $(row).addClass('bg-danger-light text-danger');
+                        }
+                    },
+                    columnDefs: [{
+                        "targets": 0,
+                        "data": null,
+                        "render": function (data, type, row) {
+
+                            if(data['original_filename']!==null){
+                                if(data['is_reviewed']=='for review'){
+                                    return '</strong> <span class="badge bg-warning "> For review</span>';
+                                }else{
+                                    return '</strong> <span class="badge bg-success "> Reviewed</span>';
+
+                                }
+                            }else{
+                                return '<strong>Not yet uploaded</strong>'
+                            }
+                        },
+                    },
+                        {
+                            "targets": 1,
+                            "data": null,
+                            "render": function (data, type, row) {
+
+                                if(data['original_filename']!==null){
+                                    if(data['is_reviewed']!=='for review'){
+                                        var file_stat='</strong> <span class="badge bg-warning "> For review</span>';
+                                    }else{
+                                        var file_stat='</strong> <span class="badge bg-success "> Reviewed</span>';
+
+                                    }
+                                    return '<a class="text-primary" href="'+data['host']+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
+                                }else{
+                                    return '<div class="text-center"><strong>-</strong></div>'
+                                }
+                            },
+                        },
+                        {
+                            "targets": 2,
+                            "data": null,
+                            "render": function (data, type, row) {
+                                if(data['original_filename']!==''){
+                                    return data['form_name']+"<br/>"+'<small>Activity: '+data['activity_name']+'</small>';
+                                }else{
+                                    return '<strong class="text-center">-</strong>'
+                                }
+
+                            },
+                        },
+                        {
+                            "targets": 3,
+                            "data": null,
+                            "render": function (data, type, row) {
+                                if(data['area']!==null){
+                                    return '<span title="'+data['area']+'">'+data['area']+'</span>';
+                                }else{
+                                    return '<div class="text-center"><strong>-</strong></div>'
+                                }
+                            },
+                        },
+                        {
+                            "targets": 4,
+                            "data": null,
+                            "render": function (data, type, row) {
+                                if(data['date_uploaded']!==null){
+                                    return '<span>'+data['date_uploaded']+'</span>';
+                                }else{
+                                    return '<div class="text-center"><strong>-</strong></div>'
+                                }
+                            },
+                        }
+                    ],
+
+                });
             });
         }
     }

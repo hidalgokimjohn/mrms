@@ -120,20 +120,17 @@ $progress = $app->areaProgress($_GET['cycle'], $_GET['area']);
             </div>
 
                 <div class="table-responsive">
-                    <table id="tbl_addFiles" class="table table-hover" style="width:100%">
+                    <table id="tbl_actFiles" class="table table-hover" style="width:100%">
                         <thead>
                         <tr class="border-bottom-0">
-                            <th style="width: 40%;">Filename</th>
-                            <th style="width: 40%;">Form</th>
+                            <th style="width: 10%;">Status</th>
+                            <th style="width: 30%;">Filename</th>
+                            <th style="width: 30%;">Form</th>
                             <th style="width: 20%;">Mun/Barangay</th>
+                            <th style="width: 10%;">Uploaded</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>asdsdoHVLIDHUOFHOhf</td>
-                            <td>asdsdoHVLIDHUOFHOhfs;ldksaldas'dl</td>
-                            <td>asdsdoH</td>
-                        </tr>
                         </tbody>
                     </table>
                 </div>
