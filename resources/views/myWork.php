@@ -157,7 +157,7 @@
 
                                     foreach ($app->myWorkDashboard_ipcddDrom('active') as $item) {
                                         echo '<tr>';
-                                        echo '<td>' . $item['cadt_name'] . '</td>';
+                                        echo '<td><a target="_blank" href="home.php?p=act&m=view_more&cycle='.$item['cycle_id'].'&area='.$item['cadt_id'].'">' . $item['cadt_name'] . '</a></td>';
                                         echo '<td class="text-capitalize">' . $item['cycle_name'] . '</td>';
                                         echo '<td>' . $item['reviewedOverActual'] . '%</td>';
                                         //echo '<td>'.$item['reviewed'].'/'.$item['actual'].'=<strong>'.$item['reviewedOverActual'].'</strong></td>';
@@ -176,7 +176,6 @@
             <div class="tab-pane fade show <?php echo ($_GET['tab'] == 'coverage') ? 'active' : ''; ?>" id="coverage" role="tabpanel">
                 <div class="card">
                     <div class="card-header"><h5 class="card-title"><a href="home.php?p=mywork&tab=main&tab=coverage">Coverage</a></h5></div>
-
                        <?php
                             if (!isset($_GET['m'])) {
                                 $userCoverages = $app->getIpcddCoverage('active', $_SESSION['id_number']);

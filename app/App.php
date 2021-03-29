@@ -2804,7 +2804,11 @@ WHERE
             lib_activity.id,
             lib_activity.activity_name,
             form_target.fk_cycle,
-            COALESCE(form_target.fk_psgc_mun,form_target.fk_cadt) as area_id,
+            COALESCE(
+                form_target.fk_cadt,
+                    form_target.fk_psgc_mun,
+                form_target.fk_psgc_brgy
+                    ) as area_id,
             FORMAT(SUM(form_target.actual)/SUM(form_target.target)*100,2) AS progress,
             lib_activity.fk_category
             FROM
@@ -2880,6 +2884,8 @@ WHERE
 
     public function areaProgress($cycle_id,$area_id){
         $mysql = $this->connectDatabase();
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $area_id = $mysql->real_escape_string($area_id);
         $q="SELECT
                 format(((sum(`form_target`.`actual`) / sum(`form_target`.`target`)) * 100),2) as progress
                 FROM
@@ -2895,6 +2901,8 @@ WHERE
     }
     public function getACTMembers_avatar($cycle_id,$area_id){
         $mysql = $this->connectDatabase();
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $area_id = $mysql->real_escape_string($area_id);
         $q="SELECT
             view_tbl_user_coverage.username,
             view_tbl_user_coverage.avatar_path

@@ -386,7 +386,6 @@ $(document).ready(function () {
                 $('.activity_title').text(activity_name);
                 tbl_actFiles = $('#tbl_actFiles').DataTable({
                     orderCellsTop: true,
-                    fixedHeader: true,
                     bDestroy: true,
                     order: [
                         [4, "desc"]
@@ -449,7 +448,7 @@ $(document).ready(function () {
                                         var file_stat='</strong> <span class="badge bg-success "> Reviewed</span>';
 
                                     }
-                                    return '<a href="'+data['host']+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</a>';
+                                    return '<a class="text-primary" href="'+data['host']+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
                                 }else{
                                     return '<div class="text-center"><strong>-</strong></div>'
                                 }
@@ -460,7 +459,7 @@ $(document).ready(function () {
                             "data": null,
                             "render": function (data, type, row) {
                                 if(data['original_filename']!==''){
-                                    return "<strong>"+data['form_name']+"</strong>"+"<br/>"+'<small>Activity: '+data['activity_name']+'</small>';
+                                    return data['form_name']+"<br/>"+'<small>Activity: '+data['activity_name']+'</small>';
                                 }else{
                                     return '<strong class="text-center">-</strong>'
                                 }

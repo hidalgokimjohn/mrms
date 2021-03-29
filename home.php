@@ -122,6 +122,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
                                 ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
                                 ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
 
                                 //dqa module
                                 $getModality = '';
