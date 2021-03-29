@@ -2430,11 +2430,37 @@ WHERE
         }
     }
 
+    public function prevWeekUpload2($modality,$batch,$week){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+            SUM(form_target.actual) prevWeekUpload
+            FROM
+                form_target
+            INNER JOIN cycles ON cycles.id = form_target.fk_cycle
+            INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
+            INNER JOIN form_uploaded ON form_uploaded.fk_ft_guid = form_target.ft_guid
+            WHERE
+                lib_modality.modality_group = '$modality'
+            AND form_target.target > 0
+            AND cycles.batch = '$batch'
+            AND cycles.`status` = 'active'
+            AND form_uploaded.is_deleted=0
+            AND DATE(form_uploaded.date_uploaded) > DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+            AND DATE(form_uploaded.date_uploaded) < CURDATE()";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            $row = $result->fetch_assoc();
+            return $row['prevWeekUpload'];
+        }else{
+            return false;
+        }
+    }
+
     public function weeklyUpload($modality,$year){
         $mysql = $this->connectDatabase();
         $q="SELECT
             WEEK(form_uploaded.date_uploaded) week_no,
-            SUM(form_target.actual) weeklyUpload
+            SUM(CASE WHEN form_uploaded.is_deleted = 0 THEN 1 ELSE 0 END) weeklyUpload
             FROM
                 form_target
             INNER JOIN cycles ON cycles.id = form_target.fk_cycle
@@ -2689,6 +2715,55 @@ WHERE
         if($result->num_rows>0){
             while($row = $result->fetch_assoc()){
                 $row['rp'] = $this->getUsersName($row['rp_id']);
+                $data[] = $row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data);
+        }else{
+            return false;
+        }
+
+    }
+
+    public function getUploadedFilesByActivity($activity_id,$cycle_id,$area_id){
+        $mysql = $this->connectDatabase();
+
+        $activity_id = $mysql->real_escape_string($activity_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $area_id = $mysql->real_escape_string($area_id);
+
+        $q="SELECT
+            form_uploaded.file_id,
+            form_uploaded.original_filename,
+            form_uploaded.file_path,
+            form_uploaded.is_reviewed,
+            form_uploaded.with_findings,
+            lib_activity.activity_name,
+            lib_form.form_name,
+            COALESCE (
+                    lib_barangay.brgy_name,
+                    lib_municipality.mun_name,
+                    lib_cadt.cadt_name,
+                    'n/a'
+                ) AS area,
+            form_uploaded.host,
+            form_uploaded.date_uploaded
+            FROM
+            form_target
+            LEFT JOIN form_uploaded ON form_uploaded.fk_ft_guid = form_target.ft_guid
+            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+            INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+            INNER JOIN lib_category ON lib_category.id = lib_activity.fk_category
+            INNER JOIN lib_modality ON lib_modality.id = lib_category.fk_modality
+            LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
+            LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
+            LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
+            WHERE lib_activity.id = '$activity_id' AND form_target.fk_cycle='$cycle_id'
+            AND(form_target.fk_cadt ='$area_id' OR form_target.fk_psgc_mun='$area_id')
+            AND (form_uploaded.is_deleted = 0 OR form_uploaded.is_deleted IS NULL)";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            while($row = $result->fetch_assoc()){
                 $data[] = $row;
             }
             $json_data = array("data" => $data);
