@@ -1,5 +1,5 @@
 <nav id="sidebar" class="sidebar <?php if(isset($_GET['p']) && $_GET['p']=='dashboards'){
-    echo 'collapsed';
+    //echo 'collapsed';
 } ?>">
     <div class="sidebar-content js-simplebar">
         <a class="sidebar-brand" href="index.php">
