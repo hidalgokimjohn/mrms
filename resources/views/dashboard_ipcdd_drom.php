@@ -98,8 +98,8 @@
                         </div>
                         <h1 class="mt-1 mb-3"><?php echo $app->overAll('ipcdd_drom','b3').'%';  ?></h1>
                         <div class="mb-0">
-                            <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> <?php echo number_format($app->prevWeekUpload('ipcdd_drom','b3',1)/$app->tot_target*100,2).'%'; ?> </span>
-                            <span class="text-muted">Since last week</span>
+                           <!-- <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> <?php /*echo number_format($app->prevWeekUpload('ipcdd_drom','b3',1)/$app->tot_target*100,2).'%'; */?> </span>
+                            <span class="text-muted">Since last week</span>-->
                         </div>
                     </div>
                 </div>
@@ -122,8 +122,8 @@
                         </div>
                         <h1 class="mt-1 mb-3"><?php echo $app->overAll('ipcdd_drom','b2').'%';  ?></h1>
                         <div class="mb-0">
-                            <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> <?php echo number_format($app->prevWeekUpload('ipcdd_drom','b2',1)/$app->tot_target*100,2).'%'; ?> </span>
-                            <span class="text-muted">Since last week</span>
+                          <!--  <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> <?php /*echo number_format($app->prevWeekUpload('ipcdd_drom','b2',1)/$app->tot_target*100,2).'%'; */?> </span>
+                            <span class="text-muted">Since last week</span>-->
                         </div>
                     </div>
                 </div>
@@ -146,8 +146,8 @@
                         </div>
                         <h1 class="mt-1 mb-3"><?php echo $app->overAll('af_cbrc','').'%';  ?></h1>
                         <div class="mb-0">
-                            <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> <?php echo number_format($app->prevWeekUpload('af_cbrc','',1)/$app->tot_target*100,2).'%'; ?> </span>
-                            <span class="text-muted">Since last week</span>
+                           <!-- <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i> <?php /*echo number_format($app->prevWeekUpload('af_cbrc','',1)/$app->tot_target*100,2).'%'; */?> </span>
+                            <span class="text-muted">Since last week</span>-->
                         </div>
                     </div>
                 </div>
