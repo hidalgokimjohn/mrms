@@ -58,8 +58,15 @@ if(!$_SESSION['mrms_auth']){
                 //$user_sso = $user_sso->toArray();
                 $_SESSION['mrms_auth'] = $user_sso['sub'];
                 $app->login_sso($user_sso['preferred_username']);
-                header('location: home.php?p=dashboards&modality=ipcdd_drom');
-                exit;
+                if($_SESSION['user_lvl']=='ACT'){
+                    header('location: home.php?p=act&m=main');
+                    exit;
+                }
+                if($_SESSION['user_lvl']=='RPMO'){
+                    header('location: home.php?p=dashboards&modality=ipcdd_drom');
+                    exit;
+                }
+
             } else {
                 $_SESSION['sso_username']=$user_sso['preferred_username'];
                 $_SESSION['sso_oauth']=$user_sso['sub'];
@@ -74,7 +81,14 @@ if(!$_SESSION['mrms_auth']){
         // Use this to interact with an API on the users behalf
     }
 }else{
-    header('location: home.php?p=dashboards&modality=ipcdd_drom');
+    if($_SESSION['user_lvl']=='ACT'){
+        header('location: home.php?p=act&m=main');
+        exit;
+    }
+    if($_SESSION['user_lvl']=='RPMO'){
+        header('location: home.php?p=dashboards&modality=ipcdd_drom');
+        exit;
+    }
 }
 
 ?>
@@ -163,10 +177,16 @@ if(!$_SESSION['mrms_auth']){
 										    </div>';
                                         } else {*/
                                             if ($z=$app->login($_POST['username'], $_POST['password'])) {
-
                                                 $app->permission($_SESSION['username']);
                                                 $log = $app->log($_SESSION['username'], 'login', 'has logged in', null, null);
-                                                header('location: home.php?p=dashboards&modality=ipcdd_drom');
+                                                if($_SESSION['user_lvl']=='ACT'){
+                                                    header('location: home.php?p=act&m=main');
+                                                    exit;
+                                                }
+                                                if($_SESSION['user_lvl']=='RPMO'){
+                                                    header('location: home.php?p=dashboards&modality=ipcdd_drom');
+                                                    exit;
+                                                }
                                                 exit;
                                             } else {
                                                 echo '<br><div class="alert alert-danger alert-dismissible" role="alert">
