@@ -126,6 +126,7 @@ if ($_SESSION['forIDNumber']!=='true') {
                         }else{
                             if($app->register_sso($_SESSION['id_number'])){
                                 $app->login_sso($_SESSION['sso_username']);
+                                unset($_SESSION['forIDNumber']);
                                 if($_SESSION['user_lvl']=='ACT'){
                                     header('location: home.php?p=act&m=main');
                                     exit;
