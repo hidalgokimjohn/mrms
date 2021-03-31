@@ -96,7 +96,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
     tbl_searchFileResult = $('#tbl_searchFileResult').DataTable({
         orderCellsTop: true,
-        fixedHeader: true,
         bDestroy:true,
         order: [
             [0, "asc"]
@@ -123,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
         var form_id = $('.choices-multiple-form').val();
         tbl_searchFileResult = $('#tbl_searchFileResult').DataTable({
             orderCellsTop: true,
-            fixedHeader: true,
             bDestroy:true,
             order: [
                 [0, "asc"]

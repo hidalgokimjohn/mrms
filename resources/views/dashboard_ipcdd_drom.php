@@ -111,7 +111,6 @@
                             <div class="col mt-0">
                                 <h5 class="card-title"><strong>Batch 2 IPCDD DROM</strong> <br><small>(Overall Uploaded)</small></h5>
                             </div>
-
                             <div class="col-auto">
                                 <div class="avatar">
                                     <div class="avatar-title rounded-circle bg-primary-light">

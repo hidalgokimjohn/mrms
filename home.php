@@ -177,6 +177,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'act' && $_GET['m']=='main') ? include('resources/views/actMain.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='upload') ? include('resources/views/upload.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='nyu') ? include('resources/views/actNyu.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
