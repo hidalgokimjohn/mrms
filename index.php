@@ -161,7 +161,7 @@ if(!$_SESSION['mrms_auth']){
                                     </div>
                                     <div class="text-center mt-3">
                                         <input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in"> or
-                                        <a href="<?php echo $authUrl; ?>" class="btn btn-lg btn-success">Login with ISSO</a>
+                                        <a href="<?php echo $authUrl; ?>" class="btn btn-lg btn-success"><i data-feather="pinterest"></i> Login with ISSO</a>
                                         <!-- <button type="submit" class="btn btn-lg btn-primary">Sign in</button> -->
                                     </div>
                                     <?php

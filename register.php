@@ -4,10 +4,10 @@ include_once('app/App.php');
 include_once('app/Auth.php');
 $app = new \app\App();
 $auth = new \app\Auth();
-/*
+
 if ($_SESSION['forIDNumber']!=='true') {
     header('location: index.php');
-}*/
+}
 
 ?>
 <!DOCTYPE html>
@@ -126,7 +126,14 @@ if ($_SESSION['forIDNumber']!=='true') {
                         }else{
                             if($app->register_sso($_SESSION['id_number'])){
                                 $app->login_sso($_SESSION['sso_username']);
-                                header('location: home.php?p=dashboards&modality=ipcdd_drom');
+                                if($_SESSION['user_lvl']=='ACT'){
+                                    header('location: home.php?p=act&m=main');
+                                    exit;
+                                }
+                                if($_SESSION['user_lvl']=='RPMO'){
+                                    header('location: home.php?p=dashboards&modality=ipcdd_drom');
+                                    exit;
+                                }
                             }
                        }
                     }else{
