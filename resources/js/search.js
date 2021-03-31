@@ -155,9 +155,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 "targets": 0,
                 "data": null,
                 "render": function (data, type, row) {
-                    if(data[0]!==null){
+                    if(data['file_id']!==null){
 
-                        return '<a href="http://apps2.caraga.dswd.gov.ph'+data[2]+'" target="_blank" title="'+data[5]+', '+data[6]+'"><strong>'+data[1]+'</strong></a>';
+                        return '<a href="http://apps2.caraga.dswd.gov.ph'+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong><br/><small>Form: '+data['form_name']+'</small></a>';
                     }else{
                         return '<strong>Not Yet Uploaded</strong>'
                     }
@@ -167,8 +167,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     "targets": 1,
                     "data": null,
                     "render": function (data, type, row) {
-                        if(data[7]!==''){
-                            return data[7];
+                        if(data['mun_name']!==''){
+                            return data['mun_name'];
                         }else{
                             return '<strong>Not Yet Uploaded</strong>'
                         }
@@ -179,8 +179,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     "targets": 2,
                     "data": null,
                     "render": function (data, type, row) {
-                        if(data[8]!==''){
-                            return data[8];
+                        if(data['brgy_name']!==''){
+                            return data['brgy_name'];
                         }else{
                             return '<strong class="text-danger">Not Yet Uploaded</strong>'
                         }
@@ -190,10 +190,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     "targets": 3,
                     "data": null,
                     "render": function (data, type, row) {
-                        if(data[3]!==''){
-                            if(data[3]=='for review'){
+                        if(data['is_reviewed']!==''){
+                            if(data['is_reviewed']=='for review'){
                                 return '<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For Review</div>'
-                            }else if(data[3]=='reviewed'){
+                            }else if(data['is_reviewed']=='reviewed'){
                                 return '<div class="badge bg-primary"><span class="fa fa-check-circle"></span> Reviewed</div>'
                             }else{
                                 return '-';

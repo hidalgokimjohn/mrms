@@ -2018,7 +2018,7 @@ WHERE
         $q .= $where;
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
-            while ($row = $result->fetch_row()) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
         } else {
