@@ -195,18 +195,18 @@ class App
                 if (isset($_GET['p'])) {
                     $title = "Dashboard | MRMS";
                 }
-                /*if (isset($_GET['m']) && $_GET['m'] == 'mov_uploading_2021') {
-                    $title .= " - MOV Uploading 2021 | MRMS";
-                }
-                if (isset($_GET['m']) && $_GET['m'] == 'mov_uploading_2020') {
-                    $title .= " - MOV Uploading 2020 | MRMS";
-                }
-                if (isset($_GET['m']) && $_GET['m'] == 'mov_reviewed') {
-                    $title .= " - MOV Reviewed | MRMS";
-                }
-                if (isset($_GET['m']) && $_GET['m'] == 'exec_db') {
-                    $title .= " - Executive | MRMS";
-                }*/
+            /*if (isset($_GET['m']) && $_GET['m'] == 'mov_uploading_2021') {
+                $title .= " - MOV Uploading 2021 | MRMS";
+            }
+            if (isset($_GET['m']) && $_GET['m'] == 'mov_uploading_2020') {
+                $title .= " - MOV Uploading 2020 | MRMS";
+            }
+            if (isset($_GET['m']) && $_GET['m'] == 'mov_reviewed') {
+                $title .= " - MOV Reviewed | MRMS";
+            }
+            if (isset($_GET['m']) && $_GET['m'] == 'exec_db') {
+                $title .= " - Executive | MRMS";
+            }*/
 
             case 'user_mngt';
                 if (isset($_GET['p']) && $_GET['p'] == 'user_mngt') {
@@ -266,7 +266,8 @@ class App
         }
     }
 
-    public function selectGetModality(){
+    public function selectGetModality()
+    {
         $mysql = $this->connectDatabase();
         $q = $mysql->prepare("SELECT * FROM lib_modality where id in (3,4,5)");
         $q->execute();
@@ -281,7 +282,8 @@ class App
         }
     }
 
-    public function searchGetCycles_json($modalityGroup){
+    public function searchGetCycles_json($modalityGroup)
+    {
         $mysql = $this->connectDatabase();
         $q = $mysql->prepare("SELECT
                 cycles.id as value,
@@ -295,7 +297,7 @@ class App
                 INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
                 INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
                 WHERE  (lib_modality.modality_group=? OR lib_modality.id=?) AND cycles.`status`='active'");
-        $q->bind_param('si', $modalityGroup,$modalityGroup);
+        $q->bind_param('si', $modalityGroup, $modalityGroup);
         $q->execute();
         $result = $q->get_result();
         if ($result->num_rows > 0) {
@@ -398,7 +400,7 @@ class App
                 INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
                 INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
                 WHERE  (lib_modality.modality_group=? OR lib_modality.id=?) AND cycles.`status`='active'");
-        $q->bind_param('si', $modalityGroup,$modalityGroup);
+        $q->bind_param('si', $modalityGroup, $modalityGroup);
         $q->execute();
         $result = $q->get_result();
         if ($result->num_rows > 0) {
@@ -411,7 +413,8 @@ class App
         }
     }
 
-    public function searchgetArea($cycle_id){
+    public function searchgetArea($cycle_id)
+    {
         $mysql = $this->connectDatabase();
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $q = "SELECT
@@ -424,7 +427,7 @@ class App
                 WHERE fk_cycles='$cycle_id'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
-            while($row = $result->fetch_assoc()){
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return json_encode($data);
@@ -749,7 +752,7 @@ WHERE
         }
     }
 
-    public function deleteFile($file_id,$form_id)
+    public function deleteFile($file_id, $form_id)
     {
         $mysql = $this->connectDatabase();
         $file_id = $mysql->escape_string($file_id);
@@ -1623,13 +1626,13 @@ WHERE
         }
     }
 
-    public function myWorkDashboard_ipcddDrom($area_id,$cycle_id)
+    public function myWorkDashboard_ipcddDrom($area_id, $cycle_id)
     {
         $mysql = $this->connectDatabase();
         //$status = $mysql->real_escape_string($status);
         $area_id = $mysql->real_escape_string($area_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
-            $q = "SELECT
+        $q = "SELECT
                     lib_cadt.cadt_name,
                     lib_cycle.cycle_name,
                     Sum(form_target.target) AS target,
@@ -2048,7 +2051,7 @@ WHERE
         $r = "INSERT INTO `tbl_person_info` (`fk_id_number`, `first_name`,`mid_name`, `last_name`,`sector_name`,`sector_desc`,`status`,`position_name`,`position_desc`,`office_name`,`office_desc`,`created_at`,`avatar_path`,`fk_username`) 
                 VALUES ('$id_number','$this->firstName','$this->midName','$this->lastName','$this->sectorName','$this->sectorDesc','$this->status','$this->posName','$this->posDesc','$this->officeName','$this->officeDesc',NOW(),'$_SESSION[avatar_path]','$username')";
         $execute = $mysql->query($r) or die($mysql->error);
-        if($mysql->affected_rows>0){
+        if ($mysql->affected_rows > 0) {
             return true;
         }
 
@@ -2080,9 +2083,9 @@ WHERE
         $result = $mysql->query($q);
         $row = $result->fetch_assoc();
 
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
 
@@ -2124,14 +2127,15 @@ WHERE
         }
     }
 
-    public function getUsersName($id_number){
+    public function getUsersName($id_number)
+    {
         $mysql = $this->connectHREDatabase();
         $q = "SELECT concat(fname,' ',lname) as fullName FROM view_active_staff WHERE id_number='$id_number'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['fullName'];
-        }else{
+        } else {
             return false;
         }
     }
@@ -2202,73 +2206,78 @@ WHERE
         echo json_encode($json_data, JSON_PRETTY_PRINT);
     }
 
-    public function tbl_users(){
+    public function tbl_users()
+    {
         $mysql = $this->connectHREDatabase();
-        $q="SELECT * FROM kcpis.view_active_staff";
+        $q = "SELECT * FROM kcpis.view_active_staff";
         /*$mysql = $this->connectHREDatabase();
         $q="SELECT * FROM kcpis.view_active_staff";*/
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                $row['avatar_path'] ='';
-               // $row['avatar_path'] =$this->getImage($row['id_number']);
+                $row['avatar_path'] = '';
+                // $row['avatar_path'] =$this->getImage($row['id_number']);
                 $data[] = $row;
             }
             $json_data = array("data" => $data);
             echo json_encode($json_data);
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function tbl_userCoverage($id_number){
+    public function tbl_userCoverage($id_number)
+    {
         $mysql = $this->connectDatabase();
         $id_number = $mysql->real_escape_string($id_number);
-        $q="SELECT * FROM view_tbl_user_coverage where id_number='$id_number'";
+        $q = "SELECT * FROM view_tbl_user_coverage where id_number='$id_number'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             $json_data = array("data" => $data);
             echo json_encode($json_data);
-        }else{
+        } else {
             $json_data = array("data" => '');
             echo json_encode($json_data);;
         }
     }
 
-    public function userCoverage($id_number){
+    public function userCoverage($id_number)
+    {
         $mysql = $this->connectDatabase();
         $id_number = $mysql->real_escape_string($id_number);
-        $q="SELECT * FROM view_tbl_user_coverage where id_number='$id_number'";
+        $q = "SELECT * FROM view_tbl_user_coverage where id_number='$id_number'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             $json_data = array("data" => '');
             echo json_encode($json_data);;
         }
     }
 
-    public function activerUsers(){
+    public function activerUsers()
+    {
         $mysql = $this->connectHREDatabase();
-        $q="select COUNT(view_active_staff.id_number) as activeUser from view_active_staff";
+        $q = "select COUNT(view_active_staff.id_number) as activeUser from view_active_staff";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['activeUser'];
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function getACUser(){
+    public function getACUser()
+    {
         $mysql = $this->connectHREDatabase();
-        $q="SELECT
+        $q = "SELECT
             view_active_staff.id_number,
             view_active_staff.fname,
             view_active_staff.mname,
@@ -2276,19 +2285,20 @@ WHERE
             FROM view_active_staff
             WHERE view_active_staff.position_name='AC'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function getActUser(){
+    public function getActUser()
+    {
         $mysql = $this->connectHREDatabase();
-        $q="SELECT
+        $q = "SELECT
             view_active_staff.id_number,
             view_active_staff.fname,
             view_active_staff.mname,
@@ -2296,101 +2306,108 @@ WHERE
             FROM view_active_staff
             WHERE view_active_staff.sector_name='CD Sector' AND view_active_staff.office_name='ACT'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function addUserCoverage(){
+    public function addUserCoverage()
+    {
         $mysql = $this->connectDatabase();
         $id_number = $mysql->real_escape_string($_GET['id_number']);
         $cycle = $mysql->real_escape_string($_POST['cycle']);
 
-        foreach ($_POST['area'] as $area_id){
+        foreach ($_POST['area'] as $area_id) {
             //Check existing coverage
-            if(!$this->coverageExist($id_number,$cycle,$area_id)){
+            if (!$this->coverageExist($id_number, $cycle, $area_id)) {
                 //check modality
-                if($this->modality($_POST['modality'])=='ipcdd'){
-                    $q="INSERT INTO `tbl_user_coverage_ipcdd` (`id_number`, `fk_cadt_id`, `fk_cycle_id`, `status`, `created_at`) 
+                if ($this->modality($_POST['modality']) == 'ipcdd') {
+                    $q = "INSERT INTO `tbl_user_coverage_ipcdd` (`id_number`, `fk_cadt_id`, `fk_cycle_id`, `status`, `created_at`) 
                 VALUES ('$id_number', '$area_id', '$cycle', 'active', NOW())";
                     $mysql->query($q);
-                }else{
+                } else {
                     //for ncddp
-                    $q="INSERT INTO `tbl_user_coverage_ncddp` (`id_number`, `fk_psgc_mun`, `fk_cycle_id`, `status`, `created_at`) 
+                    $q = "INSERT INTO `tbl_user_coverage_ncddp` (`id_number`, `fk_psgc_mun`, `fk_cycle_id`, `status`, `created_at`) 
                 VALUES ('$id_number', '$area_id', '$cycle', 'active', NOW())";
                     $mysql->query($q);
                 }
             }
         }
-        if($mysql->affected_rows>0){
+        if ($mysql->affected_rows > 0) {
             echo 'coverage_added';
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function coverageExist($id_number,$cycle,$area){
+    public function coverageExist($id_number, $cycle, $area)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT view_tbl_user_coverage.area_id FROM view_tbl_user_coverage WHERE (id_number='$id_number' OR username='$id_number') AND cycle_id='$cycle' AND area_id='$area'";
+        $q = "SELECT view_tbl_user_coverage.area_id FROM view_tbl_user_coverage WHERE (id_number='$id_number' OR username='$id_number') AND cycle_id='$cycle' AND area_id='$area'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             return true;
-        }else{
+        } else {
             return false;
         }
 
     }
 
-    public function modality($id){
+    public function modality($id)
+    {
         $mysql = $this->connectDatabase();
         $id = $mysql->real_escape_string($id);
-        $q="SELECT * FROM lib_modality WHERE id='$id'";
+        $q = "SELECT * FROM lib_modality WHERE id='$id'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['modality_name'];
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function tbl_uploading_progress($modalityGroup){
+    public function tbl_uploading_progress($modalityGroup)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT * FROM view_tbl_uploading_progress WHERE view_tbl_uploading_progress.modality_group='$modalityGroup'";
+        $q = "SELECT * FROM view_tbl_uploading_progress WHERE view_tbl_uploading_progress.modality_group='$modalityGroup'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             return false;
         }
 
     }
-    public function view_tbl_milestone_uploading_progress($modalityGroup){
+
+    public function view_tbl_milestone_uploading_progress($modalityGroup)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT * FROM view_tbl_milestone_uploading_progress WHERE view_tbl_milestone_uploading_progress.modality_group='$modalityGroup'";
+        $q = "SELECT * FROM view_tbl_milestone_uploading_progress WHERE view_tbl_milestone_uploading_progress.modality_group='$modalityGroup'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             return false;
         }
 
     }
 
-    public function overAll($modality,$batch){
+    public function overAll($modality, $batch)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT
+        $q = "SELECT
                 SUM(form_target.target) as tot_target,
                 FORMAT(SUM(form_target.actual)/SUM(form_target.target)*100,2) as overallUploading
                 FROM
@@ -2399,17 +2416,19 @@ WHERE
                 INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
                 WHERE lib_modality.modality_group='$modality' AND form_target.target>0 AND cycles.batch='$batch' AND cycles.`status`='active'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-           $row = $result->fetch_assoc();
-           $this->tot_target = $row['tot_target'];
-           return $row['overallUploading'];
-        }else{
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $this->tot_target = $row['tot_target'];
+            return $row['overallUploading'];
+        } else {
             return false;
         }
     }
-    public function prevWeekUpload($modality,$batch,$week){
+
+    public function prevWeekUpload($modality, $batch, $week)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT
+        $q = "SELECT
             SUM(form_target.actual) prevWeekUpload
             FROM
                 form_target
@@ -2424,17 +2443,18 @@ WHERE
             AND form_uploaded.is_deleted=0
             AND YEARWEEK(form_uploaded.date_uploaded) = YEARWEEK(NOW()) - '$week'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['prevWeekUpload'];
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function prevWeekUpload2($modality,$batch,$week){
+    public function prevWeekUpload2($modality, $batch, $week)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT
+        $q = "SELECT
             SUM(form_target.actual) prevWeekUpload
             FROM
                 form_target
@@ -2450,17 +2470,18 @@ WHERE
             AND DATE(form_uploaded.date_uploaded) > DATE_SUB(CURDATE(), INTERVAL 7 DAY)
             AND DATE(form_uploaded.date_uploaded) < CURDATE()";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['prevWeekUpload'];
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function weeklyUpload($modality,$year){
+    public function weeklyUpload($modality, $year)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT
+        $q = "SELECT
             WEEK(form_uploaded.date_uploaded) week_no,
             SUM(CASE WHEN form_uploaded.is_deleted = 0 THEN 1 ELSE 0 END) weeklyUpload
             FROM
@@ -2477,29 +2498,31 @@ WHERE
             AND YEAR(form_uploaded.date_uploaded) = $year
 			GROUP BY WEEK(form_uploaded.date_uploaded)";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
-                $row['week'] = $this->getWeekStartEndDate($year,$row['week_no']);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $row['week'] = $this->getWeekStartEndDate($year, $row['week_no']);
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function getWeekStartEndDate($year,$week_no){
+    public function getWeekStartEndDate($year, $week_no)
+    {
         $dateTime = new \DateTime();
-        $dateTime->setISODate($year,$week_no);
-        $start_date=$result['start_date'] = $dateTime->format('m/d');
+        $dateTime->setISODate($year, $week_no);
+        $start_date = $result['start_date'] = $dateTime->format('m/d');
         $dateTime->modify('+6 days');
         $end_date = $result['end_date'] = $dateTime->format('m/d');
-        return $start_date.' - '.$end_date;
+        return $start_date . ' - ' . $end_date;
     }
 
-    public function getCeacActivity($area_id,$cycle_id){
+    public function getCeacActivity($area_id, $cycle_id)
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT
+        $q = "SELECT
             lib_activity.activity_name as label,
             lib_activity.id as value
             FROM
@@ -2513,22 +2536,23 @@ WHERE
             GROUP BY lib_activity.id
             ORDER BY lib_activity.id ASC";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return json_encode($data);
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function getCeacForm($area_id,$cycle_id,$activity_id){
+    public function getCeacForm($area_id, $cycle_id, $activity_id)
+    {
         $mysql = $this->connectDatabase();
         $area_id = $mysql->real_escape_string($area_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $activity_id = $mysql->real_escape_string($activity_id);
-        $q="SELECT
+        $q = "SELECT
             form_target.ft_guid as value,
             CONCAT(COALESCE(lib_barangay.brgy_name,lib_municipality.mun_name,lib_cadt.cadt_name),': ',lib_form.form_name) as label,
             lib_barangay.brgy_name,
@@ -2548,12 +2572,12 @@ WHERE
             WHERE (form_target.fk_psgc_mun = '$area_id' OR form_target.fk_cadt = '$area_id') AND form_target.fk_cycle = '$cycle_id' and lib_activity.id = '$activity_id'
             ORDER BY lib_form.form_name,lib_barangay.brgy_name ASC";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return json_encode($data);
-        }else{
+        } else {
             return false;
         }
     }
@@ -2591,7 +2615,7 @@ WHERE
         $host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $dir . '/' . $uniqueFileName)) {
             $q = $mysql->prepare("INSERT INTO `form_uploaded`(`file_id`, `fk_ft_guid`, `original_filename`, `generated_filename`, `file_path`, `date_uploaded`, `with_findings`, `is_findings_complied`, `is_reviewed`,`is_deleted`,`uploaded_by`,`rp_id`,`host`) VALUES (?, ?, ?, ?,?,NOW(),NULL,NULL,'for review',0,?,?,'$host')");
-            $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['username'],$_POST['rp_id']);
+            $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['username'], $_POST['rp_id']);
             $q->execute();
             if ($q->affected_rows > 0) {
                 if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft))
@@ -2679,13 +2703,14 @@ WHERE
         }
     }
 
-    public function getUploadedFiles(){
+    public function getUploadedFiles()
+    {
         $mysql = $this->connectDatabase();
 
-       // $area_id= "'".implode("','", $this->area_id)."'";
-       // $cycle_id= "'".implode("','", $this->cycle_id)."'";
+        // $area_id= "'".implode("','", $this->area_id)."'";
+        // $cycle_id= "'".implode("','", $this->cycle_id)."'";
 
-        $q="SELECT
+        $q = "SELECT
                 form_uploaded.original_filename,
                 form_uploaded.generated_filename,
                 form_target.ft_guid,
@@ -2714,27 +2739,28 @@ WHERE
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             WHERE form_uploaded.is_deleted = 0 AND  (form_uploaded.rp_id='$_SESSION[id_number]' OR form_uploaded.uploaded_by='$_SESSION[username]')";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $row['rp'] = $this->getUsersName($row['rp_id']);
                 $data[] = $row;
             }
             $json_data = array("data" => $data);
             echo json_encode($json_data);
-        }else{
+        } else {
             return false;
         }
 
     }
 
-    public function getUploadedFilesByActivity($activity_id,$cycle_id,$area_id){
+    public function getUploadedFilesByActivity($activity_id, $cycle_id, $area_id)
+    {
         $mysql = $this->connectDatabase();
 
         $activity_id = $mysql->real_escape_string($activity_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $area_id = $mysql->real_escape_string($area_id);
 
-        $q="SELECT
+        $q = "SELECT
             form_uploaded.file_id,
             form_uploaded.original_filename,
             form_uploaded.file_path,
@@ -2764,45 +2790,47 @@ WHERE
             AND(form_target.fk_cadt ='$area_id' OR form_target.fk_psgc_mun='$area_id')
             AND (form_uploaded.is_deleted = 0 OR form_uploaded.is_deleted IS NULL)";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             $json_data = array("data" => $data);
             echo json_encode($json_data);
-        }else{
+        } else {
             return false;
         }
 
     }
 
-    public function getUserActiveAreas(){
+    public function getUserActiveAreas()
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT
+        $q = "SELECT
                 view_tbl_user_coverage.cycle_id,
                 view_tbl_user_coverage.area_id
                 FROM
                 view_tbl_user_coverage
                 WHERE view_tbl_user_coverage.id_number='$_SESSION[id_number]'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $cycle[] = $row['cycle_id'];
                 $area[] = $row['area_id'];
                 $this->cycle_id = $cycle;
                 $this->area_id = $area;
             }
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function actActivityProg($cycle,$area_id,$cat_id){
+    public function actActivityProg($cycle, $area_id, $cat_id)
+    {
         $mysql = $this->connectDatabase();
         $cycle = $mysql->real_escape_string($cycle);
         $area_id = $mysql->real_escape_string($area_id);
-        $q="SELECT
+        $q = "SELECT
             lib_activity.id,
             lib_activity.activity_name,
             form_target.fk_cycle,
@@ -2820,21 +2848,22 @@ WHERE
             WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id') AND lib_activity.fk_category='$cat_id'
             GROUP BY lib_activity.id";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while ($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function actCategoryProg($cycle,$area_id){
+    public function actCategoryProg($cycle, $area_id)
+    {
         $mysql = $this->connectDatabase();
         $cycle = $mysql->real_escape_string($cycle);
         $area_id = $mysql->real_escape_string($area_id);
-        $q="SELECT
+        $q = "SELECT
             lib_activity.fk_category,
             lib_category.category_name,
             lib_category.stage_no,
@@ -2847,19 +2876,20 @@ WHERE
             WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id')
             GROUP BY lib_activity.fk_category";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while ($row = $result->fetch_assoc()){
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function getUserCoverage(){
+    public function getUserCoverage()
+    {
         $mysql = $this->connectDatabase();
-        $q="SELECT
+        $q = "SELECT
             view_tbl_user_coverage.area_name,
             view_tbl_user_coverage.modality_group,
             view_tbl_user_coverage.batch,
@@ -2875,57 +2905,62 @@ WHERE
             LEFT JOIN lib_cadt ON lib_cadt.id = view_tbl_user_coverage.area_id
             WHERE view_tbl_user_coverage.id_number='$_SESSION[id_number]'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-            while($row = $result->fetch_assoc())
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc())
                 $data[] = $row;
             return $data;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public function areaProgress($cycle_id,$area_id){
+    public function areaProgress($cycle_id, $area_id)
+    {
         $mysql = $this->connectDatabase();
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $area_id = $mysql->real_escape_string($area_id);
-        $q="SELECT
+        $q = "SELECT
                 format(((sum(`form_target`.`actual`) / sum(`form_target`.`target`)) * 100),2) as progress
                 FROM
                 form_target
                 WHERE form_target.fk_cycle='$cycle_id' AND (form_target.fk_psgc_mun='$area_id' OR form_target.fk_cadt='$area_id')";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-           $row = $result->fetch_assoc();
-           return $row['progress'];
-        }else{
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['progress'];
+        } else {
             return false;
         }
     }
-    public function getACTMembers_avatar($cycle_id,$area_id){
+
+    public function getACTMembers_avatar($cycle_id, $area_id)
+    {
         $mysql = $this->connectDatabase();
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $area_id = $mysql->real_escape_string($area_id);
-        $q="SELECT
+        $q = "SELECT
             view_tbl_user_coverage.username,
             view_tbl_user_coverage.avatar_path
             FROM
             view_tbl_user_coverage where view_tbl_user_coverage.status='active'
             AND view_tbl_user_coverage.cycle_id='$cycle_id' AND view_tbl_user_coverage.area_id='$area_id'";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
-           while($row = $result->fetch_assoc()){
-               $data[] = $row;
-           }
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
             return $data;
-        }else{
+        } else {
             return false;
         }
     }
-    public function actView_areaInfo($cycle_id,$area_id){
+
+    public function actView_areaInfo($cycle_id, $area_id)
+    {
         $mysql = $this->connectDatabase();
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $area_id = $mysql->real_escape_string($area_id);
-        $q="SELECT
+        $q = "SELECT
                 view_tbl_user_coverage.area_name,
                 view_tbl_user_coverage.modality_group,
                 view_tbl_user_coverage.batch,
@@ -2944,10 +2979,69 @@ WHERE
             AND view_tbl_user_coverage.cycle_id = '$cycle_id'
             AND view_tbl_user_coverage.area_id = '$area_id' LIMIT 1";
         $result = $mysql->query($q) or die($mysql->error);
-        if($result->num_rows>0){
+        if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row;
-        }else{
+        } else {
+            return false;
+        }
+    }
+
+    public function tbl_nyu(){
+        $mysql = $this->connectDatabase();
+        $this->getUserActiveAreas();
+        $area_id =  "'".implode("','", $this->area_id)."'";
+        $cycle_id =  "'".implode("','", $this->cycle_id)."'";
+        $q = "SELECT
+                cycles.batch,
+                lib_cycle.cycle_name,
+                COALESCE( 
+                    lib_cadt.cadt_name,
+                    lib_municipality.mun_name,
+                    '-') as cadt_muni,
+                lib_municipality.mun_name,
+                lib_barangay.brgy_name,
+                form_target.target,
+                form_target.actual,
+                lib_activity.activity_name,
+                lib_form.form_name
+                FROM
+                form_target
+                LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
+                LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
+                LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
+                INNER JOIN cycles ON cycles.id = form_target.fk_cycle
+                INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
+                INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+                INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+                WHERE form_target.fk_cadt IN ($area_id) AND form_target.fk_cycle IN ($cycle_id) AND form_target.actual<form_target.target";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()){
+                $data[] = $row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data);
+        } else {
+            return false;
+        }
+    }
+
+    public function notif_nyu(){
+        $mysql = $this->connectDatabase();
+        $this->getUserActiveAreas();
+        $area_id =  "'".implode("','", $this->area_id)."'";
+        $cycle_id =  "'".implode("','", $this->cycle_id)."'";
+        $q = "SELECT
+               SUM(form_target.target) target
+                FROM
+                form_target
+                WHERE form_target.fk_cadt IN ($area_id) AND form_target.fk_cycle IN ($cycle_id) AND form_target.actual<form_target.target";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['target'];
+        } else {
             return false;
         }
     }

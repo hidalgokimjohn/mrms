@@ -163,7 +163,6 @@ $(document).ready(function () {
         });
         var tbl_uploadedFiles = $('#tbl_uploadedFiles').DataTable({
             orderCellsTop: true,
-            fixedHeader: true,
             order: [
                 [5, "desc"]
             ],
@@ -350,6 +349,7 @@ $(document).ready(function () {
     }
 
     var tbl_actFiles='';
+    var tbl_nyu='';
 
     $('#tbl_actFiles thead tr').clone(true).appendTo('#tbl_actFiles thead');
     $('#tbl_actFiles thead tr:eq(1) th').each(function (i) {
@@ -371,11 +371,84 @@ $(document).ready(function () {
            }*/
 
     });
+    $('#tbl_nyu thead tr').clone(true).appendTo('#tbl_nyu thead');
+    $('#tbl_nyu thead tr:eq(1) th').each(function (i) {
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+        $('input', this).on('keyup change', function (e) {
+            if (tbl_nyu.column(i).search() !== this.value) {
+                tbl_nyu.column(i).search(this.value).draw();
+            }
+        });
+    });
+
+    if(m=='nyu'){
+         tbl_nyu = $('#tbl_nyu').DataTable({
+            orderCellsTop: true,
+            bDestroy: true,
+            columnDefs: [{
+                orderable: false,
+                targets: 0
+            }],
+            dom: '<<t>ip>',
+            //dom: '<"html5buttons">bitpr',
+            ajax: {
+                url: "resources/ajax/tbl_nyu.php",
+                type: "POST",
+                processData: false,
+                contentType: false,
+                cache: false,
+                dataType: 'json',
+                error: function () {
+                    $("post_list_processing").css("display", "none");
+                }
+            },
+            language: {
+                "emptyTable": "<b>No records <found class=''></found></b>"
+            },
+            initComplete: function(settings, json) {
+                $('.dataTables_paginate').addClass('p-3');
+                $('.dataTables_info').addClass('p-3');
+            },
+            columnDefs: [{
+                "targets": 0,
+                "data": null,
+                "render": function (data, type, row) {
+                    var mun_name='';
+                    if(data['mun_name']!==null){
+                        mun_name = data['mun_name'];
+                    }
+                    return data['cadt_muni']+'<br/><small>'+mun_name+'</small>';
+                },
+            },
+                {
+                    "targets": 1,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return data['brgy_name'];
+                    },
+                },
+                {
+                    "targets": 2,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return data['activity_name'];
+                    },
+                },
+                {
+                    "targets": 3,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        return data['form_name']+'<br/><small class="text-danger font-weight-bold">Target: '+data['target']+' Actual: '+data['actual']+'</small>';
+                    },
+                }
+            ],
+
+        });
+    }
 
     if(m=='view_more'){
         const modalViewActivity = document.getElementById('modalViewActivity');
-
-
         if (modalViewActivity) {
             modalViewActivity.addEventListener('show.bs.modal', function (e) {
                 var activity_id = $(e.relatedTarget).data('activity-id');
@@ -649,7 +722,7 @@ $(document).ready(function () {
     });
     var tbl_users = $('#tbl_users').DataTable({
         orderCellsTop: true,
-        fixedHeader: true,
+
         order: [
             [1, "asc"]
         ],
@@ -735,7 +808,6 @@ $(document).ready(function () {
     });
     var tbl_userCoverage = $('#tbl_userCoverage').DataTable({
         orderCellsTop: true,
-        fixedHeader: true,
         order: [
             [4, "desc"]
         ],

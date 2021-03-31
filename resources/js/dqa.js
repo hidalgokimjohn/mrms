@@ -37,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
     
     var tbl_dqa = $('#tbl_dqa').DataTable({
         orderCellsTop: true,
-        fixedHeader: true,
         order: [
             [1, "desc"]
         ],
@@ -132,7 +131,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     tbl_viewDqaItems = $('#tbl_viewDqaItems').DataTable({
         orderCellsTop: true,
-        fixedHeader: true,
         order: [
             [2, "desc"]
         ],

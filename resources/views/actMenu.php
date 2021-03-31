@@ -8,7 +8,7 @@
                 Upload
             </a>
             <a class="list-group-item list-group-item-action <?php echo $app->sidebar_active('nyu', $_GET['m']); ?>" href="home.php?p=act&m=nyu" role="tab">
-                Not Yet Uploaded <span class="badge bg-danger rounded float-right">1,334</span>
+                Not Yet Uploaded <span class="badge bg-danger rounded float-right"><?php echo number_format($app->notif_nyu()); ?></span>
             </a>
             <a class="list-group-item list-group-item-action <?php echo $app->sidebar_active('findings', $_GET['m']); ?>" href="home.php?p=act&m=findings" role="tab">
                 Findings <span class="badge bg-danger rounded float-right">34</span>
