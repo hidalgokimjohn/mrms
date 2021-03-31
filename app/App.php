@@ -180,41 +180,61 @@ class App
 
         switch ($p) {
 
-            case 'modules';
-                $title = '';
+            case 'search';
+
                 if (isset($_GET['p'])) {
-                    if (isset($_GET['title'])) {
-                        $title .= $_GET['title'] . " |";
+                    $title = 'Search - ';
+                    if($_GET['modality']=='ipcdd_drom'){
+                        $title .= "IPCDD DROM";
                     }
-                    $title .= " Data Quality Assessment | MRMS";
-                }
-                return $title;
+                    if($_GET['modality']=='ncddp_drom'){
+                        $title .= "NCDDP DROM";
+                    }
+                    if($_GET['modality']=='af_cbrc'){
+                        $title .= "KC-AF CBRC";
+                    }
 
-            case 'dashboards';
-                $title = '';
-                if (isset($_GET['p'])) {
-                    $title = "Dashboard | MRMS";
                 }
-            /*if (isset($_GET['m']) && $_GET['m'] == 'mov_uploading_2021') {
-                $title .= " - MOV Uploading 2021 | MRMS";
-            }
-            if (isset($_GET['m']) && $_GET['m'] == 'mov_uploading_2020') {
-                $title .= " - MOV Uploading 2020 | MRMS";
-            }
-            if (isset($_GET['m']) && $_GET['m'] == 'mov_reviewed') {
-                $title .= " - MOV Reviewed | MRMS";
-            }
-            if (isset($_GET['m']) && $_GET['m'] == 'exec_db') {
-                $title .= " - Executive | MRMS";
-            }*/
+                return $title.' | MRMS';
+                break;
+            case 'act';
 
-            case 'user_mngt';
-                if (isset($_GET['p']) && $_GET['p'] == 'user_mngt') {
-                    $title = "User Management | MRMS";
+                if (isset($_GET['m'])) {
+                    if ($_GET['m'] == 'main') {
+                        $title = "Main | MRMS";
+                    }
                 }
-                return $title;
+                if (isset($_GET['m'])) {
+                    if ($_GET['m'] == 'upload') {
+                        $title = "Upload | MRMS";
+                    }
+                }
+                if (isset($_GET['m'])) {
+                    if ($_GET['m'] == 'nyu') {
+                        $title = "Not Yet Uploaded | MRMS";
+                    }
+                }
+                if (isset($_GET['m'])) {
+                    if ($_GET['m'] == 'findings') {
+                        $title = "Findings | MRMS";
+                    }
+                }
+                if (isset($_GET['m'])) {
+                    if ($_GET['m'] == 'activity_logs') {
+                        $title = "Activity Log | MRMS";
+                    }
+                }
+                if (isset($_GET['m'])) {
+                    if ($_GET['m'] == 'view_more') {
+                        $area_info=$this->actView_areaInfo($_GET['cycle'],$_GET['area']);
+                        $title = $area_info['area_name'].' '.$area_info['cycle_name'].' '.$area_info['batch']." | MRMS";
+                    }
+                }
+                return ucwords($title);
+                break;
+
             default:
-                echo 'MRMS | Home';
+                return 'MRMS | Home';
                 break;
         }
     }
@@ -2987,11 +3007,12 @@ WHERE
         }
     }
 
-    public function tbl_nyu(){
+    public function tbl_nyu()
+    {
         $mysql = $this->connectDatabase();
         $this->getUserActiveAreas();
-        $area_id =  "'".implode("','", $this->area_id)."'";
-        $cycle_id =  "'".implode("','", $this->cycle_id)."'";
+        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
         $q = "SELECT
                 cycles.batch,
                 lib_cycle.cycle_name,
@@ -3017,7 +3038,7 @@ WHERE
                 WHERE form_target.fk_cadt IN ($area_id) AND form_target.fk_cycle IN ($cycle_id) AND form_target.actual<form_target.target";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()){
+            while ($row = $result->fetch_assoc()) {
                 $data[] = $row;
             }
             $json_data = array("data" => $data);
@@ -3027,11 +3048,12 @@ WHERE
         }
     }
 
-    public function notif_nyu(){
+    public function notif_nyu()
+    {
         $mysql = $this->connectDatabase();
         $this->getUserActiveAreas();
-        $area_id =  "'".implode("','", $this->area_id)."'";
-        $cycle_id =  "'".implode("','", $this->cycle_id)."'";
+        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
         $q = "SELECT
                SUM(form_target.target) target
                 FROM

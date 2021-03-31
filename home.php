@@ -111,10 +111,6 @@ if (!$auth->loggedIn()) {
                         if(!empty($_GET['p'])){
                             //dashboards
                             //($_GET['p'] == 'dashboards' && $_GET['modality'] == 'ncddp' && $_GET['year'] == '2020') ? include('resources/views/movUploadingStatus.php') : '';
-                            ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/dashboard_kcaf_cbrc.php') : '';
-                            ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/dashboard_ipcdd_drom.php') : '';
-
-
                             if($_SESSION['user_lvl']=='RPMO'){
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
@@ -124,6 +120,9 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
+                                ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/dashboard_kcaf_cbrc.php') : '';
+                                ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/dashboard_ipcdd_drom.php') : '';
+
                                 //dqa module
                                 $getModality = '';
                                 if (isset($_GET['modality']) && ($_GET['modality'] == 'ipcdd_drom')) {
