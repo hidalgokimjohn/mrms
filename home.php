@@ -113,9 +113,7 @@ if (!$auth->loggedIn()) {
                             //($_GET['p'] == 'dashboards' && $_GET['modality'] == 'ncddp' && $_GET['year'] == '2020') ? include('resources/views/movUploadingStatus.php') : '';
                             ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/dashboard_kcaf_cbrc.php') : '';
                             ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/dashboard_ipcdd_drom.php') : '';
-                            ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
-                            ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
-                            ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
+
 
                             if($_SESSION['user_lvl']=='RPMO'){
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
@@ -123,7 +121,9 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
                                 ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
-
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
                                 //dqa module
                                 $getModality = '';
                                 if (isset($_GET['modality']) && ($_GET['modality'] == 'ipcdd_drom')) {
@@ -178,9 +178,9 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'act' && $_GET['m']=='upload') ? include('resources/views/upload.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='nyu') ? include('resources/views/actNyu.php') : '';
-                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
-                                ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
-                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp_act.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileAf_act.php') : '';
+                                ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd_act.php') : '';
                                 echo '</div>';
                             }
                         }
