@@ -184,18 +184,18 @@ class App
 
                 if (isset($_GET['p'])) {
                     $title = 'Search - ';
-                    if($_GET['modality']=='ipcdd_drom'){
+                    if ($_GET['modality'] == 'ipcdd_drom') {
                         $title .= "IPCDD DROM";
                     }
-                    if($_GET['modality']=='ncddp_drom'){
+                    if ($_GET['modality'] == 'ncddp_drom') {
                         $title .= "NCDDP DROM";
                     }
-                    if($_GET['modality']=='af_cbrc'){
+                    if ($_GET['modality'] == 'af_cbrc') {
                         $title .= "KC-AF CBRC";
                     }
 
                 }
-                return $title.' | MRMS';
+                return $title . ' | MRMS';
                 break;
             case 'act';
 
@@ -226,13 +226,45 @@ class App
                 }
                 if (isset($_GET['m'])) {
                     if ($_GET['m'] == 'view_more') {
-                        $area_info=$this->actView_areaInfo($_GET['cycle'],$_GET['area']);
-                        $title = $area_info['area_name'].' '.$area_info['cycle_name'].' '.$area_info['batch']." | MRMS";
+                        $area_info = $this->actView_areaInfo($_GET['cycle'], $_GET['area']);
+                        $title = $area_info['area_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'] . " | MRMS";
                     }
                 }
                 return ucwords($title);
                 break;
-
+            case 'dashboards';
+                if ($_GET['p'] == 'dashboards') {
+                    $title = "Dashboard | MRMS";
+                }
+                return $title;
+                break;
+            case 'mywork';
+                if ($_GET['p'] == 'mywork') {
+                    $title = "My Work | MRMS";
+                }
+                return $title;
+                break;
+            case 'modules';
+                if ($_GET['m'] == 'dqa_conducted') {
+                    $title = "DQA | MRMS";
+                }
+                if ($_GET['m'] == 'dqa_items') {
+                    $title = $_GET['title']." | MRMS";
+                }
+                return $title;
+                break;
+            case 'user_mngt';
+                if ($_GET['p'] == 'user_mngt') {
+                    $title = "User Management | MRMS";
+                }
+                return $title;
+                break;
+            case 'user_coverage';
+                if ($_GET['p'] == 'user_coverage') {
+                    $title = "Set User Coverage | MRMS";
+                }
+                return $title;
+                break;
             default:
                 return 'MRMS | Home';
                 break;
