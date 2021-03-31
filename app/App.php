@@ -2658,7 +2658,7 @@ WHERE
         }
         if ($this->check_modality($fk_ft) == 'ipcdd_drom') {
             $dir = '../../storage/ipcdd/';
-            $mov_path = '/mrms/storage/ipcdd/' . $uniqueFileName;
+            $mov_path = '/mrms/storage/ipcdd_drom/' . $uniqueFileName;
         }
 
         if (!is_dir($dir)) {
