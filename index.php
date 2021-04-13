@@ -129,15 +129,18 @@ if(!$_SESSION['mrms_auth']){
                     <div class="text-center mt-4">
                         <h1 class="h2">MOV Repository & Management System</h1>
                         <p class="lead">
-                            CARAGA | Kalahi-CIDSS <small>Beta 3.0</small>
+                            CARAGA | Kalahi-CIDSS <small>Beta 4.0</small>
                         </p>
                     </div>
 
                     <div class="card">
                         <div class="card-body">
-                            <div class="m-sm-4">
+                            <div class="m-sm-4 text-center">
                                 <form method="post">
                                     <div class="mb-3">
+                                        MRMS is a regionally-managed database which serves as the repository (or storehouse) of the program documents or Means of Verification (MOVs) of the various program activities.
+                                    </div>
+                                    <!--<div class="mb-3">
                                         <label class="form-label">Username</label>
                                         <input class="form-control form-control-lg" type="text" name="username"
                                                placeholder="Enter your username"/>
@@ -158,10 +161,10 @@ if(!$_SESSION['mrms_auth']){
 													Remember me next time
 												</span>
                                         </label>
-                                    </div>
+                                    </div>-->
                                     <div class="text-center mt-3">
-                                        <input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in"> or
-                                        <a href="<?php echo $authUrl; ?>" class="btn btn-lg btn-success"><i data-feather="pinterest"></i> Login with ISSO</a>
+                                        <!--<input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in"> or-->
+                                        <a href="<?php echo $authUrl; ?>" class="btn btn-lg btn-success"><i data-feather="pinterest"></i> Login via Portal Account</a>
                                         <!-- <button type="submit" class="btn btn-lg btn-primary">Sign in</button> -->
                                     </div>
                                     <?php
