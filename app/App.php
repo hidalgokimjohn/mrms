@@ -658,9 +658,10 @@ WHERE
 
     public function tbl_dqaItems()
     {
+        //echo $_SESSION['id_number'];
         $mysql = $this->connectDatabase();
         $dqaId = $_GET['dqaId'];
-        $q = "SELECT * FROM view_tbl_dqa_items WHERE added_by='$_SESSION[id_number]' AND fk_dqa_guid='$dqaId'";
+        $q = "SELECT * FROM view_tbl_dqa_items WHERE view_tbl_dqa_items.added_by='$_SESSION[id_number]' AND view_tbl_dqa_items.fk_dqa_guid='$dqaId'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -702,7 +703,7 @@ WHERE
                 tbl_dqa_list.is_delete,
                 lib_activity.activity_name
             FROM
-                form_target
+                form_target 
             LEFT JOIN form_uploaded ON form_uploaded.fk_ft_guid = form_target.ft_guid
             LEFT JOIN tbl_dqa_list ON tbl_dqa_list.fk_file_guid = form_uploaded.file_id
             LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
@@ -737,7 +738,8 @@ WHERE
                             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
                             LEFT JOIN form_uploaded ON form_uploaded.file_id = tbl_dqa_list.fk_file_guid
                             WHERE
-                                tbl_dqa_list.added_by = '$username'
+                                tbl_dqa_list.added_by = '$username' AND
+                                ( form_uploaded.is_deleted = 0 OR form_uploaded.is_deleted is NULL)
                             AND (
                                 form_target.fk_psgc_mun = '$fk_psgc_mun'
                                 OR form_target.fk_cadt = '$cadt_id'
@@ -788,7 +790,7 @@ WHERE
         $dqa_id = $mysql->real_escape_string($_POST['dqaId']);
         $file_id = $mysql->real_escape_string($_POST['fileId']);
         if ($_POST['fileId'] !== '') {
-            !$q = "INSERT INTO `tbl_dqa_list` (`fk_file_guid`,`fk_dqa_guid`, `added_by`, `created_at`, `is_delete`,`ft_guid`)
+            $q = "INSERT INTO `tbl_dqa_list` (`fk_file_guid`,`fk_dqa_guid`, `added_by`, `created_at`, `is_delete`,`ft_guid`)
             VALUES ('$file_id','$dqa_id', '$_SESSION[id_number]', NOW(), '0','$ft_guid')";
         } else {
             $q = "INSERT INTO `tbl_dqa_list` (`fk_file_guid`,`fk_dqa_guid`, `added_by`, `created_at`, `is_delete`,`ft_guid`)
