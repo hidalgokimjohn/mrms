@@ -141,7 +141,7 @@ if(!$_SESSION['mrms_auth']){
                                     <div class="mb-3 text-center">
                                         MRMS is a regionally-managed database which serves as the repository (or storehouse) of the program documents or Means of Verification (MOVs) of the various program activities.
                                     </div>
-                                    <div class="mb-3">
+                                    <!--<div class="mb-3">
                                         <label class="form-label">Username</label>
                                         <input class="form-control form-control-lg" type="text" name="username"
                                                placeholder="Enter your username"/>
@@ -162,9 +162,9 @@ if(!$_SESSION['mrms_auth']){
 													Remember me next time
 												</span>
                                         </label>
-                                    </div>
+                                    </div>-->
                                     <div class="text-center mt-3">
-                                        <input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in"> or
+                                        <!--<input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in"> or-->
                                         <a href="<?php echo $authUrl; ?>" class="btn btn-lg btn-success"><i data-feather="pinterest"></i> Login via Portal Account</a>
                                         <!-- <button type="submit" class="btn btn-lg btn-primary">Sign in</button> -->
                                     </div>
