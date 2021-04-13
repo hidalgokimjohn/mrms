@@ -4,7 +4,6 @@
             <style type="text/css">
                 td a {
                     display: block;
-                    color: #495057;
                 }
             </style>
             <table id="tbl_actDqa" class="table table-hover" style="width:100%">
