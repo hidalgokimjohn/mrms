@@ -738,6 +738,177 @@ document.addEventListener("DOMContentLoaded", function () {
             });
         }
     });
+
+    $('#tbl_actDqa thead tr').clone(true).appendTo('#tbl_actDqa thead');
+    $('#tbl_actDqa thead tr:eq(1) th').each(function (i) {
+
+            var title = $(this).text();
+            $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+            $('input', this).on('keyup change', function (e) {
+                if (tbl_actDqa.column(i).search() !== this.value) {
+                    tbl_actDqa.column(i).search(this.value).draw();
+                }
+            });
+
+    });
+
+    var tbl_actDqa = $('#tbl_actDqa').DataTable({
+        orderCellsTop: true,
+        order: [
+            [0, "desc"]
+        ],
+        dom: '<<t>ip>',
+        //dom: '<"html5buttons">btpr',
+        columnDefs: [{
+            orderable: false,
+            targets: 0
+        }],
+        ajax: {
+                url: "resources/ajax/tbl_actDqa.php?dqaid="+dqaId,
+            type: "POST",
+            processData: false,
+            contentType: false,
+            cache: false,
+            dataType: 'json',
+            error: function () {
+                $("post_list_processing").css("display", "none");
+            }
+        },
+        language: {
+            "emptyTable": "<b>No records found.</b>"
+        },
+        columnDefs: [{
+            "targets": 0,
+            "data": null,
+            "render": function (data, type, row) {
+                return '<strong><a href="#">#'+data['dqa_id']+'</a></strong>';
+            },
+        },{
+            "targets": 1,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['area_name'];
+            },
+        },{
+            "targets": 2,
+            "data": null,
+            "render": function (data, type, row) {
+                return '<a href="home.php?p=act&m=view_dqa&dqaid='+data['dqa_guid']+'"><strong>'+data['title']+'</strong></a>';
+            },
+        },{
+            "targets": 3,
+            "data": null,
+            "render": function (data, type, row) {
+                return '13/15 = <span class="badge bg-warning rounded-pill">92%</span>';
+            },
+        },{
+            "targets": 4,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['created_at'];
+            },
+        },{
+            "targets": 5,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['conducted_by'];
+            },
+        }],
+    });
+
+    $('#tbl_actDqaItems thead tr').clone(true).appendTo('#tbl_actDqaItems thead');
+    $('#tbl_actDqaItems thead tr:eq(1) th').each(function (i) {
+        if(i!==0){
+            var title = $(this).text();
+            $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+            $('input', this).on('keyup change', function (e) {
+                if (tbl_actDqaItems.column(i).search() !== this.value) {
+                    tbl_actDqaItems.column(i).search(this.value).draw();
+                }
+            });
+        }else{
+            ''
+        }
+
+
+    });
+
+    var tbl_actDqaItems = $('#tbl_actDqaItems').DataTable({
+        orderCellsTop: true,
+        order: [
+            [0, "desc"]
+        ],
+        dom: '<<t>ip>',
+        //dom: '<"html5buttons">btpr',
+        columnDefs: [{
+            orderable: false,
+            targets: 0
+        }],
+        ajax: {
+            url: "resources/ajax/tbl_actDqaItems.php?dqaid="+dqaId,
+            type: "POST",
+            processData: false,
+            contentType: false,
+            cache: false,
+            dataType: 'json',
+            error: function () {
+                $("post_list_processing").css("display", "none");
+            }
+        },
+        language: {
+            "emptyTable": "<b>No records found.</b>"
+        },
+        columnDefs: [{
+            "targets": 0,
+            "data": null,
+            "render": function (data, type, row) {
+                return '<a href="#" data-file-id="'+data['file_id']+'" class="btn btn-outline-primary btn-pill" title="Comply"><span class="fa fa-edit"></span></a>';
+            },
+        },{
+            "targets": 1,
+            "data": null,
+            "render": function (data, type, row) {
+                return '<strong><a href="#" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
+            },
+        },{
+            "targets": 2,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['form_name']+'<br/><small>Activity: '+data['activity_name']+'</small>';
+            },
+        },{
+            "targets": 3,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['location'];
+            },
+        },{
+            "targets": 4,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['uploaded_by'];
+            },
+        },{
+            "targets": 5,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['reviewed_by'];
+            },
+        },{
+            "targets": 6,
+            "data": null,
+            "render": function (data, type, row) {
+                if(data['is_findings_complied']=='complied'){
+                    var x = '<div class="badge bg-success"><span class="fa fa-check-circle"></span> Complied</div>'
+                }
+                if(data['is_findings_complied']!=='complied'){
+                    var x = '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> Not Complied</div>'
+                }
+                return x;
+            },
+        }],
+    });
+
 });
 
 

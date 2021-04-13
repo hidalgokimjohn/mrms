@@ -765,7 +765,9 @@ WHERE
                 tbl_dqa.responsible_person,
                 tbl_dqa.conducted_by,
                 tbl_dqa.created_at,
-                tbl_dqa.dqa_status
+                tbl_dqa.dqa_status,
+                tbl_dqa.title,
+                tbl_dqa.id
                 FROM
                 tbl_dqa
                 WHERE dqa_guid='$dqaId'";
@@ -2188,7 +2190,7 @@ WHERE
             $row = $result->fetch_assoc();
             return $row['fullName'];
         } else {
-            return false;
+            return 'User not found';
         }
     }
 
@@ -2657,7 +2659,7 @@ WHERE
             $mov_path = '/mrms/storage/ipcdd/' . $uniqueFileName;
         }
         if ($this->check_modality($fk_ft) == 'ipcdd_drom') {
-            $dir = '../../storage/ipcdd/';
+            $dir = '../../storage/ipcdd_drom/';
             $mov_path = '/mrms/storage/ipcdd_drom/' . $uniqueFileName;
         }
 
@@ -3098,5 +3100,104 @@ WHERE
         } else {
             return false;
         }
+    }
+
+    public function tbl_actDqa(){
+        $mysql = $this->connectDatabase();
+        $this->getUserActiveAreas();
+        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
+        $q = "SELECT
+                view_tbl_dqa_conducted.cycle_name,
+                COALESCE(view_tbl_dqa_conducted.mun_name,
+                view_tbl_dqa_conducted.cadt_name) area_name,
+                view_tbl_dqa_conducted.title,
+                view_tbl_dqa_conducted.responsible_person,
+                view_tbl_dqa_conducted.conducted_by,
+                view_tbl_dqa_conducted.created_at,
+                view_tbl_dqa_conducted.dqa_guid,
+                view_tbl_dqa_conducted.dqa_id
+                FROM
+                view_tbl_dqa_conducted
+                WHERE
+                cycle_id IN ($cycle_id) AND (fk_psgc_mun IN ($area_id) OR fk_cadt_id IN ($area_id))";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()){
+                $row['conducted_by'] = $this->getUsersName($row['conducted_by']);
+                $row['responsible_person'] = $this->getUsersName($row['responsible_person']);
+                $data[] = $row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data,JSON_PRETTY_PRINT);
+        } else {
+            return false;
+        }
+    }
+
+    public function tbl_actDqaItems($dqa_id){
+        $mysql = $this->connectDatabase();
+        $dqa_id = $mysql->real_escape_string($dqa_id);
+        $q="SELECT
+            COALESCE (
+                    lib_barangay.brgy_name,
+                    lib_municipality.mun_name,
+                    lib_cadt.cadt_name,
+                    'n/a') AS location,
+            form_uploaded.original_filename,
+            form_uploaded.with_findings,
+            form_uploaded.is_findings_complied,
+            form_uploaded.file_path,
+            form_uploaded.uploaded_by,
+            form_uploaded.is_deleted,
+            form_uploaded.is_compliance,
+            form_uploaded.is_complied,
+            form_uploaded.rp_id,
+            form_uploaded.reviewed_by,
+            form_uploaded.date_reviewed,
+            form_uploaded.file_id,
+            form_uploaded.fk_ft_guid,
+            lib_municipality.mun_name,
+            lib_barangay.brgy_name,
+            lib_cycle.cycle_name,
+            lib_modality.modality_name,
+            lib_modality.modality_group,
+            lib_modality.`mode`,
+            cycles.batch,
+            cycles.`year`,
+            lib_cadt.cadt_name,
+            lib_form.form_name,
+            lib_activity.activity_name,
+            tbl_dqa_list.added_by
+            FROM
+            tbl_dqa
+            INNER JOIN tbl_dqa_list ON tbl_dqa_list.fk_dqa_guid = tbl_dqa.dqa_guid
+            INNER JOIN form_uploaded ON form_uploaded.file_id = tbl_dqa_list.fk_file_guid
+            INNER JOIN form_target ON form_target.ft_guid = form_uploaded.fk_ft_guid
+            left JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
+            left JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
+            INNER JOIN cycles ON cycles.id = form_target.fk_cycle
+            INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
+            INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
+            left JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
+            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+            INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+            WHERE tbl_dqa.dqa_guid='$dqa_id' AND tbl_dqa_list.is_delete=0";
+
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while($row = $result->fetch_assoc()){
+                $row['uploaded_by']=$this->getUsersName($row['uploaded_by']);
+                $row['reviewed_by']=$this->getUsersName($row['added_by']);
+                $data[] = $row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data,JSON_PRETTY_PRINT);
+        } else {
+            $json_data = array("data" => '');
+            echo json_encode($json_data,JSON_PRETTY_PRINT);
+            return false;
+        }
+
     }
 }
