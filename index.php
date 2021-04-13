@@ -126,17 +126,18 @@ if(!$_SESSION['mrms_auth']){
             <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
                 <div class="d-table-cell align-middle">
 
-                    <div class="text-center mt-4">
-                        <h1 class="h2">MOV Repository & Management System</h1>
-                        <p class="lead">
-                            CARAGA | Kalahi-CIDSS <small>Beta 4.0</small>
-                        </p>
-                    </div>
+
 
                     <div class="card">
                         <div class="card-body">
                             <div class="m-sm-4 text-center">
                                 <form method="post">
+                                    <div class="text-center mt-4">
+                                        <h1 class="h2">MOV Repository & Management System</h1>
+                                        <p class="lead">
+                                            CARAGA | Kalahi-CIDSS <small>Beta 4.0</small>
+                                        </p>
+                                    </div>
                                     <div class="mb-3">
                                         MRMS is a regionally-managed database which serves as the repository (or storehouse) of the program documents or Means of Verification (MOVs) of the various program activities.
                                     </div>
