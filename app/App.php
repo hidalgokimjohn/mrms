@@ -721,11 +721,9 @@ WHERE
                     AND (
                         tbl_dqa_list.is_delete = 0
                         OR tbl_dqa_list.is_delete IS NULL
-                        OR tbl_dqa_list.fk_file_guid IS NULL
-                        OR form_uploaded.is_deleted = 0
-                        OR form_uploaded.is_deleted is NULL
-                        
+                        OR tbl_dqa_list.fk_file_guid IS NULL   
                     )
+                    AND ( form_uploaded.is_deleted = 0 OR form_uploaded.is_deleted is NULL)
                     AND form_uploaded.is_compliance is null
                     AND (
                         form_target.ft_guid NOT IN (
@@ -738,8 +736,7 @@ WHERE
                             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
                             LEFT JOIN form_uploaded ON form_uploaded.file_id = tbl_dqa_list.fk_file_guid
                             WHERE
-                                tbl_dqa_list.added_by = '$username' AND
-                                ( form_uploaded.is_deleted = 0 OR form_uploaded.is_deleted is NULL)
+                                tbl_dqa_list.added_by = '$username'
                             AND (
                                 form_target.fk_psgc_mun = '$fk_psgc_mun'
                                 OR form_target.fk_cadt = '$cadt_id'
