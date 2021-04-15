@@ -2245,7 +2245,8 @@ WHERE
             tbl_dqa_findings.responsible_person,
             tbl_dqa_findings.is_checked,
             tbl_dqa_findings.added_by,
-            tbl_dqa_findings.created_at
+            tbl_dqa_findings.created_at,
+            tbl_dqa_findings.findings_guid
             FROM
             tbl_dqa
             INNER JOIN tbl_dqa_findings ON tbl_dqa_findings.fk_dqa_guid = tbl_dqa.dqa_guid
