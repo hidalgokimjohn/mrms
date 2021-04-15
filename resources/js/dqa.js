@@ -343,7 +343,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "data": null,
                         "render": function (data, type, row) {
                             if (data['file_id'] !== null) {
-                                return '<a href="' + data['file_path'] + '" target="_blank"><strong>' + data['original_filename'] + '</strong></a>';
+                                return '<a href="' +data['host']+ data['file_path'] + '" target="_blank"><strong>' + data['original_filename'] + '</strong></a>';
                             } else {
                                 return '<strong class="text-danger">Not Yet Uploaded</strong>';
                             }
