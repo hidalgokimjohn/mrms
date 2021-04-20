@@ -1699,6 +1699,7 @@ WHERE
                         '%'
                     ) AS uploadStatus,
                     cycles.id AS cycle_id,
+                    cycles.batch,
                     form_target.fk_cadt AS cadt_id,
                     form_target.fk_psgc_mun
                 FROM
@@ -2213,8 +2214,8 @@ WHERE
             form_uploaded.original_filename,
             form_uploaded.generated_filename,
             form_uploaded.file_path,
-            form_uploaded.date_uploaded
-            
+            form_uploaded.date_uploaded,
+            form_uploaded.uploaded_by
             FROM
             form_target
             INNER JOIN form_uploaded ON form_target.ft_guid = form_uploaded.fk_ft_guid
@@ -2666,6 +2667,7 @@ WHERE
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
+
         $host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $dir . '/' . $uniqueFileName)) {
             $q = $mysql->prepare("INSERT INTO `form_uploaded`(`file_id`, `fk_ft_guid`, `original_filename`, `generated_filename`, `file_path`, `date_uploaded`, `with_findings`, `is_findings_complied`, `is_reviewed`,`is_deleted`,`uploaded_by`,`rp_id`,`host`) VALUES (?, ?, ?, ?,?,NOW(),NULL,NULL,'for review',0,?,?,'$host')");
@@ -2679,6 +2681,7 @@ WHERE
             }
         } else {
             echo 'Something went wrong while uploading the file';
+            /*echo "Not uploaded because of error # ".$_FILES["fileToUpload"]["error"];*/
         }
     }
 
@@ -3200,4 +3203,95 @@ WHERE
         }
 
     }
+    public function notif_findings(){
+        $mysql = $this->connectDatabase();
+        $this->getUserActiveAreas();
+        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
+        $q = "SELECT
+                COUNT(tbl_dqa_findings.findings_guid) as notif_findings
+                FROM
+                tbl_dqa_findings
+                INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
+                WHERE tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=0 AND form_target.fk_cycle IN ($cycle_id) AND (form_target.fk_psgc_mun IN ($area_id) OR form_target.fk_cadt IN ($area_id))";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['notif_findings'];
+        } else {
+            return false;
+        }
+    }
+
+    public function isChecklistItemExist($form_id,$mun_id,$brgy_id,$cycle_id){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+        form_target.ft_guid
+            FROM
+                form_target
+            WHERE
+                fk_form = '$form_id'
+            AND (fk_psgc_mun = '$mun_id' OR fk_cadt = '$mun_id')
+            AND fk_psgc_brgy = '$brgy_id'
+            AND fk_cycle = '$cycle_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function create_checklist($group,$checklistVersion,$area_id,$cycle_id){
+        $mysql = $this->connectDatabase();
+        $group = $mysql->real_escape_string($group);
+        $checklistVersion = $mysql->real_escape_string($checklistVersion);
+
+        $q="SELECT
+        lib_form.form_type,
+        form_checklist.fk_form_code
+        FROM
+        form_checklist
+        INNER JOIN lib_form ON lib_form.form_code = form_checklist.fk_form_code
+        INNER JOIN lib_activity ON lib_form.fk_activity = lib_activity.id
+        INNER JOIN lib_category ON lib_activity.fk_category = lib_category.id
+        INNER JOIN lib_modality ON lib_category.fk_modality = lib_modality.id
+        WHERE form_checklist.`group`= '$group' and form_checklist.version= '$checklistVersion'
+        ORDER BY form_checklist.id ASC";
+        $result = $mysql->query($q) or die($mysql->error);
+
+        if ($result->num_rows > 0) {
+            while ($form_checklist_row = $result->fetch_assoc()) {
+                if($form_checklist_row=='municipal'){
+
+                }
+            }
+        }else{
+            return false;
+        }
+    } 
+
+    public function targetForMunicipal_level_ipcdd($area_id,$cycle_id,$form_code){
+        $mysql = $this->connectDatabase();
+        $area_id = $mysql->real_escape_string($area_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $guid = $this->v4();
+        $q = "SELECT
+                        implementing_cadt_icc.fk_cadt_id,
+                        implementing_cadt_icc.fk_psgc_mun
+                        FROM
+                        implementing_cadt_icc
+                        WHERE implementing_cadt_icc.`level`='municipal' AND implementing_cadt_icc.fk_cadt_id='$cadt' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
+        $get_muni_result = $mysql->query($q) or die($mysql->error);
+        if ($get_muni_result) {
+            while ($row_muni = $get_muni_result->fetch_assoc()) {
+                $insert_muni = $mysql->prepare("INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`)
+                        VALUES ('$guid','$form_code','','')");
+                $insert_muni->bind_param('ssiii', $guid, $form_code, $row_muni['fk_psgc_mun'], $cycle_id, $cadt);
+                $insert_muni->execute();
+            }
+        }
+                
+    }
+
 }
