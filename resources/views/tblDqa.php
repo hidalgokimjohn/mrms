@@ -270,9 +270,8 @@
                     <select id="editChoicesAC" class="form-control editChoicesAc" name="staff">
                         <option value="">Select Area Coordinator</option>
                         <?php
-                        $acs = $app->getStaffs("'ac'");
-                        foreach ($acs as $ac) {
-                            echo '<option class="text-capitalize" value="' . $ac['fk_username'] . '">' . strtoupper($ac['fullname']) . '</option>';
+                        foreach ($app->getActUser() as $act) {
+                            echo '<option class="text-capitalize" value="' . $act['id_number'] . '">' . ucwords(strtolower($act['fname'].' '.$act['mname'].' '.$act['lname'])) . '</option>';
                         }
                         ?>
                     </select>
