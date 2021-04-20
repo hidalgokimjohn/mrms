@@ -177,6 +177,7 @@
                 <th style="width: 80px;">DQA #</th>
                 <th style="width: 230px;">Title</th>
                 <th>City</th>
+                <th>Cycle</th>
                 <th title="Responsible Person">Area Coordinator</th>
                 <th class="">Created by</th>
                 <th class="">Created at</th>

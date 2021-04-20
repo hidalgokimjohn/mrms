@@ -11,7 +11,14 @@
                 Not Yet Uploaded <span class="badge bg-danger rounded float-right"><?php echo number_format($app->notif_nyu()); ?></span>
             </a>
             <a class="list-group-item list-group-item-action <?php echo $app->sidebar_active('findings', $_GET['m']); echo $app->sidebar_active('view_dqa', $_GET['m']);  ?>" href="home.php?p=act&m=findings" role="tab">
-                Findings <span class="badge bg-danger rounded float-right">34</span>
+                Findings
+                <?php $notif_findings=$app->notif_findings();
+                        if($notif_findings){
+                            echo '<span class="badge bg-danger rounded float-right">'.$notif_findings.' </span>';
+                        }
+                        ?>
+
+                
             </a>
             <a class="list-group-item list-group-item-action <?php echo $app->sidebar_active('activity_logs', $_GET['m']); ?>" href="home.php?p=act&m=activity_logs" role="tab">
                 Activity Logs

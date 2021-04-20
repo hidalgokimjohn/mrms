@@ -88,7 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (data['fk_psgc_mun'] === null) {
                         return '<div class="text-uppercase">' + data['cadt_name'] + '</div>';
                     } else {
-                        return '<div class="text-uppercase">' + data['mun_name'] + '</div>';
+                        return '<div class="text-uppercase">' + data['mun_name'] +'</div>';
                     }
                 },
             },
@@ -96,17 +96,24 @@ document.addEventListener("DOMContentLoaded", function () {
                 "targets": 4,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<div class="text-capitalize">' + data['responsible_person'] + '</div>';
+                    return '<div class="text-uppercase">' + data['batch'] +' - '+data['cycle_name']+ '</div>';
                 },
             },
             {
                 "targets": 5,
                 "data": null,
                 "render": function (data, type, row) {
+                    return '<div class="text-capitalize">' + data['responsible_person'] + '</div>';
+                },
+            },
+            {
+                "targets": 6,
+                "data": null,
+                "render": function (data, type, row) {
                     return '<div class="text-capitalize">' + data['conducted_by'] + '</div>';
                 },
             }, {
-                "targets": 6,
+                "targets": 7,
                 "data": null,
                 "render": function (data, type, row) {
                     return '<div class="text-capitalize">' + data['created_at'] + '</div>';
