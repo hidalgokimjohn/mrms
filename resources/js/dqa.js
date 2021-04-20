@@ -372,7 +372,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "data": null,
                         "render": function (data, type, row) {
                             if (data['location'] !== null) {
-                                return '<span class="text-capitalize">' + data['location'] + '</span>';
+                                return '<span class="text-capitalize">' + data['location'] +' - '+data['batch']+' '+data['cycle_name']+ '</span>';
                             } else {
                                 return '<strong class="text-danger">N/A</strong>'
                             }

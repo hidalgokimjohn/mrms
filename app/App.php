@@ -701,7 +701,10 @@ WHERE
                 form_uploaded.uploaded_by,
                 tbl_dqa_list.fk_dqa_guid,
                 tbl_dqa_list.is_delete,
-                lib_activity.activity_name
+                lib_activity.activity_name, 
+                cycles.batch,
+                lib_cycle.cycle_name,
+                form_uploaded.host
             FROM
                 form_target 
             LEFT JOIN form_uploaded ON form_uploaded.fk_ft_guid = form_target.ft_guid
@@ -711,6 +714,8 @@ WHERE
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             LEFT JOIN lib_form ON lib_form.form_code = form_target.fk_form
             LEFT JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+            INNER JOIN cycles ON cycles.id = form_target.fk_cycle
+            INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
             WHERE
                 (
                     (
