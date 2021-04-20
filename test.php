@@ -16,7 +16,8 @@ echo '<br/>';
 
 //var_dump($app->getUploadedFiles());
 echo '<pre>';*/
-echo '<pre>';
-($app->act_tblDqa());
+/*echo '<pre>';
+($app->act_tblDqa());*/
+echo $app->notif_findings();
 
 ?>
