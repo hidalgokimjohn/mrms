@@ -12,6 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     var file_id;
     var file_path;
     var listId;
+    var rp_id;
 
     //DQA Table
 
@@ -278,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalCreateDqa = document.getElementById('modalCreateDqa');
     const modalAddFiles = document.getElementById('modalAddFiles');
     const modalViewFile = document.getElementById('modalViewFile');
+    const modalViewFindings = document.getElementById('modalViewFindings');
     if (modalCreateDqa) {
         modalCreateDqa.addEventListener('show.bs.modal', function (e) {
             
@@ -489,6 +491,53 @@ document.addEventListener("DOMContentLoaded", function () {
             $('.file-name').text(fileName);
         });
     }
+    //modalViewFindings
+    if(modalViewFindings){
+        modalViewFindings.addEventListener('show.bs.modal', function (e) {
+            fileName = $(e.relatedTarget).data('file-name');
+            file_path = $(e.relatedTarget).data('file-path');
+            fileId = $(e.relatedTarget).data('file-id');
+            listId = $(e.relatedTarget).data('list-id');
+            ft_guid = $(e.relatedTarget).data('ft-guid');
+            rp_id = $(e.relatedTarget).data('rp-id');
+            //console.log(file_path);
+            //alert(fileId+': listId:'+listId);
+            PDFObject.embed(file_path, "#pdf", options);
+
+            $.ajax({
+                type: "post",
+                url: "resources/ajax/displayFindings.php",
+                data: {
+                    "file_id": fileId,
+                    "ft_guid": ft_guid
+                },
+                dataType: 'html',
+                success: function (data) {
+                    $("#displayFindings").html('');
+                    $("#displayFindings").html(data);
+                }
+            });
+
+            $.ajax({
+                type: "post",
+                url: "resources/ajax/displayFileHistory.php",
+                data: {
+                    "form_id": ft_guid
+                },
+                dataType: 'html',
+                success: function (data) {
+                    $("#displayFileHistory").html('');
+                    $("#displayFileHistory").html(data);
+                }
+            });
+
+            if (fileName == null) {
+                fileName = 'Not Yet Uploaded';
+            }
+            $('.file-name').text(fileName);
+        });
+    }
+
     const editDqaTitle = document.getElementById('editDqaTitle');
     if (editDqaTitle) {
         editDqaTitle.addEventListener('show.bs.modal', function (e) {
@@ -869,7 +918,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "targets": 0,
             "data": null,
             "render": function (data, type, row) {
-                return '<a href="#" data-file-id="'+data['file_id']+'" class="btn btn-outline-primary btn-pill" title="Comply"><span class="fa fa-edit"></span></a>';
+                return '<a href="#modalViewFindings" data-toggle="modal" data-ft-guid="'+data['fk_ft_guid']+'" data-file-name="'+data['original_filename']+'" data-file-path="'+data['host']+data['file_path']+'" data-file-id="'+data['file_id']+'" data-rp-id="'+data['rp_id']+'" class="btn btn-outline-primary btn-pill" title="Comply"><span class="fa fa-edit"></span></a>';
             },
         },{
             "targets": 1,
@@ -914,6 +963,76 @@ document.addEventListener("DOMContentLoaded", function () {
                 return x;
             },
         }],
+    });
+
+    //DQA UPLOAD COMPLIANCE
+    $("form#formComplianceFileUpload").submit(function (event) {
+        event.preventDefault();
+        var btn = this;
+        $('.btn-upload-file').prop('disabled', true);
+        $('.btn-upload-file-text').text(' Uploading compliance please wait...');
+        var formData = new FormData($(this)[0]);
+        $.ajax({
+            url: 'resources/ajax/uploadComplianceFile.php?form_id='+ft_guid+'&rp_id='+rp_id,
+            type: 'POST',
+            dataType: 'html',
+            data: formData,
+            async: true,
+            cache: false,
+            contentType: false,
+            processData: false,
+            xhr: function () {
+                var xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function (evt) {
+                    if (evt.lengthComputable) {
+                        var percentComplete = evt.loaded / evt.total;
+                        percentComplete = parseInt(percentComplete * 100);
+                        console.log(percentComplete);
+                        $(".upload_percent").text(+' ' + percentComplete + "%");
+                    }
+                }, false);
+                return xhr;
+            },
+            success: function (returndata) {
+                /*alert(returndata);*/
+                if (returndata === 'uploaded') {
+                    window.notyf.open({
+                        type: 'success',
+                        message: '<strong>Compliance uploaded </strong>successfully',
+                        duration: '5000',
+                        ripple: true,
+                        dismissible: true,
+                        position: {
+                            x: 'center',
+                            y: 'top'
+                        }
+                    });
+
+                    $("#status").text('');
+                    $("#fileToUpload").val('');
+                    $('.btn-upload-file-text').text('Upload compliance');
+                    $(".upload_percent").text('');
+                    $('.btn-upload-file').prop('disabled', false);
+                    tbl_uploadedFiles.ajax.reload();
+                } else {
+                    window.notyf.open({
+                        type: 'error',
+                        message: 'Something went wrong please try again.',
+                        duration: '5000',
+                        ripple: true,
+                        dismissible: true,
+                        position: {
+                            x: 'center',
+                            y: 'top'
+                        }
+                    });
+
+                    $(".upload_percent").text('');
+                    $('.btn-upload-file-text').text(' Upload compliance');
+                    $('.btn-upload-file').prop('disabled', false);
+                }
+            }
+        });
     });
 
 });

@@ -35,8 +35,8 @@ $app = new \app\App();
                 Posted: ' . date("M d, Y H:m:s a", strtotime($displayFinding['created_at'])) . '
                 <p><strong>' . htmlentities($displayFinding['findings']) . '</strong></p>
                 <div class="float-right mt-n1">
-                    <img src="resources/img/avatars/default.jpg" width="32" height="32" class="rounded-circle" alt="Avatar">
-                    <span>' . $app->userInfo($displayFinding['added_by']) . '</span>
+                    <img src="'.$displayFinding['user_avatar'].'" width="32" height="32" class="rounded-circle" alt="Avatar">
+                    <span>' . $app->getUsersName($displayFinding['added_by']) . '</span>
                     <br>
                 </div>
                 '.$btnRemove.'
