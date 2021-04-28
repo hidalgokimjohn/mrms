@@ -170,18 +170,15 @@
 </div>
 <div class="card">
     <div class="ml-3 mt-3">
-        <a href="home.php?p=modules&m=dqa_conducted&modality=<?php
-        if(isset($_GET['modality'])){
-            echo $_GET['modality'];
-        }
-        ?>">
-            <button type="button" class="btn btn-primary">
-                <span class="fa fa-arrow-left"></span> Back
-            </button>
-        </a>
+        <h5 class="text-capitalize card-title mb-3"><strong><a href="home.php?p=modules&m=dqa_conducted&modality=<?php
+                if(isset($_GET['modality'])){
+                    echo $_GET['modality'];
+                }
+                ?>" class=""><span class="fa fa-arrow-left"></span> Back </a><span class="ml-3"><strong class="pb-2"><?php echo $_GET['title'].'</br>'?></strong></span></strong></h5>
         <?php
         $dqaInfo = $app->getDqaInfo($_GET['dqaid']);
         ?>
+
         <a href="#modalAddFiles" data-toggle="modal" data-area="<?php echo $dqaInfo['area_id'] ?>" data-cycle="<?php echo $dqaInfo['fk_cycle']; ?>">
             <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span> Add Files</button>
         </a>

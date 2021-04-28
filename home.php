@@ -136,18 +136,6 @@ if (!$auth->loggedIn()) {
                                     if (isset($_GET['modality'])) {
                                         $l = "home.php?p=modules&m=dqa_conducted&modality=" . $_GET['modality'];
                                     }
-                                    echo '<div class="row mb-2 mb-xl-3">
-                                                <div class="col-auto ml-auto text-right mt-n1">
-                                                    <nav aria-label="breadcrumb">
-                                                        <ol class="breadcrumb bg-transparent p-0 mt-1 mb-0">
-                                                        <li class="breadcrumb-item"><a href="#">Module</a></li>
-                                                        <li class="breadcrumb-item"><a href="#">Data Quality Assessment</a></li>
-                                                        <li class="breadcrumb-item"><a href="' . $l . '">' . $getModality . '</a></li>
-                                                        <li class="breadcrumb-item active">' . $_GET['title'] . '</li>
-                                                        </ol>
-                                                    </nav>
-                                                </div>
-                                           </div>';
                                     include('resources/views/viewDqaItems.php');
                                 }
                                 if (isset($_GET['m']) && $_GET['m'] == 'dqa_conducted') {

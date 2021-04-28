@@ -31,3 +31,66 @@ $dqaInfo=$app->getDqaInfo($_GET['dqaid']);
             </table>
     </div>
 </div>
+    <div class="modal fade" id="modalViewFindings" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog modal-xxl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title file-name text-uppercase"></h4>
+                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body m-3">
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <div class="card">
+                                <div class="card-body mt-0">
+                                    <h4>Upload Compliance</h4>
+                                    <form method="post" name="fileUpload" id="formComplianceFileUpload" enctype="multipart/form-data">
+                                        <div class="m-2">
+                                            <label class="form-label mb-2">Select file</label>
+                                            <input type="file" class="form-control"
+                                                   required accept="application/pdf"
+                                                   name="fileToUpload"
+                                                   id="fileToUpload"> <label>
+                                        </div>
+                                        <div class="m-2">
+                                            <button class="btn btn-primary btn-upload-file">
+                                                <span class="fa fa-paper-plane"></span><span class="btn-upload-file-text"> Upload compliance </span>
+                                                <span class="upload_percent"></span>
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <div class="card-body mt-0">
+                                    <div id="displayFileHistory">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-9">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div id="pdf" class="mb-3 bg-light">
+
+                                    </div>
+                                    <div id="displayFindings">
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- <div class="col-sm-12">
+                                 <div class="card">
+                                     <div class="card-header">
+                                         Findings
+                                     </div>
+
+                                 </div>
+                             </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

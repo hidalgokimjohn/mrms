@@ -1076,6 +1076,7 @@ WHERE
         $results = $mysql->query($q) or die($mysql->error);
         if ($results->num_rows > 0) {
             while ($row = $results->fetch_assoc()) {
+                $row['user_avatar']=$this->getImage($row['added_by']);
                 $data[] = $row;
             }
             return $data;
@@ -2651,6 +2652,7 @@ WHERE
         $mysql = $this->connectDatabase();
         $uniqueFileName = uniqid($date->getTimestamp(), false) . "." . $extension;
         $file_id = $this->v4();
+        $rp_id = $mysql->real_escape_string($_POST['rp_id']);
 
         if ($this->check_modality($fk_ft) == 'ncddp_drom') {
             $dir = '../../storage/ncddp_drom_2020/';
@@ -2676,7 +2678,56 @@ WHERE
         $host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
         if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $dir . '/' . $uniqueFileName)) {
             $q = $mysql->prepare("INSERT INTO `form_uploaded`(`file_id`, `fk_ft_guid`, `original_filename`, `generated_filename`, `file_path`, `date_uploaded`, `with_findings`, `is_findings_complied`, `is_reviewed`,`is_deleted`,`uploaded_by`,`rp_id`,`host`) VALUES (?, ?, ?, ?,?,NOW(),NULL,NULL,'for review',0,?,?,'$host')");
-            $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['username'], $_POST['rp_id']);
+            $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['id_number'], $rp_id);
+            $q->execute();
+            if ($q->affected_rows > 0) {
+                //if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft))
+                    echo 'uploaded';
+            } else {
+                echo 'Something went upon saving';
+            }
+        } else {
+            echo 'Something went wrong while uploading the file';
+            /*echo "Not uploaded because of error # ".$_FILES["fileToUpload"]["error"];*/
+        }
+    }
+    public function uploadComplianceFile()
+    {
+        $fileName = basename($_FILES['fileToUpload']['name']);
+        $extension = pathinfo($fileName, PATHINFO_EXTENSION);
+        $fk_ft = $_GET['form_id'];
+
+        $date = new \DateTime();
+        $mysql = $this->connectDatabase();
+        $uniqueFileName = uniqid($date->getTimestamp(), false) . "." . $extension;
+        $file_id = $this->v4();
+        $rp_id = $mysql->real_escape_string($_GET['rp_id']);
+
+        if ($this->check_modality($fk_ft) == 'ncddp_drom') {
+            $dir = '../../storage/ncddp_drom_2020/';
+            $mov_path = '/mrms/storage/ncddp_drom_2020/' . $uniqueFileName;
+        }
+        if ($this->check_modality($fk_ft) == 'ncddp') {
+            $dir = '../../storage/ncddp/';
+            $mov_path = '/mrms/storage/ncddp/' . $uniqueFileName;
+        }
+        if ($this->check_modality($fk_ft) == 'ipcdd') {
+            $dir = '../../storage/ipcdd/';
+            $mov_path = '/mrms/storage/ipcdd/' . $uniqueFileName;
+        }
+        if ($this->check_modality($fk_ft) == 'ipcdd_drom') {
+            $dir = '../../storage/ipcdd_drom/';
+            $mov_path = '/mrms/storage/ipcdd_drom/' . $uniqueFileName;
+        }
+
+        if (!is_dir($dir)) {
+            mkdir($dir, 0777, true);
+        }
+
+        $host = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]";
+        if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $dir . '/' . $uniqueFileName)) {
+            $q = $mysql->prepare("INSERT INTO `form_uploaded`(`file_id`, `fk_ft_guid`, `original_filename`, `generated_filename`, `file_path`, `date_uploaded`, `with_findings`, `is_findings_complied`, `is_reviewed`,`is_deleted`,`uploaded_by`,`rp_id`,`host`,`is_compliance`) VALUES (?, ?, ?, ?,?,NOW(),NULL,NULL,'for review',0,?,?,'$host','compliance')");
+            $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['id_number'], $rp_id);
             $q->execute();
             if ($q->affected_rows > 0) {
                 if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft))
@@ -3164,6 +3215,7 @@ WHERE
             form_uploaded.reviewed_by,
             form_uploaded.date_reviewed,
             form_uploaded.file_id,
+            form_uploaded.host,
             form_uploaded.fk_ft_guid,
             lib_municipality.mun_name,
             lib_barangay.brgy_name,
@@ -3297,6 +3349,38 @@ WHERE
             }
         }
                 
+    }
+
+    public function fileHistory($form_id){
+        $mysql = $this->connectDatabase();
+        $form_id = $mysql->real_escape_string($form_id);
+        $q="SELECT
+            form_uploaded.fk_ft_guid,
+            form_uploaded.original_filename,
+            form_uploaded.file_path,
+            form_uploaded.uploaded_by,
+            form_uploaded.is_compliance,
+            form_uploaded.is_complied,
+            form_uploaded.date_uploaded,
+            form_uploaded.with_findings,
+            form_uploaded.is_reviewed,
+            form_uploaded.reviewed_by,
+            form_uploaded.date_reviewed,
+            form_uploaded.rp_id,
+            form_uploaded.`host`
+            FROM
+            form_uploaded
+            WHERE fk_ft_guid='$form_id' AND is_compliance='compliance' ORDER BY date_uploaded ASC";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+           while ($row = $result->fetch_assoc()){
+               $row['responsible_person']=$this->getUsersName($row['rp_id']);
+               $data[]=$row;
+           }
+           return $data;
+        } else {
+            return false;
+        }
     }
 
 }
