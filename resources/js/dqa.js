@@ -13,6 +13,8 @@ document.addEventListener("DOMContentLoaded", function () {
     var file_path;
     var listId;
     var rp_id;
+    var area_id;
+    var cycle_id;
 
     //DQA Table
 
@@ -105,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "targets": 2,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<div class=" font-bold"><a href="home.php?p=modules&m=dqa_items&modality=' + data['modality_group'] + '&dqaid=' + data['dqa_guid'] + '&title=' + data['title'] + '"><strong>' + htmlspecialchars(data['title']) + '</strong></a></div>';
+                    return '<div class=" font-bold"><a href="home.php?p=modules&m=dqa_items&modality=' + data['modality_group'] + '&dqaid=' + data['dqa_guid'] + '&title=' + data['title'] + '&cycle='+data['cycle_id']+'&area_id='+data['area_id']+'"><strong>' + htmlspecialchars(data['title']) + '</strong></a></div>';
                 },
             },
             {
@@ -162,7 +164,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     });
-
+    cycle_id = url.searchParams.get("cycle");
+    area_id = url.searchParams.get("area_id");
     tbl_viewDqaItems = $('#tbl_viewDqaItems').DataTable({
         orderCellsTop: true,
         order: [
@@ -185,6 +188,8 @@ document.addEventListener("DOMContentLoaded", function () {
             var btnCsv = $('.buttons-csv');
             var btnPdf = $('.buttons-pdf');
             var btnPrint = $('.buttons-print');
+
+
             btnExcel.addClass('btn btn-outline-primary');
             btnExcel.removeClass('buttons-html5 btn-secondary');
 
@@ -204,7 +209,7 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         buttons: [
             {
-                text: '<div href="#modalAddFiles" data-toggle="modal" data-area="1" data-cycle="15"><span class="fa fa-plus"></span> Add files</div>',
+                text: '<div href="#modalAddFiles" data-toggle="modal" data-area="'+area_id+'" data-cycle="'+cycle_id+'"><span class="fa fa-plus"></span> Add files</div>',
                 className: "btn btn-outline-primary btn-addFile",
             },['copy','print','excel','pdf'],
 

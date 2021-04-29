@@ -185,7 +185,7 @@
                         <th style="width: 25%;">Uploaded</th>
                     </tr>
                     </thead>
-                    <tbody >
+                    <tbody>
                     <?php
                     if(!empty($af_cbrc = $app->tbl_uploading_progress('ipcdd_drom'))) {
                         foreach ($app->tbl_uploading_progress('ipcdd_drom') as $item) {

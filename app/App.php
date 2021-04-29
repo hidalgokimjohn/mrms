@@ -644,6 +644,12 @@ WHERE
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
+                if($row['fk_psgc_mun']==null){
+                    $row['area_id']=$row['fk_cadt_id'];
+                }
+                if($row['fk_cadt_id']==null){
+                    $row['area_id']=$row['fk_psgc_mun'];
+                }
                 $row['responsible_person'] = $this->getUsersName($row['responsible_person']);
                 $row['conducted_by'] = $this->getUsersName($row['conducted_by']);
                 $data[] = $row;
