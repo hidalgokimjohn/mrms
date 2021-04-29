@@ -138,10 +138,8 @@
                 <div class="row">
                     <div class="col-md-12 col-xl-12">
                         <div class="card mb-3">
-                            <div class="card-header">
-                                <h5 class="card-title">IPCDD DROM</h5>
-                            </div>
-                            <table class="table table-striped table-hover">
+                            <h5 class="p-3">Coverage Area <span class="badge bg-primary float-right"> IPCDD</span></h5>
+                            <table id="tbl_mywork" class="table table-striped table-hover">
                                 <thead>
                                     <tr>
                                         <th style="width: 300px;">CADT</th>

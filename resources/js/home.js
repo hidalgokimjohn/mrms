@@ -878,11 +878,19 @@ $(document).ready(function () {
 
 
     $('#tbl_uploading_progress_ipcdd').DataTable({
-        dom: '',
+        dom: 'B',
         order: [
             [2, "desc"]
         ],
         paging: false,
+        initComplete: function () {
+            var btns = $('.btn');
+            var btns_group = $('.btn-group');
+            btns.addClass('btn btn-sm pull-right');
+            btns_group.addClass('float-right');
+            btns.removeClass('buttons-html5 btn-secondary');
+
+        }
         //fixedHeader: true,
     });
     $('#tbl_uploading_progress_af').DataTable({
@@ -890,6 +898,21 @@ $(document).ready(function () {
         paging: false,
         order: [
             [2, "desc"]
+        ],
+    });
+    $('#tbl_mywork').DataTable({
+        dom: 'B',
+        initComplete: function () {
+            var btns = $('.btn');
+            var btns_group = $('.btn-group');
+            btns.addClass('btn btn-sm pull-right');
+            btns_group.addClass('float-right');
+            btns.removeClass('buttons-html5 btn-secondary');
+
+        },
+        paging: false,
+        order: [
+            [5, "desc"]
         ],
     });
     $('#tbl_weekly_upload_af').DataTable({

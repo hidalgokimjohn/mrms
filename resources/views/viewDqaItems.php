@@ -179,9 +179,9 @@
         $dqaInfo = $app->getDqaInfo($_GET['dqaid']);
         ?>
 
-        <a href="#modalAddFiles" data-toggle="modal" data-area="<?php echo $dqaInfo['area_id'] ?>" data-cycle="<?php echo $dqaInfo['fk_cycle']; ?>">
+        <!--<a href="#modalAddFiles" data-toggle="modal" data-area="<?php /*echo $dqaInfo['area_id'] */?>" data-cycle="<?php /*echo $dqaInfo['fk_cycle']; */?>">
             <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span> Add Files</button>
-        </a>
+        </a>-->
     </div>
         <div class="table-responsive">
             <table id="tbl_viewDqaItems" class="table table-striped table-hover" style="width:100%">

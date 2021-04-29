@@ -41,12 +41,38 @@ document.addEventListener("DOMContentLoaded", function () {
         order: [
             [1, "desc"]
         ],
-        dom: '<<t>ip>',
+        dom: 'B<<t>ip>',
         //dom: '<"html5buttons">btpr',
         columnDefs: [{
             orderable: false,
             targets: 0
         }],
+        initComplete: function () {
+            var dtButtons = $('.dt-buttons');
+            dtButtons.addClass('float-right mt-3 mr-3');
+            dtButtons.removeClass('btn-group');
+
+            var btnExcel = $('.buttons-excel');
+            var btnCopy = $('.buttons-copy');
+            var btnCsv = $('.buttons-csv');
+            var btnPdf = $('.buttons-pdf');
+            var btnPrint = $('.buttons-print');
+            btnExcel.addClass('btn btn-outline-primary');
+            btnExcel.removeClass('buttons-html5 btn-secondary');
+
+            btnCopy.addClass('btn btn-outline-primary');
+            btnCopy.removeClass('buttons-html5 btn-secondary');
+
+            btnCsv.addClass('btn btn-outline-primary');
+            btnCsv.removeClass('buttons-html5 btn-secondary');
+
+            btnPdf.addClass('btn btn-outline-primary');
+            btnPdf.removeClass('buttons-html5 btn-secondary');
+
+            btnPrint.addClass('btn btn-outline-primary');
+            btnPrint.removeClass('buttons-html5 btn-secondary');
+
+        },
         ajax: {
             url: "resources/ajax/tbl_dqaConducted.php?modality="+modality,
             type: "POST",
@@ -142,12 +168,47 @@ document.addEventListener("DOMContentLoaded", function () {
         order: [
             [2, "desc"]
         ],
-        dom: '<<t>ip>',
+        dom: 'B<<t>ip>',
         //dom: '<"html5buttons">btpr',
         columnDefs: [{
             orderable: false,
             targets: 0
         }],
+        initComplete: function () {
+            var dtButtons = $('.dt-buttons');
+            dtButtons.addClass('float-right mr-3');
+            dtButtons.removeClass('btn-group');
+
+            var btnExcel = $('.buttons-excel');
+            var btnAddFile = $('.btn-addFile');
+            var btnCopy = $('.buttons-copy');
+            var btnCsv = $('.buttons-csv');
+            var btnPdf = $('.buttons-pdf');
+            var btnPrint = $('.buttons-print');
+            btnExcel.addClass('btn btn-outline-primary');
+            btnExcel.removeClass('buttons-html5 btn-secondary');
+
+            btnCopy.addClass('btn btn-outline-primary');
+            btnCopy.removeClass('buttons-html5 btn-secondary');
+
+            btnCsv.addClass('btn btn-outline-primary');
+            btnCsv.removeClass('buttons-html5 btn-secondary');
+
+            btnPdf.addClass('btn btn-outline-primary');
+            btnPdf.removeClass('buttons-html5 btn-secondary');
+
+            btnPrint.addClass('btn btn-outline-primary');
+            btnPrint.removeClass('buttons-html5 btn-secondary');
+
+            btnAddFile.removeClass('buttons-html5 btn-secondary ');
+        },
+        buttons: [
+            {
+                text: '<div href="#modalAddFiles" data-toggle="modal" data-area="1" data-cycle="15"><span class="fa fa-plus"></span> Add files</div>',
+                className: "btn btn-outline-primary btn-addFile",
+            },['copy','print','excel','pdf'],
+
+        ],
         ajax: {
             url: "resources/ajax/tbl_dqaItems.php?dqaId=" + dqaId,
             type: "POST",
