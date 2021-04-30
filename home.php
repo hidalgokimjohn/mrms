@@ -122,6 +122,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
                                 ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/dashboard_kcaf_cbrc.php') : '';
                                 ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/dashboard_ipcdd_drom.php') : '';
+                                ($_GET['p'] == 'compliance' && $_GET['tab'] == 'main') ? include('resources/views/tblCompliance.php') : '';
 
                                 //dqa module
                                 $getModality = '';
