@@ -3390,14 +3390,14 @@ WHERE
         }
     }
 
-    public function tbl_act_compliance(){
+    public function tbl_dqaCompliance(){
         $mysql = $this->connectDatabase();
-        $q="SELECT * FROM view_tbl_act_compliance WHERE view_tbl_act_compliance.conducted_by='$_SESSION[id_number]'";
+        $q="SELECT * FROM view_tbl_dqa_compliance WHERE view_tbl_dqa_compliance.added_by='$_SESSION[id_number]'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()){
-                $row['responsible_person']=$this->getUsersName($row['responsible_person']);
-                $row['conducted_by']=$this->getUsersName($row['conducted_by']);
+                $row['responsible_person']=$this->getUsersName($row['rp_id']);
+                $row['conducted_by']=$this->getUsersName($row['added_by']);
                 $data[]=$row;
             }
             $json_data = array("data" => $data);
@@ -3405,6 +3405,22 @@ WHERE
         } else {
             $json_data = array("data" => '');
             echo json_encode($json_data,JSON_PRETTY_PRINT);
+        }
+    }
+
+    public function notif_dqa_compliance(){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+        COUNT(view_tbl_dqa_compliance.is_reviewed) notifDqaCompliance
+        FROM
+        view_tbl_dqa_compliance
+        WHERE view_tbl_dqa_compliance.added_by='$_SESSION[id_number]' AND view_tbl_dqa_compliance.is_reviewed='for review'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['notifDqaCompliance'];
+        } else {
+            return false;
         }
     }
 
