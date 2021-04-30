@@ -2687,8 +2687,9 @@ WHERE
             $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['id_number'], $rp_id);
             $q->execute();
             if ($q->affected_rows > 0) {
-                //if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft))
+                if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft)){
                     echo 'uploaded';
+                }
             } else {
                 echo 'Something went upon saving';
             }
@@ -2736,7 +2737,7 @@ WHERE
             $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['id_number'], $rp_id);
             $q->execute();
             if ($q->affected_rows > 0) {
-                if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft))
+                //if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft))
                     echo 'uploaded';
             } else {
                 echo 'Something went upon saving';
@@ -3386,6 +3387,24 @@ WHERE
            return $data;
         } else {
             return false;
+        }
+    }
+
+    public function tbl_act_compliance(){
+        $mysql = $this->connectDatabase();
+        $q="SELECT * FROM view_tbl_act_compliance WHERE view_tbl_act_compliance.conducted_by='$_SESSION[id_number]'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()){
+                $row['responsible_person']=$this->getUsersName($row['responsible_person']);
+                $row['conducted_by']=$this->getUsersName($row['conducted_by']);
+                $data[]=$row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data,JSON_PRETTY_PRINT);
+        } else {
+            $json_data = array("data" => '');
+            echo json_encode($json_data,JSON_PRETTY_PRINT);
         }
     }
 
