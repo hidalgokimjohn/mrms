@@ -2857,7 +2857,7 @@ WHERE
             LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
-            WHERE form_uploaded.is_deleted = 0 AND  (form_uploaded.rp_id='$_SESSION[id_number]' OR form_uploaded.uploaded_by='$_SESSION[username]')";
+            WHERE form_uploaded.is_deleted = 0 AND  (form_uploaded.rp_id='$_SESSION[id_number]' OR form_uploaded.uploaded_by='$_SESSION[id_number]')";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
