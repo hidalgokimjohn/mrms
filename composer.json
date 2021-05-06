@@ -1,6 +1,6 @@
 {
     "require": {
-        "phpmailer/phpmailer": "^6.2",
+        "phpmailer/phpmailer": "^6.4",
       "ext-mysqli": "*",
         "stevenmaguire/oauth2-keycloak": "^2.2",
         "guzzlehttp/guzzle": "6.0"
