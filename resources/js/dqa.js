@@ -1101,6 +1101,120 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    $('#tbl_dqaCompliance thead tr').clone(true).appendTo('#tbl_dqaCompliance thead');
+    $('#tbl_dqaCompliance thead tr:eq(1) th').each(function (i) {
+
+            var title = $(this).text();
+            $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+            $('input', this).on('keyup change', function (e) {
+                if (tbl_dqaCompliance.column(i).search() !== this.value) {
+                    tbl_dqaCompliance.column(i).search(this.value).draw();
+                }
+            });
+    });
+
+    var tbl_dqaCompliance = $('#tbl_dqaCompliance').DataTable({
+        orderCellsTop: true,
+        order: [
+            [0, "desc"]
+        ],
+        dom: '<<t>ip>',
+        //dom: '<"html5buttons">btpr',
+        columnDefs: [{
+            orderable: false,
+            targets: 0
+        }],
+        ajax: {
+            url: "resources/ajax/tbl_dqaCompliance.php",
+            type: "POST",
+            processData: false,
+            contentType: false,
+            cache: false,
+            dataType: 'json',
+            error: function () {
+                $("post_list_processing").css("display", "none");
+            }
+        },
+        language: {
+            "emptyTable": "<b>No records found.</b>"
+        },
+        columnDefs: [{
+            "targets": 0,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['date_uploaded'];
+            },
+        },{
+            "targets": 1,
+            "data": null,
+            "render": function (data, type, row) {
+                return '<strong><a href="#" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
+            },
+        },{
+            "targets": 2,
+            "data": null,
+            "render": function (data, type, row) {
+                return '<span class="text-capitalize">'+data['batch']+' - '+data['cycle_name']+'</span>';
+            },
+        },{
+            "targets": 3,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['location'];
+            },
+        },{
+            "targets": 4,
+            "data": null,
+            "render": function (data, type, row) {
+                return data['responsible_person'];
+            },
+        },{
+            "targets": 5,
+            "data": null,
+            "render": function (data, type, row) {
+                return '#'+data['id']+'<br><small>'+data['title']+'</small>';
+            },
+        },{
+            "targets": 6,
+            "data": null,
+            "render": function (data, type, row) {
+                var x ='';
+                if(data['is_reviewed']==='for review'){
+                    x='<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For review</div>'
+                }
+                if(data['is_reviewed']==='reviewed'){
+                    if(data['with_findings']==='with findings'){
+                        x= '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> With findings</div>'
+                    }
+                    if(data['with_findings']!=='no findings'){
+                        x= '<div class="badge bg-primary"><span class="fa fa-check-circle"></span> No findings</div>'
+                    }
+                }
+                return x;
+            },
+        },{
+            "targets": 7,
+            "data": null,
+            "render": function (data, type, row) {
+
+                var x ='';
+                if(data['is_reviewed']==='for review'){
+                    x='<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For review</div>'
+                }
+                if(data['is_reviewed']==='reviewed'){
+                    if(data['is_complied']=='complied'){
+                        x= '<div class="badge bg-success"><span class="fa fa-check-circle"></span> Complied</div>'
+                    }
+                    if(data['is_complied']!=='complied'){
+                        x= '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> Not Complied</div>'
+                    }
+                }
+
+                return x;
+            },
+        }],
+    });
+
 });
 
 

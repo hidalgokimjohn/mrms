@@ -74,6 +74,19 @@
                     </li>
                 </ul>
             </li>
+            <li class="sidebar-item <?php $app->sidebar_active('compliance', $_GET['p']); ?>">
+                <?php
+                $notifDqaCompliance = $app->notif_dqa_compliance();
+                if($notifDqaCompliance){
+                    $ndc='<span class="sidebar-badge badge bg-primary">'.$notifDqaCompliance.'</span>';
+                }else{
+                    $ndc='';
+                }
+                ?>
+                <a class="sidebar-link" href="home.php?p=compliance&tab=main">
+                    <i class="align-middle" data-feather="file-text"></i> <span class="align-middle">Compliance</span> <?php echo $ndc ?>
+                </a>
+            </li>
             <!-- <li class="sidebar-header">
                 Modality
             </li>
