@@ -156,8 +156,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 "data": null,
                 "render": function (data, type, row) {
                     if(data['file_id']!==null){
-
-                        return '<a href="http://apps2.caraga.dswd.gov.ph'+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong><br/><small>Form: '+data['form_name']+'</small></a>';
+                        return '<a href="'+data['host']+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong><br/><small>Form: '+data['form_name']+'</small></a>';
                     }else{
                         return '<strong>Not Yet Uploaded</strong>'
                     }

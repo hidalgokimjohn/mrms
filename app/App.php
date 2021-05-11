@@ -1077,7 +1077,7 @@ WHERE
         tbl_dqa_findings.technical_advice
         FROM
         tbl_dqa_findings
-        WHERE  (fk_ft_guid='$ft_guid' OR fk_file_guid='$fileId') AND is_deleted=0
+        WHERE  (fk_ft_guid='$ft_guid' AND fk_file_guid='$fileId') AND is_deleted=0
         ORDER BY tbl_dqa_findings.created_at DESC";
         $results = $mysql->query($q) or die($mysql->error);
         if ($results->num_rows > 0) {
@@ -2064,7 +2064,8 @@ WHERE
             COALESCE (
                     lib_barangay.brgy_name,
                     '-'
-                ) AS brgy_name
+                ) AS brgy_name,
+            form_uploaded.host
             FROM
             form_target
             LEFT JOIN form_uploaded ON form_target.ft_guid = form_uploaded.fk_ft_guid
@@ -2167,6 +2168,14 @@ WHERE
                 return $item['image_path'];
             }
         }
+    }
+
+    public function getSP()
+    {
+        $opts = array('http' => array('header' => "User-Agent:MyAgent/1.0\r\n"));
+        $context = stream_context_create($opts);
+        $url = json_decode(file_get_contents('https://geotagging.dswd.gov.ph/api/dashboard/caraga/spi/masterlist/btf/get', true, $context), true);
+        var_dump($url);
     }
 
     public function personInfo($id_number)
@@ -3287,17 +3296,18 @@ WHERE
         }
     }
 
-    public function isChecklistItemExist($form_id,$mun_id,$brgy_id,$cycle_id){
+    public function isTargetExist($form_type,$form_code,$cadt_id,$mun_id,$brgy_id,$cycle_id){
         $mysql = $this->connectDatabase();
-        $q="SELECT
-        form_target.ft_guid
-            FROM
-                form_target
-            WHERE
-                fk_form = '$form_id'
-            AND (fk_psgc_mun = '$mun_id' OR fk_cadt = '$mun_id')
-            AND fk_psgc_brgy = '$brgy_id'
-            AND fk_cycle = '$cycle_id'";
+        if($form_type=='cadt'){
+            $q="SELECT form_target.ft_guid FROM form_target WHERE fk_form = '$form_code' AND fk_cadt = '$cadt_id' AND fk_cycle = '$cycle_id'";
+        }
+        if($form_type=='municipal'){
+            $q="SELECT form_target.ft_guid FROM form_target WHERE fk_form = '$form_code' AND fk_cadt = '$mun_id' AND fk_psgc_mun='$mun_id' AND fk_cycle = '$cycle_id'";
+        }
+        if($form_type=='barangay'){
+            $q="SELECT form_target.ft_guid FROM form_target WHERE fk_form = '$form_code' AND fk_cadt = '$mun_id' AND fk_psgc_brgy='$brgy_id' AND fk_cycle = '$cycle_id'";
+        }
+
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             return true;
@@ -3306,11 +3316,10 @@ WHERE
         }
     }
 
-    public function create_checklist($group,$checklistVersion,$area_id,$cycle_id){
+    public function createChecklist($modality,$version,$area_id,$cycle_id){
         $mysql = $this->connectDatabase();
-        $group = $mysql->real_escape_string($group);
-        $checklistVersion = $mysql->real_escape_string($checklistVersion);
-
+        $modality = $mysql->real_escape_string($modality);
+        $version = $mysql->real_escape_string($version);
         $q="SELECT
         lib_form.form_type,
         form_checklist.fk_form_code
@@ -3320,13 +3329,19 @@ WHERE
         INNER JOIN lib_activity ON lib_form.fk_activity = lib_activity.id
         INNER JOIN lib_category ON lib_activity.fk_category = lib_category.id
         INNER JOIN lib_modality ON lib_category.fk_modality = lib_modality.id
-        WHERE form_checklist.`group`= '$group' and form_checklist.version= '$checklistVersion'
+        WHERE form_checklist.`group`= '$modality' and form_checklist.version= '$version'
         ORDER BY form_checklist.id ASC";
-        $result = $mysql->query($q) or die($mysql->error);
 
+        $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($form_checklist_row = $result->fetch_assoc()) {
                 if($form_checklist_row=='municipal'){
+                    $this->createMunLevelTargetIpcdd($area_id,$cycle_id,$form_checklist_row['fk_form_code']);
+                }
+                if($form_checklist_row=='cadt'){
+                    $this->createCadtLevelTargetIpcdd($area_id,$cycle_id,$form_checklist_row['fk_form_code']);
+                }
+                if($form_checklist_row['barangay']){
 
                 }
             }
@@ -3335,7 +3350,7 @@ WHERE
         }
     } 
 
-    public function targetForMunicipal_level_ipcdd($area_id,$cycle_id,$form_code){
+    public function createMunLevelTargetIpcdd($area_id,$cycle_id,$form_code){
         $mysql = $this->connectDatabase();
         $area_id = $mysql->real_escape_string($area_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
@@ -3345,17 +3360,73 @@ WHERE
                         implementing_cadt_icc.fk_psgc_mun
                         FROM
                         implementing_cadt_icc
-                        WHERE implementing_cadt_icc.`level`='municipal' AND implementing_cadt_icc.fk_cadt_id='$cadt' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
+                        WHERE implementing_cadt_icc.`level`='municipal' AND implementing_cadt_icc.fk_cadt_id='$area_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
         $get_muni_result = $mysql->query($q) or die($mysql->error);
         if ($get_muni_result) {
             while ($row_muni = $get_muni_result->fetch_assoc()) {
-                $insert_muni = $mysql->prepare("INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`)
-                        VALUES ('$guid','$form_code','','')");
-                $insert_muni->bind_param('ssiii', $guid, $form_code, $row_muni['fk_psgc_mun'], $cycle_id, $cadt);
-                $insert_muni->execute();
+                if(!$this->isChecklistItemExist($form_code,$row_muni['fk_psgc_mun'],'',$cycle_id)){
+                    $insert_muni = "INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`) 
+                    VALUES ('$guid','$form_code','$row_muni[fk_psgc_mun]','$cycle_id','$area_id')";
+                    $result = $mysql->query($insert_muni) or die($mysql->error);
+                    if($mysql->affected_rows>0){
+                        return true;
+                    }
+                }
             }
         }
                 
+    }
+
+    public function createCadtLevelTargetIpcdd($area_id,$cycle_id,$form_code){
+        $mysql = $this->connectDatabase();
+        $area_id = $mysql->real_escape_string($area_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $guid = $this->v4();
+        $q = "SELECT
+                        implementing_cadt_icc.fk_cadt_id,
+                        implementing_cadt_icc.fk_psgc_mun
+                        FROM
+                        implementing_cadt_icc
+                        WHERE  implementing_cadt_icc.`level`='cadt' AND implementing_cadt_icc.fk_cadt_id='$area_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
+        $get_muni_result = $mysql->query($q) or die($mysql->error);
+        if ($get_muni_result) {
+            while ($row_muni = $get_muni_result->fetch_assoc()) {
+                if(!$this->isTargetExist($form_code,$row_muni['fk_psgc_mun'],'',$cycle_id)){
+                    $insert_muni = "INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`) VALUES ('$guid','$form_code','$row_muni[fk_psgc_mun]','$cycle_id','$area_id')";
+                    $result = $mysql->query($insert_muni) or die($mysql->error);
+                    if($mysql->affected_rows>0){
+                        return true;
+                    }
+                }
+            }
+        }
+
+    }
+
+    public function createBrgyLevelTargetIpcdd($area_id,$cycle_id,$form_code){
+        $mysql = $this->connectDatabase();
+        $area_id = $mysql->real_escape_string($area_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $guid = $this->v4();
+        $q = "SELECT
+                        implementing_cadt_icc.fk_cadt_id,
+                        implementing_cadt_icc.fk_psgc_mun
+                        FROM
+                        implementing_cadt_icc
+                        WHERE  implementing_cadt_icc.`level`='barangay' AND implementing_cadt_icc.fk_cadt_id='$area_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
+        $get_muni_result = $mysql->query($q) or die($mysql->error);
+        if ($get_muni_result) {
+            while ($row_muni = $get_muni_result->fetch_assoc()) {
+                if(!$this->isChecklistItemExist($form_code,$row_muni['fk_psgc_mun'],'',$cycle_id)){
+                    $insert_muni = "INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`) VALUES ('$guid','$form_code','$row_muni[fk_psgc_mun]','$cycle_id','$area_id')";
+                    $result = $mysql->query($insert_muni) or die($mysql->error);
+                    if($mysql->affected_rows>0){
+                        return true;
+                    }
+                }
+            }
+        }
+
     }
 
     public function fileHistory($form_id){
