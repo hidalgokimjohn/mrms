@@ -346,6 +346,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalAddFiles = document.getElementById('modalAddFiles');
     const modalViewFile = document.getElementById('modalViewFile');
     const modalViewFindings = document.getElementById('modalViewFindings');
+    const modalReviewCompliance = document.getElementById('modalReviewCompliance');
     if (modalCreateDqa) {
         modalCreateDqa.addEventListener('show.bs.modal', function (e) {
             
@@ -1031,7 +1032,7 @@ document.addEventListener("DOMContentLoaded", function () {
         }],
     });
 
-    //DQA UPLOAD COMPLIANCE
+    //DQA UPLOAD COMPLIANCE START
     $("form#formComplianceFileUpload").submit(function (event) {
         event.preventDefault();
         var btn = this;
@@ -1148,34 +1149,40 @@ document.addEventListener("DOMContentLoaded", function () {
             "targets": 1,
             "data": null,
             "render": function (data, type, row) {
-                return '<strong><a href="#" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
+                return '<strong><a href="#modalReviewCompliance" data-toggle="modal" data-ft-guid="'+data['ft_guid']+'" data-file-path="'+data['file_path']+'" data-filename="'+data['original_filename']+'" data-parent-file-id="'+data['fk_file_guid']+'" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
             },
         },{
             "targets": 2,
             "data": null,
             "render": function (data, type, row) {
-                return '<span class="text-capitalize">'+data['batch']+' - '+data['cycle_name']+'</span>';
+                return '<span class="text-capitalize">'+data['form_name']+'<br/><small>Activity: '+data['activity_name']+'</small></span>';
             },
         },{
             "targets": 3,
             "data": null,
             "render": function (data, type, row) {
-                return data['location'];
+                return '<span class="text-capitalize">'+data['batch']+' - '+data['cycle_name']+'</span>';
             },
         },{
             "targets": 4,
             "data": null,
             "render": function (data, type, row) {
-                return data['responsible_person'];
+                return data['location'];
             },
         },{
             "targets": 5,
             "data": null,
             "render": function (data, type, row) {
-                return '#'+data['id']+'<br><small>'+data['title']+'</small>';
+                return data['responsible_person'];
             },
         },{
             "targets": 6,
+            "data": null,
+            "render": function (data, type, row) {
+                return '#'+data['id']+'<br><small>'+data['title']+'</small>';
+            },
+        },{
+            "targets": 7,
             "data": null,
             "render": function (data, type, row) {
                 var x ='';
@@ -1193,7 +1200,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 return x;
             },
         },{
-            "targets": 7,
+            "targets": 8,
             "data": null,
             "render": function (data, type, row) {
 
@@ -1209,15 +1216,50 @@ document.addEventListener("DOMContentLoaded", function () {
                         x= '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> Not Complied</div>'
                     }
                 }
-
                 return x;
             },
         }],
     });
+    //DQA UPLOAD COMPLIANCE END
 
+    //DQA REVIEW COMPLIANCE
+
+    if (modalReviewCompliance) {
+        var options = {
+            height: "600px",
+            pdfOpenParams: {
+                view: 'FitH',
+                pagemode: 'thumbs'
+            }
+        };
+        modalReviewCompliance.addEventListener('show.bs.modal', function (e) {
+            fileName = $(e.relatedTarget).data('filename');
+            fileId = $(e.relatedTarget).data('file-id');
+            var parent_fileId = $(e.relatedTarget).data('parent-file-id');
+            ft_guid = $(e.relatedTarget).data('ft-guid');
+            file_path = $(e.relatedTarget).data('file-path');
+            PDFObject.embed(file_path, "#pdf", options);
+            $('.compliance-filename').html(fileName);
+            $.ajax({
+                type: "post",
+                url: "resources/ajax/displayFindings_compliance.php",
+                data: {
+                    "file_id": fileId,
+                    "parent_file_id": parent_fileId,
+                    "ft_guid": ft_guid
+                },
+                dataType: 'html',
+                success: function (data) {
+                    $("#displayFindings").html('');
+                    $("#displayFindings").html(data);
+                }
+            });
+
+        });
+    }
+
+    //DQA REVIEW COMPLIANCE END
 });
-
-
 
 function htmlspecialchars(string) {
     return $('<span>').text(string).html()
