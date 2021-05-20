@@ -194,8 +194,8 @@
                             echo '<td>' . ucwords($item['batch'] . ' ' . $item['cycle_name']) . '</td>';
                             echo '<td title="'.$item['actual'].'/'.$item['target'].'">
 										<span class=""><strong>'.$item['progress'].'%</strong></span>
-										<div class="progress progress-sm">
-											<div class="progress-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: '.$item['progress'].'%;">
+										<div class="progress progress-sm prog">
+											<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: '.$item['progress'].'%;">
 											</div>
 										</div>
 									</td>';
