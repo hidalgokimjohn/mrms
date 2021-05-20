@@ -3517,4 +3517,34 @@ WHERE
         }
     }
 
+    public function tbl_ceac_ipcdd($modality)
+    {
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+            implementing_cadt_ipcdd.fk_cadt,
+            implementing_cadt_ipcdd.fk_cycles,
+            implementing_cadt_ipcdd.`status`,
+            lib_cycle.cycle_name,
+            cycles.batch,
+            lib_cadt.cadt_name,
+            lib_modality.modality_name,
+            lib_modality.modality_group
+            FROM
+            implementing_cadt_ipcdd
+            INNER JOIN lib_cadt ON lib_cadt.id = implementing_cadt_ipcdd.fk_cadt
+            INNER JOIN cycles ON cycles.id = implementing_cadt_ipcdd.fk_cycles
+            INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
+            INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
+            WHERE lib_modality.modality_group='$modality'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data);
+        } else {
+            return false;
+        }
+    }
 }
