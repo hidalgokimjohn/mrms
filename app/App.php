@@ -15,7 +15,7 @@ class App
     public $officeName;
     public $officeDesc;
     public $tot_target;
-    public $area_id;
+    public $cadt_id;
     public $cycle_id;
     public $username;
     public $avatar;
@@ -1691,11 +1691,11 @@ WHERE
         }
     }
 
-    public function myWorkDashboard_ipcddDrom($area_id, $cycle_id)
+    public function myWorkDashboard_ipcddDrom($cadt_id, $cycle_id)
     {
         $mysql = $this->connectDatabase();
         //$status = $mysql->real_escape_string($status);
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $q = "SELECT
                     lib_cadt.cadt_name,
@@ -1724,8 +1724,8 @@ WHERE
         
                     form_target.fk_cycle='$cycle_id'
                 AND (
-                    form_target.fk_cadt = '$area_id'
-                    OR form_target.fk_psgc_mun = '$area_id'
+                    form_target.fk_cadt = '$cadt_id'
+                    OR form_target.fk_psgc_mun = '$cadt_id'
                 )
                 AND form_target.target > 0";
         $result = $mysql->query($q) or die($mysql->error);
@@ -1742,7 +1742,7 @@ WHERE
     }
 
 
-    public function countReviewedByUsername($area_id, $area_id2, $cycle_id)
+    public function countReviewedByUsername($cadt_id, $cadt_id2, $cycle_id)
     {
         $mysql = $this->connectDatabase();
         $q = "SELECT
@@ -1755,8 +1755,8 @@ WHERE
             WHERE
                 tbl_dqa_list.added_by = '$_SESSION[id_number]'
             AND (
-                form_target.fk_cadt = '$area_id'
-                OR form_target.fk_psgc_mun = '$area_id2'
+                form_target.fk_cadt = '$cadt_id'
+                OR form_target.fk_psgc_mun = '$cadt_id2'
             )
             AND form_target.fk_cycle = '$cycle_id'
             AND tbl_dqa_list.is_delete = 0";
@@ -1768,7 +1768,7 @@ WHERE
         }
     }
 
-    public function countFindingByUsername($area_id, $area_id2, $cycle_id)
+    public function countFindingByUsername($cadt_id, $cadt_id2, $cycle_id)
     {
         $mysql = $this->connectDatabase();
         $q = "SELECT
@@ -1776,7 +1776,7 @@ WHERE
         FROM
         tbl_dqa_findings
         INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
-        WHERE (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[username]'
+        WHERE (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[username]'
         AND tbl_dqa_findings.is_deleted=0";
         $result = $mysql->query($q);
         if ($result->num_rows > 0) {
@@ -1785,7 +1785,7 @@ WHERE
         }
     }
 
-    public function countCompliedByUsername($area_id, $area_id2, $cycle_id)
+    public function countCompliedByUsername($cadt_id, $cadt_id2, $cycle_id)
     {
         $mysql = $this->connectDatabase();
         $q = "SELECT
@@ -1793,7 +1793,7 @@ WHERE
         FROM
         tbl_dqa_findings
         INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
-        WHERE (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[username]'
+        WHERE (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[username]'
         AND tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=1";
         $result = $mysql->query($q);
         if ($result->num_rows > 0) {
@@ -2398,18 +2398,18 @@ WHERE
         $id_number = $mysql->real_escape_string($_GET['id_number']);
         $cycle = $mysql->real_escape_string($_POST['cycle']);
 
-        foreach ($_POST['area'] as $area_id) {
+        foreach ($_POST['area'] as $cadt_id) {
             //Check existing coverage
-            if (!$this->coverageExist($id_number, $cycle, $area_id)) {
+            if (!$this->coverageExist($id_number, $cycle, $cadt_id)) {
                 //check modality
                 if ($this->modality($_POST['modality']) == 'ipcdd') {
                     $q = "INSERT INTO `tbl_user_coverage_ipcdd` (`id_number`, `fk_cadt_id`, `fk_cycle_id`, `status`, `created_at`) 
-                VALUES ('$id_number', '$area_id', '$cycle', 'active', NOW())";
+                VALUES ('$id_number', '$cadt_id', '$cycle', 'active', NOW())";
                     $mysql->query($q);
                 } else {
                     //for ncddp
                     $q = "INSERT INTO `tbl_user_coverage_ncddp` (`id_number`, `fk_psgc_mun`, `fk_cycle_id`, `status`, `created_at`) 
-                VALUES ('$id_number', '$area_id', '$cycle', 'active', NOW())";
+                VALUES ('$id_number', '$cadt_id', '$cycle', 'active', NOW())";
                     $mysql->query($q);
                 }
             }
@@ -2595,7 +2595,7 @@ WHERE
         return $start_date . ' - ' . $end_date;
     }
 
-    public function getCeacActivity($area_id, $cycle_id)
+    public function getCeacActivity($cadt_id, $cycle_id)
     {
         $mysql = $this->connectDatabase();
         $q = "SELECT
@@ -2608,7 +2608,7 @@ WHERE
             LEFT JOIN lib_sitio ON lib_sitio.psgc_sitio = form_target.fk_psgc_sitio
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
-            WHERE (form_target.fk_psgc_mun = '$area_id' OR form_target.fk_cadt = '$area_id') AND form_target.fk_cycle = '$cycle_id'
+            WHERE (form_target.fk_psgc_mun = '$cadt_id' OR form_target.fk_cadt = '$cadt_id') AND form_target.fk_cycle = '$cycle_id'
             GROUP BY lib_activity.id
             ORDER BY lib_activity.id ASC";
         $result = $mysql->query($q) or die($mysql->error);
@@ -2622,10 +2622,10 @@ WHERE
         }
     }
 
-    public function getCeacForm($area_id, $cycle_id, $activity_id)
+    public function getCeacForm($cadt_id, $cycle_id, $activity_id)
     {
         $mysql = $this->connectDatabase();
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
         $activity_id = $mysql->real_escape_string($activity_id);
         $q = "SELECT
@@ -2645,7 +2645,7 @@ WHERE
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             INNER JOIN lib_activity ON lib_form.fk_activity = lib_activity.id
-            WHERE (form_target.fk_psgc_mun = '$area_id' OR form_target.fk_cadt = '$area_id') AND form_target.fk_cycle = '$cycle_id' and lib_activity.id = '$activity_id'
+            WHERE (form_target.fk_psgc_mun = '$cadt_id' OR form_target.fk_cadt = '$cadt_id') AND form_target.fk_cycle = '$cycle_id' and lib_activity.id = '$activity_id'
             ORDER BY lib_form.form_name,lib_barangay.brgy_name ASC";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
@@ -2836,7 +2836,7 @@ WHERE
     {
         $mysql = $this->connectDatabase();
 
-        // $area_id= "'".implode("','", $this->area_id)."'";
+        // $cadt_id= "'".implode("','", $this->area_id)."'";
         // $cycle_id= "'".implode("','", $this->cycle_id)."'";
 
         $q = "SELECT
@@ -2881,13 +2881,13 @@ WHERE
 
     }
 
-    public function getUploadedFilesByActivity($activity_id, $cycle_id, $area_id)
+    public function getUploadedFilesByActivity($activity_id, $cycle_id, $cadt_id)
     {
         $mysql = $this->connectDatabase();
 
         $activity_id = $mysql->real_escape_string($activity_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
 
         $q = "SELECT
             form_uploaded.file_id,
@@ -2916,7 +2916,7 @@ WHERE
             LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             WHERE lib_activity.id = '$activity_id' AND form_target.fk_cycle='$cycle_id'
-            AND(form_target.fk_cadt ='$area_id' OR form_target.fk_psgc_mun='$area_id')
+            AND(form_target.fk_cadt ='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id')
             AND (form_uploaded.is_deleted = 0 OR form_uploaded.is_deleted IS NULL)";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
@@ -2954,11 +2954,11 @@ WHERE
         }
     }
 
-    public function actActivityProg($cycle, $area_id, $cat_id)
+    public function actActivityProg($cycle, $cadt_id, $cat_id)
     {
         $mysql = $this->connectDatabase();
         $cycle = $mysql->real_escape_string($cycle);
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $q = "SELECT
             lib_activity.id,
             lib_activity.activity_name,
@@ -2974,7 +2974,7 @@ WHERE
             form_target
             INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
-            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id') AND lib_activity.fk_category='$cat_id'
+            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id') AND lib_activity.fk_category='$cat_id'
             GROUP BY lib_activity.id";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
@@ -2987,11 +2987,11 @@ WHERE
         }
     }
 
-    public function actCategoryProg($cycle, $area_id)
+    public function actCategoryProg($cycle, $cadt_id)
     {
         $mysql = $this->connectDatabase();
         $cycle = $mysql->real_escape_string($cycle);
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $q = "SELECT
             lib_activity.fk_category,
             lib_category.category_name,
@@ -3002,7 +3002,7 @@ WHERE
             INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
             INNER JOIN lib_category ON lib_category.id = lib_activity.fk_category
-            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$area_id' OR form_target.fk_psgc_mun='$area_id')
+            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id')
             GROUP BY lib_activity.fk_category";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
@@ -3043,16 +3043,16 @@ WHERE
         }
     }
 
-    public function areaProgress($cycle_id, $area_id)
+    public function areaProgress($cycle_id, $cadt_id)
     {
         $mysql = $this->connectDatabase();
         $cycle_id = $mysql->real_escape_string($cycle_id);
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $q = "SELECT
                 format(((sum(`form_target`.`actual`) / sum(`form_target`.`target`)) * 100),2) as progress
                 FROM
                 form_target
-                WHERE form_target.fk_cycle='$cycle_id' AND (form_target.fk_psgc_mun='$area_id' OR form_target.fk_cadt='$area_id')";
+                WHERE form_target.fk_cycle='$cycle_id' AND (form_target.fk_psgc_mun='$cadt_id' OR form_target.fk_cadt='$cadt_id')";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -3062,17 +3062,17 @@ WHERE
         }
     }
 
-    public function getACTMembers_avatar($cycle_id, $area_id)
+    public function getACTMembers_avatar($cycle_id, $cadt_id)
     {
         $mysql = $this->connectDatabase();
         $cycle_id = $mysql->real_escape_string($cycle_id);
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $q = "SELECT
             view_tbl_user_coverage.username,
             view_tbl_user_coverage.avatar_path
             FROM
             view_tbl_user_coverage where view_tbl_user_coverage.status='active'
-            AND view_tbl_user_coverage.cycle_id='$cycle_id' AND view_tbl_user_coverage.area_id='$area_id'";
+            AND view_tbl_user_coverage.cycle_id='$cycle_id' AND view_tbl_user_coverage.area_id='$cadt_id'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -3084,11 +3084,11 @@ WHERE
         }
     }
 
-    public function actView_areaInfo($cycle_id, $area_id)
+    public function actView_areaInfo($cycle_id, $cadt_id)
     {
         $mysql = $this->connectDatabase();
         $cycle_id = $mysql->real_escape_string($cycle_id);
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $q = "SELECT
                 view_tbl_user_coverage.area_name,
                 view_tbl_user_coverage.modality_group,
@@ -3106,7 +3106,7 @@ WHERE
             WHERE
                 view_tbl_user_coverage.id_number = '$_SESSION[id_number]'
             AND view_tbl_user_coverage.cycle_id = '$cycle_id'
-            AND view_tbl_user_coverage.area_id = '$area_id' LIMIT 1";
+            AND view_tbl_user_coverage.area_id = '$cadt_id' LIMIT 1";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -3120,7 +3120,7 @@ WHERE
     {
         $mysql = $this->connectDatabase();
         $this->getUserActiveAreas();
-        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cadt_id = "'" . implode("','", $this->area_id) . "'";
         $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
         $q = "SELECT
                 cycles.batch,
@@ -3144,7 +3144,7 @@ WHERE
                 INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
                 INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
                 INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
-                WHERE form_target.fk_cadt IN ($area_id) AND form_target.fk_cycle IN ($cycle_id) AND form_target.actual<form_target.target";
+                WHERE form_target.fk_cadt IN ($cadt_id) AND form_target.fk_cycle IN ($cycle_id) AND form_target.actual<form_target.target";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -3161,13 +3161,13 @@ WHERE
     {
         $mysql = $this->connectDatabase();
         $this->getUserActiveAreas();
-        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cadt_id = "'" . implode("','", $this->area_id) . "'";
         $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
         $q = "SELECT
                SUM(form_target.target) target
                 FROM
                 form_target
-                WHERE form_target.fk_cadt IN ($area_id) AND form_target.fk_cycle IN ($cycle_id) AND form_target.actual<form_target.target";
+                WHERE form_target.fk_cadt IN ($cadt_id) AND form_target.fk_cycle IN ($cycle_id) AND form_target.actual<form_target.target";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -3180,7 +3180,7 @@ WHERE
     public function tbl_actDqa(){
         $mysql = $this->connectDatabase();
         $this->getUserActiveAreas();
-        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cadt_id = "'" . implode("','", $this->area_id) . "'";
         $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
         $q = "SELECT
                 view_tbl_dqa_conducted.cycle_name,
@@ -3195,7 +3195,7 @@ WHERE
                 FROM
                 view_tbl_dqa_conducted
                 WHERE
-                cycle_id IN ($cycle_id) AND (fk_psgc_mun IN ($area_id) OR fk_cadt_id IN ($area_id))";
+                cycle_id IN ($cycle_id) AND (fk_psgc_mun IN ($cadt_id) OR fk_cadt_id IN ($cadt_id))";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while($row = $result->fetch_assoc()){
@@ -3279,14 +3279,14 @@ WHERE
     public function notif_findings(){
         $mysql = $this->connectDatabase();
         $this->getUserActiveAreas();
-        $area_id = "'" . implode("','", $this->area_id) . "'";
+        $cadt_id = "'" . implode("','", $this->area_id) . "'";
         $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
         $q = "SELECT
                 COUNT(tbl_dqa_findings.findings_guid) as notif_findings
                 FROM
                 tbl_dqa_findings
                 INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
-                WHERE tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=0 AND form_target.fk_cycle IN ($cycle_id) AND (form_target.fk_psgc_mun IN ($area_id) OR form_target.fk_cadt IN ($area_id))";
+                WHERE tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=0 AND form_target.fk_cycle IN ($cycle_id) AND (form_target.fk_psgc_mun IN ($cadt_id) OR form_target.fk_cadt IN ($cadt_id))";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -3295,28 +3295,7 @@ WHERE
             return false;
         }
     }
-
-    public function isTargetExist($form_type,$form_code,$cadt_id,$mun_id,$brgy_id,$cycle_id){
-        $mysql = $this->connectDatabase();
-        if($form_type=='cadt'){
-            $q="SELECT form_target.ft_guid FROM form_target WHERE fk_form = '$form_code' AND fk_cadt = '$cadt_id' AND fk_cycle = '$cycle_id'";
-        }
-        if($form_type=='municipal'){
-            $q="SELECT form_target.ft_guid FROM form_target WHERE fk_form = '$form_code' AND fk_cadt = '$mun_id' AND fk_psgc_mun='$mun_id' AND fk_cycle = '$cycle_id'";
-        }
-        if($form_type=='barangay'){
-            $q="SELECT form_target.ft_guid FROM form_target WHERE fk_form = '$form_code' AND fk_cadt = '$mun_id' AND fk_psgc_brgy='$brgy_id' AND fk_cycle = '$cycle_id'";
-        }
-
-        $result = $mysql->query($q) or die($mysql->error);
-        if ($result->num_rows > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    public function createChecklist($modality,$version,$area_id,$cycle_id){
+    public function createChecklist($modality,$version,$cadt_id,$cycle_id){
         $mysql = $this->connectDatabase();
         $modality = $mysql->real_escape_string($modality);
         $version = $mysql->real_escape_string($version);
@@ -3335,98 +3314,141 @@ WHERE
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($form_checklist_row = $result->fetch_assoc()) {
-                if($form_checklist_row=='municipal'){
-                    $this->createMunLevelTargetIpcdd($area_id,$cycle_id,$form_checklist_row['fk_form_code']);
-                }
-                if($form_checklist_row=='cadt'){
-                    $this->createCadtLevelTargetIpcdd($area_id,$cycle_id,$form_checklist_row['fk_form_code']);
-                }
-                if($form_checklist_row['barangay']){
+                if($form_checklist_row['form_type']=='cadt'){
+                    $this->createCadtTargetIpcdd($cadt_id,$cycle_id,$form_checklist_row['fk_form_code'],$form_checklist_row['form_type']);
 
+                }
+                if($form_checklist_row['form_type']=='municipal'){
+                    $this->createMunTargetIpcdd($cadt_id,$cycle_id,$form_checklist_row['fk_form_code'],$form_checklist_row['form_type']);
+                }
+
+                if($form_checklist_row['form_type']=='barangay'){
+                    $this->createBrgyTargetIpcdd($cadt_id,$cycle_id,$form_checklist_row['fk_form_code'],$form_checklist_row['form_type']);
                 }
             }
         }else{
             return false;
         }
-    } 
-
-    public function createMunLevelTargetIpcdd($area_id,$cycle_id,$form_code){
-        $mysql = $this->connectDatabase();
-        $area_id = $mysql->real_escape_string($area_id);
-        $cycle_id = $mysql->real_escape_string($cycle_id);
-        $guid = $this->v4();
-        $q = "SELECT
-                        implementing_cadt_icc.fk_cadt_id,
-                        implementing_cadt_icc.fk_psgc_mun
-                        FROM
-                        implementing_cadt_icc
-                        WHERE implementing_cadt_icc.`level`='municipal' AND implementing_cadt_icc.fk_cadt_id='$area_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
-        $get_muni_result = $mysql->query($q) or die($mysql->error);
-        if ($get_muni_result) {
-            while ($row_muni = $get_muni_result->fetch_assoc()) {
-                if(!$this->isChecklistItemExist($form_code,$row_muni['fk_psgc_mun'],'',$cycle_id)){
-                    $insert_muni = "INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`) 
-                    VALUES ('$guid','$form_code','$row_muni[fk_psgc_mun]','$cycle_id','$area_id')";
-                    $result = $mysql->query($insert_muni) or die($mysql->error);
-                    if($mysql->affected_rows>0){
-                        return true;
-                    }
-                }
-            }
-        }
-                
     }
 
-    public function createCadtLevelTargetIpcdd($area_id,$cycle_id,$form_code){
+    public function isTargetExist($form_type,$form_code,$cadt_id,$mun_id,$brgy_id,$cycle_id){
         $mysql = $this->connectDatabase();
-        $area_id = $mysql->real_escape_string($area_id);
-        $cycle_id = $mysql->real_escape_string($cycle_id);
-        $guid = $this->v4();
-        $q = "SELECT
-                        implementing_cadt_icc.fk_cadt_id,
-                        implementing_cadt_icc.fk_psgc_mun
-                        FROM
-                        implementing_cadt_icc
-                        WHERE  implementing_cadt_icc.`level`='cadt' AND implementing_cadt_icc.fk_cadt_id='$area_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
-        $get_muni_result = $mysql->query($q) or die($mysql->error);
-        if ($get_muni_result) {
-            while ($row_muni = $get_muni_result->fetch_assoc()) {
-                if(!$this->isTargetExist($form_code,$row_muni['fk_psgc_mun'],'',$cycle_id)){
-                    $insert_muni = "INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`) VALUES ('$guid','$form_code','$row_muni[fk_psgc_mun]','$cycle_id','$area_id')";
-                    $result = $mysql->query($insert_muni) or die($mysql->error);
-                    if($mysql->affected_rows>0){
-                        return true;
-                    }
-                }
-            }
+        if($form_type=='cadt'){
+            $q="SELECT form_target.ft_guid FROM form_target WHERE fk_form = '$form_code' AND fk_cadt = '$cadt_id' AND fk_cycle = '$cycle_id'";
         }
-
+        if($form_type=='municipal'){
+            $q="SELECT form_target.ft_guid FROM form_target WHERE form_target.fk_form = '$form_code' AND form_target.fk_cadt = '$cadt_id' AND form_target.fk_psgc_mun='$mun_id' AND fk_cycle = '$cycle_id'";
+        }
+        if($form_type=='barangay'){
+            $q="SELECT
+                            form_target.ft_guid,
+                            form_target.fk_psgc_mun,
+                            form_target.fk_cycle,
+                            form_target.fk_form,
+                            form_target.fk_psgc_brgy
+                            FROM
+                            form_target
+                            where fk_psgc_brgy='$brgy_id' AND fk_cadt='$cadt_id' AND fk_cycle='$cycle_id' AND fk_form='$form_code'";
+        }
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
-    public function createBrgyLevelTargetIpcdd($area_id,$cycle_id,$form_code){
+    public function createMunTargetIpcdd($cadt_id,$cycle_id,$form_code,$form_type){
         $mysql = $this->connectDatabase();
-        $area_id = $mysql->real_escape_string($area_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
-        $guid = $this->v4();
-        $q = "SELECT
+        $createdMunTarget = "SELECT
                         implementing_cadt_icc.fk_cadt_id,
                         implementing_cadt_icc.fk_psgc_mun
                         FROM
                         implementing_cadt_icc
-                        WHERE  implementing_cadt_icc.`level`='barangay' AND implementing_cadt_icc.fk_cadt_id='$area_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
-        $get_muni_result = $mysql->query($q) or die($mysql->error);
+                        WHERE implementing_cadt_icc.`level`='$form_type' AND implementing_cadt_icc.fk_cadt_id='$cadt_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
+        $get_muni_result = $mysql->query($createdMunTarget) or die($mysql->error);
         if ($get_muni_result) {
-            while ($row_muni = $get_muni_result->fetch_assoc()) {
-                if(!$this->isChecklistItemExist($form_code,$row_muni['fk_psgc_mun'],'',$cycle_id)){
-                    $insert_muni = "INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_psgc_mun`, `fk_cycle`,`fk_cadt`, `target`, `actual`, `can_upload`) VALUES ('$guid','$form_code','$row_muni[fk_psgc_mun]','$cycle_id','$area_id')";
-                    $result = $mysql->query($insert_muni) or die($mysql->error);
+            while ($row_cadt = $get_muni_result->fetch_assoc()) {
+                $guid = $this->v4();
+                //target not exist.
+                if(!$this->isTargetExist($form_type,$form_code,$cadt_id,$row_cadt['fk_psgc_mun'],'',$cycle_id)){
+                    //Create Target here
+                    $insert_cadt = "INSERT INTO `form_target` (`ft_guid`, `fk_form`,`fk_psgc_mun`, `fk_cadt`,`fk_cycle`, `target`, `actual`, `can_upload`)
+                    VALUES ('$guid','$form_code','$row_cadt[fk_psgc_mun]','$row_cadt[fk_cadt_id]','$cycle_id',1,0,0)";
+                    $result = $mysql->query($insert_cadt) or die($mysql->error);
                     if($mysql->affected_rows>0){
-                        return true;
+                        echo 'Target created successfully: <br/>';
                     }
+                }else{
+                    echo 'Target already exist - '.$form_code.'<br/>';
                 }
             }
         }
+    }
 
+    public function createCadtTargetIpcdd($cadt_id,$cycle_id,$form_code,$form_type){
+        $mysql = $this->connectDatabase();
+        $cadt_id = $mysql->real_escape_string($cadt_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $q = "SELECT
+                            implementing_cadt_ipcdd.fk_cadt,
+                            implementing_cadt_ipcdd.fk_cycles,
+                            implementing_cadt_ipcdd.`status`
+                            FROM
+                            implementing_cadt_ipcdd
+                            WHERE fk_cadt='$cadt_id' AND fk_cycles='$cycle_id'";
+
+        $result= $mysql->query($q) or die($mysql->error);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $guid = $this->v4();
+                //target not exist.
+                if(!$this->isTargetExist($form_type,$form_code,$row['fk_cadt'],'','',$row['fk_cycles'])){
+                    //Create Target here
+                    $insert_cadt = "INSERT INTO `form_target` (`ft_guid`, `fk_form`, `fk_cadt`,`fk_cycle`, `target`, `actual`, `can_upload`)
+                    VALUES ('$guid','$form_code','$row[fk_cadt]','$row[fk_cycles]',1,0,0)";
+                    $result_1 = $mysql->query($insert_cadt) or die($mysql->error);
+                    if($mysql->affected_rows>0){
+                        echo 'Target created successfully: <br/>';
+                    }
+                }else{
+                    echo 'Target already exist - '.$form_code.'<br/>';
+                }
+            }
+        }
+    }
+
+    public function createBrgyTargetIpcdd($cadt_id,$cycle_id,$form_code,$form_type){
+        $mysql = $this->connectDatabase();
+        $cadt_id = $mysql->real_escape_string($cadt_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $createdMunTarget = "SELECT
+                        implementing_cadt_icc.fk_cadt_id,
+                        implementing_cadt_icc.fk_psgc_mun,
+                        implementing_cadt_icc.fk_psgc_brgy
+                        FROM
+                        implementing_cadt_icc
+                        WHERE implementing_cadt_icc.`level`='$form_type' AND implementing_cadt_icc.fk_cadt_id='$cadt_id' AND implementing_cadt_icc.fk_cycles='$cycle_id'";
+        $get_muni_result = $mysql->query($createdMunTarget) or die($mysql->error);
+        if ($get_muni_result) {
+            while ($row_cadt = $get_muni_result->fetch_assoc()) {
+                $guid = $this->v4();
+                //target not exist.
+                if(!$this->isTargetExist($form_type,$form_code,$cadt_id,$row_cadt['fk_psgc_mun'],$row_cadt['fk_psgc_brgy'],$cycle_id)){
+                    //Create Target here
+                    $insert_cadt = "INSERT INTO `form_target` (`ft_guid`, `fk_form`,`fk_psgc_mun`, `fk_cadt`,`fk_psgc_brgy`,`fk_cycle`, `target`, `actual`, `can_upload`)
+                    VALUES ('$guid','$form_code','$row_cadt[fk_psgc_mun]','$row_cadt[fk_cadt_id]','$row_cadt[fk_psgc_brgy]','$cycle_id',1,0,0)";
+                    $result = $mysql->query($insert_cadt) or die($mysql->error);
+                    if($mysql->affected_rows>0){
+                        echo 'Target created successfully: <br/>';
+                    }
+                }else{
+                    echo 'Target already exist - '.$form_code.'<br/>';
+                }
+            }
+        }
     }
 
     public function fileHistory($form_id){

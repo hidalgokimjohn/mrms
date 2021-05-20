@@ -283,14 +283,14 @@
                     </div>
                     <div class="col-sm-7">
                         <div class="card">
-                            <div class="card-body">
+
                                 <div id="pdf" class="mb-3 bg-light">
                                     
                                 </div>
                                 <div id="displayFindings">
 
                                 </div>
-                            </div>
+
                         </div>
                        <!-- <div class="col-sm-12">
                             <div class="card">
