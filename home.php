@@ -122,6 +122,8 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
                                 ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/dashboard_kcaf_cbrc.php') : '';
                                 ($_GET['p'] == 'dashboards' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/dashboard_ipcdd_drom.php') : '';
+                                ($_GET['p'] == 'ceac_mngt' && $_GET['m']==='list' &&$_GET['modality'] == 'ipcdd_drom') ? include('resources/views/ceac_ipcdd.php') : '';
+                                ($_GET['p'] == 'ceac_mngt' && $_GET['m']==='edit_target' &&$_GET['modality'] == 'ipcdd_drom') ? include('resources/views/edi.php') : '';
                                 ($_GET['p'] == 'compliance' && $_GET['tab'] == 'main') ? include('resources/views/tblCompliance.php') : '';
 
                                 //dqa module
@@ -241,6 +243,7 @@ if (!$auth->loggedIn()) {
 <script type="text/javascript" src="vendor/PDFObject-master/pdfobject.min.js"></script>
 <script type="text/javascript" src="resources/js/dqa.js"></script>
 <script type="text/javascript" src="resources/js/home.js"></script>
+<script type="text/javascript" src="resources/js/ceac.js"></script>
 <script type="text/javascript" src="resources/js/search.js"></script>
 <script type="text/javascript" src="resources/js/apex.js"></script>
 </html>

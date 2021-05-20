@@ -117,7 +117,7 @@
             <li class="sidebar-header">
                 System
             </li>
-            <li class="sidebar-item">
+            <!--<li class="sidebar-item">
                 <a data-target="#ui" data-toggle="collapse" class="sidebar-link collapsed">
                     <i class="align-middle" data-feather="settings"></i> <span class="align-middle">Libraries</span>
                 </a>
@@ -127,7 +127,7 @@
                     <li class="sidebar-item"><a class="sidebar-link" href="ui-cards.html">Forms</a></li>
                     <li class="sidebar-item"><a class="sidebar-link" href="ui-general.html">PIMS Meta Data</a></li>
                 </ul>
-            </li>
+            </li>-->
             <li class="sidebar-item <?php $app->sidebar_active('user_mngt', $_GET['p']); ?>">
                 <a class="sidebar-link" href="home.php?p=user_mngt&tab=users">
                     <i class="align-middle" data-feather="users"></i> <span class="align-middle">User Management</span>
@@ -141,14 +141,14 @@
                 <ul id="ceac-mngt"
                     class="sidebar-dropdown list-unstyled collapse <?php $app->sidebar_showList('ceac_mngt', $_GET['p']); ?>"
                     data-parent="#sidebar">
-                    <li class="sidebar-item <?php $app->sidebar_active('af_cbrc', $_GET['modality']); ?>"><a
+                   <!-- <li class="sidebar-item <?php /*$app->sidebar_active('af_cbrc', $_GET['modality']); */?>"><a
                                 class="sidebar-link" href="home.php?p=ceac_mngt&modality=af_cbrc">KC-AF CBRC</a>
                     </li>
-                    <li class="sidebar-item <?php $app->sidebar_active('ncddp_drom', $_GET['modality']); ?>"><a
+                    <li class="sidebar-item <?php /*$app->sidebar_active('ncddp_drom', $_GET['modality']); */?>"><a
                                 class="sidebar-link" href="home.php?p=ceac_mngt&modality=ncddp_drom">NCDDP DROM</a>
-                    </li>
+                    </li>-->
                     <li class="sidebar-item <?php $app->sidebar_active('ipcdd_drom', $_GET['modality']); ?>"><a
-                                class="sidebar-link" href="home.php?p=ceac_mngt&modality=ipcdd_drom">IPCDD DROM</a>
+                                class="sidebar-link" href="home.php?p=ceac_mngt&m=list&modality=ipcdd_drom">IPCDD DROM</a>
                     </li>
                 </ul>
             </li>

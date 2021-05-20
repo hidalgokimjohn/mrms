@@ -1,12 +1,12 @@
 <h1 class="h3 mb-3">User Management</h1>
 <div class="row">
-    <div class="col-sm-3 col-xl-2">
+    <!--<div class="col-sm-3 col-xl-2">
         <div class="card mb-3">
             <div class="list-group list-group-flush" role="tablist">
-                <a class="list-group-item list-group-item-action <?php echo (isset($_GET['tab']) && $_GET['tab'] == 'users') ? 'active' : ''; ?>" data-toggle="list" href="#users" role="tab">
+                <a class="list-group-item list-group-item-action <?php /*echo (isset($_GET['tab']) && $_GET['tab'] == 'users') ? 'active' : ''; */?>" data-toggle="list" href="#users" role="tab">
                     Users
                 </a>
-                <a class="list-group-item list-group-item-action <?php echo (isset($_GET['tab']) && $_GET['tab'] == 'position') ? 'active' : ''; ?>" data-toggle="list" href="#position" role="tab">
+                <a class="list-group-item list-group-item-action <?php /*echo (isset($_GET['tab']) && $_GET['tab'] == 'position') ? 'active' : ''; */?>" data-toggle="list" href="#position" role="tab">
                     Position
                 </a>
                 <a class="list-group-item list-group-item-action" data-toggle="list" href="#permission" role="tab">
@@ -14,8 +14,8 @@
                 </a>
             </div>
         </div>
-    </div>
-    <div class="col-sm-9 col-xl-10">
+    </div>-->
+    <div class="col-sm-12 col-xl-12">
         <div class="tab-content">
             <div class="tab-pane fade show <?php echo (isset($_GET['tab']) && $_GET['tab'] == 'users') ? 'active' : ''; ?>" id="users" role="tabpanel">
                 <div class="row">
