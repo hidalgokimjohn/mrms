@@ -37,6 +37,8 @@
                     <input class="form-control activity-name mb-2"disabled>
                     <label class="form-label mb-0">Form:</label>
                     <input class="form-control form-name mb-2"disabled>
+                    <label class="form-label mb-0">Area:</label>
+                    <input class="form-control location mb-2" disabled>
                     <label class="form-label mb-0">Target:</label>
                     <input class="form-control form-target mb-2"  name="new_target" type="number">
                     <label class="form-label mb-0">Reason:</label>

@@ -158,7 +158,7 @@ $(document).ready(function () {
             "data": null,
             "render": function (data, type, row) {
                 return '<a href="#modalEditCeacTarget" data-toggle="modal" data-form-id="'+data['ft_guid']+'" ' +
-                    'data-activity-name="'+data['activity_name']+'" data-form-name="'+data['form_name']+'" data-prevtarget="'+data['target']+'">Edit</a>'
+                    'data-activity-name="'+data['activity_name']+'" data-location="'+data['location']+'" data-form-name="'+data['form_name']+'" data-prevtarget="'+data['target']+'">Edit</a>'
             },
         },
             {
@@ -204,6 +204,7 @@ $(document).ready(function () {
         modalEditCeacTarget.addEventListener('show.bs.modal', function (e) {
             $('.activity-name').val($(e.relatedTarget).data('activity-name'));
             $('.form-name').val($(e.relatedTarget).data('form-name'));
+            $('.location').val($(e.relatedTarget).data('location'));
             $('.form-target').val($(e.relatedTarget).data('prevtarget'));
         });
     }
