@@ -129,7 +129,6 @@ class App
         $q->bind_param('s', $user);
         $q->execute();
         $result = $q->get_result();
-        echo $result->num_rows;
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             if (password_verify($pass, $row['password'])) {
@@ -3536,6 +3535,42 @@ WHERE
             INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
             INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
             WHERE lib_modality.modality_group='$modality'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data);
+        } else {
+            return false;
+        }
+    }
+
+    public function tbl_CeacIpcddTargets($cadt_id,$cycle_id,$modality){
+        $mysql = $this->connectDatabase();
+        $cadt_id = $mysql->real_escape_string($cadt_id);
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $q="SELECT
+                lib_category.category_name,
+                lib_category.acronym,
+                lib_category.stage_no,
+                lib_activity.activity_name,
+                lib_form.form_name,
+                lib_form.form_code,
+                form_target.ft_guid,
+                form_target.target,
+                form_target.actual,
+                COALESCE (lib_barangay.brgy_name,lib_municipality.mun_name,lib_cadt.cadt_name,'n/a') AS location
+                FROM
+                form_target
+                INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+                INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+                INNER JOIN lib_category ON lib_category.id = lib_activity.fk_category
+                left JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
+                left JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
+                left JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
+                WHERE form_target.fk_cadt='$cadt_id' AND form_target.fk_cycle='$cycle_id'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {

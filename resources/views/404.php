@@ -6,7 +6,7 @@
                 <div class="text-center">
                     <h1 class="display-1 font-weight-bold">404</h1>
                     <p class="h1">Page not found.</p>
-                    <p class="h2 font-weight-normal mt-3 mb-4">The page you are looking for might have been removed.</p>
+                    <p class="h2 font-weight-normal mt-3 mb-4">The page you are looking for might have been removed or you have no access.</p>
                     <a href="../../mrms" class="btn btn-primary btn-lg">Return to website</a>
                 </div>
 
