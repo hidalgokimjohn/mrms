@@ -3582,4 +3582,34 @@ WHERE
             return false;
         }
     }
+
+    public function editTarget(){
+        $mysql = $this->connectDatabase();
+        $target = $mysql->real_escape_string($_POST['new_target']);
+        $form_id = $mysql->real_escape_string($_GET['form_id']);
+         $q="SELECT
+            form_target.target,
+            form_target.actual
+            FROM
+            form_target
+            WHERE ft_guid='$form_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            $row = $result->fetch_assoc();
+            if($target>=$row['actual']){
+                $q="UPDATE `form_target` SET `target`='$target' WHERE (`ft_guid`='$form_id') LIMIT 1";
+                $result = $mysql->query($q) or die($mysql->error);
+                if($mysql->affected_rows>0){
+                    echo 'target_updated';
+                }
+            }else{
+                echo 'error_target';
+            }
+        }else{
+            echo 'false';
+        }
+
+    }
+
+
 }

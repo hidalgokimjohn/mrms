@@ -4,7 +4,7 @@
             <table id="tbl_viewCeacIpcdd" class="table table-hover" style="width:100%">
                 <thead>
                 <tr class="border-bottom-0">
-                    <th></th>
+                    <th width="10%"></th>
                     <th>CADT</th>
                     <th>Cycle</th>
                     <th>Mode</th>
