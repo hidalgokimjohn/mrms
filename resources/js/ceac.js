@@ -229,7 +229,7 @@ $(document).ready(function () {
                     if (data == 'target_updated') {
                         window.notyf.open({
                             type: 'success',
-                            message: '<strong>Saved!</strong>',
+                            message: '<strong>New target saved.</strong>',
                             duration: '5000',
                             ripple: true,
                             dismissible: true,

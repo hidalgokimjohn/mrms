@@ -3587,6 +3587,7 @@ WHERE
         $mysql = $this->connectDatabase();
         $target = $mysql->real_escape_string($_POST['new_target']);
         $form_id = $mysql->real_escape_string($_GET['form_id']);
+        $reason = $mysql->real_escape_string($_POST['reason']);
          $q="SELECT
             form_target.target,
             form_target.actual
@@ -3600,6 +3601,8 @@ WHERE
                 $q="UPDATE `form_target` SET `target`='$target' WHERE (`ft_guid`='$form_id') LIMIT 1";
                 $result = $mysql->query($q) or die($mysql->error);
                 if($mysql->affected_rows>0){
+                    $q_reason = "INSERT INTO `tbl_adjustment_reason` (`fk_ft`, `reason`, `added_by`,`date_created`) VALUES ('$form_id', '$reason', '$_SESSION[id_number]',NOW())";
+                    $mysql->query($q_reason);
                     echo 'target_updated';
                 }
             }else{
