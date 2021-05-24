@@ -2,6 +2,7 @@ $(document).ready(function () {
 
     var cycle_id = url.searchParams.get("cycle_id");
     var cadt_id = url.searchParams.get("cadt_id");
+    var form_id = '';
 
     $('.dataTables_paginate').addClass('p-3');
     $('.dataTables_info').addClass('p-3');
@@ -49,7 +50,7 @@ $(document).ready(function () {
             "targets": 0,
             "data": null,
             "render": function (data, type, row) {
-                return '<a href="home.php?p=ceac_mngt&m=edit_target&modality=ipcdd_drom&cadt_id='+data['fk_cadt']+'&cycle_id='+data['fk_cycles']+'">Targets</a>'
+                return '<a href="home.php?p=ceac_mngt&m=edit_target&modality=ipcdd_drom&cadt_id='+data['fk_cadt']+'&cycle_id='+data['fk_cycles']+'">Set target</a>'
             },
         },
             {
@@ -206,7 +207,68 @@ $(document).ready(function () {
             $('.form-name').val($(e.relatedTarget).data('form-name'));
             $('.location').val($(e.relatedTarget).data('location'));
             $('.form-target').val($(e.relatedTarget).data('prevtarget'));
+            form_id=$(e.relatedTarget).data('form-id');
         });
     }
 
+    //edit target
+    $("form#formEditTarget").submit(function (event) {
+        event.preventDefault();
+        var formData = new FormData($(this)[0]);
+        $("#btnEditTarget").html('<i class="fa fa-circle-notch fa-spin"></i> Saving changes');
+        $("#btnEditTarget").prop('disabled', true);
+        $.ajax({
+                url: 'resources/ajax/editTarget.php?form_id='+form_id,
+                type: 'POST',
+                data: formData,
+                async: true,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data == 'target_updated') {
+                        window.notyf.open({
+                            type: 'success',
+                            message: '<strong>Saved!</strong>',
+                            duration: '5000',
+                            ripple: true,
+                            dismissible: true,
+                            position: {
+                                x: 'center',
+                                y: 'top'
+                            }
+                        });
+                        tbl_viewCeacIpcddTargets.ajax.reload();
+                    }
+                    if (data == 'error_target') {
+                        window.notyf.open({
+                            type: 'error',
+                            message: '<strong>Sorry!</strong> target must be equal or greater than the actual.',
+                            duration: '5000',
+                            ripple: true,
+                            dismissible: true,
+                            position: {
+                                x: 'center',
+                                y: 'top'
+                            }
+                        });
+                    }
+                    if (data === 'false') {
+                        window.notyf.open({
+                            type: 'error',
+                            message: '<strong>Sorry!</strong> something went wrong. Please try again',
+                            duration: '5000',
+                            ripple: true,
+                            dismissible: true,
+                            position: {
+                                x: 'center',
+                                y: 'top'
+                            }
+                        });
+                    }
+                    $("#btnEditTarget").html('<i class="fa fa-save"></i> Save changes');
+                    $("#btnEditTarget").prop('disabled', false);
+                }
+            });
+    });
 });

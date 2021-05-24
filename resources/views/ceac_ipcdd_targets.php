@@ -28,27 +28,29 @@
     <div class="modal fade" id="modalEditCeacTarget" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-sm" role="document">
             <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title"><strong>Edit target</strong></h5>
-                    <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body m-2">
-                    <label class="form-label mb-0">Activity:</label>
-                    <input class="form-control activity-name mb-2"disabled>
-                    <label class="form-label mb-0">Form:</label>
-                    <input class="form-control form-name mb-2"disabled>
-                    <label class="form-label mb-0">Area:</label>
-                    <input class="form-control location mb-2" disabled>
-                    <label class="form-label mb-0">Target:</label>
-                    <input class="form-control form-target mb-2"  name="new_target" type="number">
-                    <label class="form-label mb-0">Reason:</label>
-                    <input class="form-control mb-2" name="reason" type="text" placeholder="Please provide reason for adjustment">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="btnEditTarget"><span class="fa fa-save"></span>
-                        <span class="text_editTarget">Save changes</span></button>
-                </div>
+                <form method="post" id="formEditTarget">
+                    <div class="modal-header">
+                        <h5 class="modal-title"><strong>Edit target</strong></h5>
+                        <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body m-2">
+                        <label class="form-label mb-0">Activity:</label>
+                        <input class="form-control activity-name mb-2"disabled>
+                        <label class="form-label mb-0">Form:</label>
+                        <input class="form-control form-name mb-2"disabled>
+                        <label class="form-label mb-0">Area:</label>
+                        <input class="form-control location mb-2" disabled>
+                        <label class="form-label mb-0">Target:</label>
+                        <input class="form-control form-target mb-2"  name="new_target" type="number" required>
+                        <label class="form-label mb-0">Reason:</label>
+                        <input class="form-control mb-2" name="reason" type="text" placeholder="Please provide reason for adjustment" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" id="btnEditTarget"><span class="fa fa-save"></span>
+                            <span class="text_editTarget">Save changes</span></button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
