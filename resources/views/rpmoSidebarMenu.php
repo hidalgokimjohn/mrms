@@ -152,6 +152,17 @@
                     </li>
                 </ul>
             </li>
+            <li class="sidebar-header">
+                Connected Systems
+            </li>
+            <li class="sidebar-item">
+                <a class="sidebar-link" href="https://caraga-portal.dswd.gov.ph/dashboard/" target="_blank">
+                    <i class="align-middle" data-feather="grid"></i> <span class="align-middle">DSWD Caraga Portal</span>
+                </a>
+                <a class="sidebar-link" href="http://crg-kcapps-svr.entdswd.local/kc/" target="_blank">
+                    <i class="align-middle" data-feather="layout"></i> <span class="align-middle">KC Dashboard</span>
+                </a>
+            </li>
         </ul>
         <div class="sidebar-cta">
             <div class="sidebar-cta-content">
