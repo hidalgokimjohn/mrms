@@ -3070,7 +3070,7 @@ WHERE
             view_tbl_user_coverage.username,
             view_tbl_user_coverage.avatar_path
             FROM
-            view_tbl_user_coverage where view_tbl_user_coverage.status='active'
+            view_tbl_user_coverage where view_tbl_user_coverage.status='active' AND view_tbl_user_coverage.office_name='ACT'
             AND view_tbl_user_coverage.cycle_id='$cycle_id' AND view_tbl_user_coverage.area_id='$cadt_id'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {

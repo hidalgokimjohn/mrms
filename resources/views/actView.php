@@ -1,8 +1,9 @@
 <?php
 $area = $app->actView_areaInfo($_GET['cycle'], $_GET['area']);
 $progress = $app->areaProgress($_GET['cycle'], $_GET['area']);
+$sp = new \app\SubProject();
 ?>
-<div class="col-md-3 col-xl-10">
+<div class="col-sm-9 col-xl-10">
     <div class="row">
         <div class="col-12 col-md-6 col-lg-8">
             <div class="card">
@@ -11,7 +12,14 @@ $progress = $app->areaProgress($_GET['cycle'], $_GET['area']);
                     <div class="badge bg-primary my-2"><?php echo $area['year']; ?></div>
                     <div class="badge bg-success my-2 text-capitalize"><?php echo $area['batch'] . ' ' . $area['cycle_name']; ?></div>
                     <div class="badge bg-success my-2 text-capitalize"><?php echo $area['status']; ?></div>
-                    <p class="mb-2 font-weight-bold">Progress <span class="float-right"><?php echo $progress; ?>%</span>
+                    <h5 >Members</h5>
+                    <?php
+                    $av = $app->getACTMembers_avatar($_GET['cycle'], $_GET['area']);
+                    foreach ($av as $avatar) {
+                        echo '<img src="' . $avatar['avatar_path'] . '" class="rounded-circle mr-1" alt="' . $avatar['username'] . '" title="@' . $avatar['username'] . '" width="48" height="48">';
+                    }
+                    ?>
+                    <p class="mb-2 font-weight-bold mt-2">MOV Progress <span class="float-right"><?php echo $progress; ?>%</span>
                     </p>
                     <div class="progress progress-sm">
                         <div class="progress-bar progress-bar-striped" role="progressbar" aria-valuenow="100"
@@ -67,13 +75,69 @@ $progress = $app->areaProgress($_GET['cycle'], $_GET['area']);
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card">
                 <div class="card-body">
-                    <h5>Members</h5>
-                    <?php
-                    $av = $app->getACTMembers_avatar($_GET['cycle'], $_GET['area']);
-                    foreach ($av as $avatar) {
-                        echo '<img src="' . $avatar['avatar_path'] . '" class="rounded-circle mr-1" alt="' . $avatar['username'] . '" title="@' . $avatar['username'] . '" width="48" height="48">';
-                    }
-                    ?>
+                    <h5 class="card-title mb-0"><strong>Sub Project Implementation</strong><br><span><small>Data are based from Geotagging WebApp (updated weekly). <br>To update the data visit <a href="https://geotagging.dswd.gov.ph/" target="_blank">https://geotagging.dswd.gov.ph/</a></small></span></h5>
+                </div>
+                <div class="card-body pt-0">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-4">
+                                    <h3><?php echo $sp->total_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h3>
+                                    Total SPs
+                                </div>
+                                <div class="col-4">
+                                    <h3><?php echo $sp->ongoing_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h3>
+                                    On-going
+                                </div>
+                                <div class="col-4">
+                                    <h3><?php echo $sp->completed_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h3>
+                                    Completed
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body border-top">
+                    <h5 class="h3 card-title"><strong>Household Beneficiaries</strong></h5>
+                    <div class="row pt-1">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-3">
+                                    <h4><?php echo $sp->totalHH_target_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
+                                    Target
+                                </div>
+                                <div class="col-3">
+                                    <h4><?php echo $sp->totalHH_actual_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
+                                    Actual
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="card-body border-top">
+                    <h5 class="h3 card-title"><strong>Financial Information</strong></h5>
+                    <div class="row pt-1">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-6">
+                                    <h4 class="font-weight-bolder">PHP <?php echo $sp->final_grantMibf_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
+                                    Final Grant Amount MIBF
+                                </div>
+                                <div class="col-6">
+                                    <h4 class="font-weight-bolder">PHP <?php echo $sp->final_amntDownloaded_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
+                                    Final Amount Downloaded (BTF)
+                                </div>
+                                <div class="col-6 pt-2">
+                                    <h4 class="font-weight-bolder">PHP <?php echo $sp->final_LccDelivery_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
+                                    Final LCC Amount Delivery
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center bg-primary">
+                    <a href="home.php?p=act&amp;m=view_more&amp;cycle=14&amp;area=10" class="text-light">View more</a>
                 </div>
             </div>
             <div class="card">
