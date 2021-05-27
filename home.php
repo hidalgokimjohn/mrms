@@ -1,6 +1,7 @@
 <?php
 include_once('app/Database.php');
 include_once('app/App.php');
+include_once('app/SubProject.php');
 include_once('app/Auth.php');
 $app = new \app\App();
 $auth = new \app\Auth();
