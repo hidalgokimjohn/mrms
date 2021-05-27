@@ -285,8 +285,8 @@ $(document).ready(function () {
                 data: formData,
                 async: true,
                 cache: false,
-                contentType: false,
                 processData: false,
+                contentType: false,
                 xhr: function () {
                     var xhr = new window.XMLHttpRequest();
                     xhr.upload.addEventListener("progress", function (evt) {

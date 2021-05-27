@@ -61,7 +61,7 @@ $(document).ready(function () {
     var chart = new ApexCharts(document.querySelector("#chart"), options);
     $.ajax({
         url: "resources/ajax/getDqaStat.php",
-        type:'get',
+        type:'GET',
         dataType: 'json',
         success: function (data) {
             chart.render();
