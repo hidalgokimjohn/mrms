@@ -3614,5 +3614,28 @@ WHERE
 
     }
 
+    public function dashboard_dqa($modality,$version)
+    {
+        $mysql = $this->connectDatabase();
+        $q = "SELECT
+                COUNT(form_uploaded.file_id) as total_file,
+                SUM(case when form_uploaded.is_compliance = 'compliance' then 1 else 0 end) as compliance,
+                SUM(case when form_uploaded.is_reviewed = 'reviewed' then 1 else 0 end) as is_reviewed,
+                SUM(case when form_uploaded.with_findings = 'with findings' then 1 else 0 end) as with_findings
+                FROM
+                form_uploaded
+                INNER JOIN form_target ON form_target.ft_guid = form_uploaded.fk_ft_guid
+                INNER JOIN form_checklist ON form_checklist.fk_form_code = form_target.fk_form
+                WHERE form_checklist.`group`='$modality' AND form_checklist.version='$version' AND form_uploaded.is_deleted=0";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $row['is_reviewed'] = number_format($row['is_reviewed']/$row['total_file']*100,2);
+            $row['compliance'] = number_format($row['compliance']/$row['with_findings']*100,2);
 
+            $data[]= $row['is_reviewed'];
+            $data[]= $row['compliance'];
+            echo json_encode($data);
+        }
+    }
 }
