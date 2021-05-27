@@ -156,7 +156,7 @@
     <div class="col-sm-12 col-xl-3">
         <div class="card mb-3">
             <div class="card-header">
-                <strong>Data Quality Assessment <span class="badge bg-success float-right">Online</span></strong>
+                <strong>Data Quality Assessment <span class="badge bg-success float-right">IPCDD</span></strong>
                 <p><small>(F.Y 2021)</small></p>
             </div>
             <div class="card-body pt-0 pb-0">
