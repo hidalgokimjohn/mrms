@@ -116,7 +116,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
                                 ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
-                                ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
+                                ($_GET['m'] == 'upload') ? include( 'resources/views/upload.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
