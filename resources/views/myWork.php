@@ -146,7 +146,7 @@
                                         <th>Cycle</th>
                                         <th>Reviewed</th>
                                         <th>Findings</th>
-                                        <th>Complied</th>
+                                        <th>Compliance</th>
                                         <th>Uploading Status</th>
                                     </tr>
                                 </thead>
@@ -163,7 +163,7 @@
                                                 echo '<td>' . $item['reviewedOverActual'] . '%</td>';
 /*                                              echo '<td>'.$item['reviewed'].'/'.$item['actual'].'=<strong>'.$item['reviewedOverActual'].'</strong></td>';*/
                                                 echo '<td>' . $item['findings'] . '</td>';
-                                                echo '<td>' . $item['complied'] . ' / ' . $item['findings'] . '</td>';
+                                                echo '<td>' . $item['complied'] . ' / ' . $item['findings'] . ' = '.$item['complied_%'].'</td>';
                                                 echo '<td><strong>' . $item['uploadStatus'] . '</strong></td>';
                                                 echo '</tr>';
                                             }
