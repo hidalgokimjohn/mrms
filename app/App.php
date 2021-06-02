@@ -1734,6 +1734,12 @@ WHERE
                 $row['reviewedOverActual'] = number_format($row['reviewed'] / $row['actual'] * 100, 2);
                 $row['findings'] = $this->countFindingByUsername($row['cadt_id'], $row['fk_psgc_mun'], $row['cycle_id']);
                 $row['complied'] = $this->countCompliedByUsername($row['cadt_id'], $row['fk_psgc_mun'], $row['cycle_id']);
+                if($row['findings']){
+                    $row['complied_%'] = number_format($row['complied']/$row['findings'],2).'%';
+                }else{
+                    $row['complied_%']='0%';
+                }
+
                 $data[] = $row;
             }
             return $data;
@@ -1775,12 +1781,14 @@ WHERE
         FROM
         tbl_dqa_findings
         INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
-        WHERE (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[username]'
-        AND tbl_dqa_findings.is_deleted=0";
+        WHERE (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[id_number]'
+        AND tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.technical_advice is NULL";
         $result = $mysql->query($q);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
             return $row['countFinding'];
+        }else{
+            return  false;
         }
     }
 
@@ -1792,7 +1800,7 @@ WHERE
         FROM
         tbl_dqa_findings
         INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
-        WHERE (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[username]'
+        WHERE (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id2') AND form_target.fk_cycle='$cycle_id' AND tbl_dqa_findings.added_by='$_SESSION[id_number]'
         AND tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=1";
         $result = $mysql->query($q);
         if ($result->num_rows > 0) {
@@ -1880,7 +1888,6 @@ WHERE
             AND tbl_dqa_list.is_delete=0 
             AND tbl_dqa_list.fk_file_guid is not NULL
             AND tbl_dqa_list.is_reviewed='reviewed'
-            AND YEAR(tbl_dqa_list.created_at) = YEAR(now())
             AND tbl_dqa_list.in_hard_copy is NULL";
         $result = $mysql->query($q);
         if ($result->num_rows > 0) {
