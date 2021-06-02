@@ -1880,9 +1880,8 @@ WHERE
             AND tbl_dqa_list.is_delete=0 
             AND tbl_dqa_list.fk_file_guid is not NULL
             AND tbl_dqa_list.is_reviewed='reviewed'
-            AND DAYOFYEAR(tbl_dqa_list.created_at)=DAYOFYEAR(NOW()) 
             AND YEAR(tbl_dqa_list.created_at) = YEAR(now())
-            ";
+            AND tbl_dqa_list.in_hard_copy is NULL";
         $result = $mysql->query($q);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();

@@ -67,7 +67,7 @@
                             <div class="card-body h-100">
                                 <div class="row">
                                     <div class="col mt-0">
-                                        <h5 class="card-title">Findings Made</h5>
+                                        <h5 class="card-title">Findings</h5>
                                     </div>
                                     <div class="col-auto">
                                         <div class="avatar">
