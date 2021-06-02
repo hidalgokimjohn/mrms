@@ -75,7 +75,7 @@ $sp = new \app\SubProject();
         <div class="col-12 col-md-6 col-lg-4">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title mb-0"><strong>Sub Project Implementation</strong><br><span><small>Data are based from Geotagging WebApp (updated weekly). <br>To update the data visit <a href="https://geotagging.dswd.gov.ph/" target="_blank">https://geotagging.dswd.gov.ph/</a></small></span></h5>
+                    <h5 class="card-title mb-0"><strong>Sub Project Implementation </strong><br><span><small>GWA as of <?php echo date('M d, Y', strtotime($sp->last_update())); ?>. Data is based from Geotagging WebApp (updated weekly). <br>To update the data visit <a href="https://geotagging.dswd.gov.ph/" target="_blank">https://geotagging.dswd.gov.ph/</a> <br/></small></span></h5>
                 </div>
                 <div class="card-body pt-0">
                     <div class="row">
