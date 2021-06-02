@@ -168,4 +168,20 @@ class SubProject extends App
             return false;
         }
     }
+
+    public function last_update(){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+            MAX(tbl_kcdashboard_logs.date) as last_update
+            FROM
+            tbl_kcdashboard_logs
+            LIMIT 1";
+        $result = $mysql->query($q) or die ($mysql->error);
+        if($result->num_rows>0){
+            $row = $result->fetch_assoc();
+            return $row['last_update'];
+        }else{
+            return false;
+        }
+    }
 }
