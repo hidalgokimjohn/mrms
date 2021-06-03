@@ -18,6 +18,7 @@ echo '<br/>';
 echo '<pre>';*/
 /*echo '<pre>';
 ($app->act_tblDqa());*/
-echo $app->notif_findings();
-
+echo '<pre>';
+$app->createChecklist('ipcdd_drom','mc_23',$_GET['cadt_id'],$_GET['cycle_id']);
+echo '</pre>';
 ?>
