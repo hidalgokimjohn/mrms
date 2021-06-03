@@ -3263,7 +3263,7 @@ WHERE
             left JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
-            WHERE tbl_dqa.dqa_guid='$dqa_id' AND tbl_dqa_list.is_delete=0";
+            WHERE tbl_dqa.dqa_guid='$dqa_id' AND tbl_dqa_list.is_delete=0 AND form_uploaded.with_findings='with findings'";
 
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
