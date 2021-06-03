@@ -136,7 +136,7 @@
             <li class="sidebar-item <?php $app->sidebar_active('ceac_mngt', $_GET['p']); ?>">
                 <a data-target="#ceac-mngt" data-toggle="collapse"
                    class="sidebar-link <?php $app->sidebar_collapsed('ceac_mngt', $_GET['p']); ?>">
-                    <i class="align-middle" data-feather="slack"></i> <span class="align-middle">CEAC</span>
+                    <i class="align-middle" data-feather="slack"></i> <span class="align-middle">Change Target</span>
                 </a>
                 <ul id="ceac-mngt"
                     class="sidebar-dropdown list-unstyled collapse <?php $app->sidebar_showList('ceac_mngt', $_GET['p']); ?>"
