@@ -50,7 +50,7 @@ $(document).ready(function () {
             "targets": 0,
             "data": null,
             "render": function (data, type, row) {
-                return '<a href="home.php?p=ceac_mngt&m=edit_target&modality=ipcdd_drom&cadt_id='+data['fk_cadt']+'&cycle_id='+data['fk_cycles']+'">Set target</a>'
+                return '<a href="home.php?p=ceac_mngt&m=edit_target&modality=ipcdd_drom&cadt_id='+data['fk_cadt']+'&cycle_id='+data['fk_cycles']+'">Update target</a>'
             },
         },
             {
