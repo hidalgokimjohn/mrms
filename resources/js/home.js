@@ -880,7 +880,7 @@ $(document).ready(function () {
     $('#tbl_uploading_progress_ipcdd').DataTable({
         dom: 'B',
         order: [
-            [2, "desc"]
+            [1, "asc"]
         ],
         paging: false,
         initComplete: function () {
