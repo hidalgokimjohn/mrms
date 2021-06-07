@@ -893,6 +893,22 @@ $(document).ready(function () {
         }
         //fixedHeader: true,
     });
+    $('#tbl_by_brgy').DataTable({
+        dom: 'B',
+        order: [
+            [1, "asc"]
+        ],
+        paging: false,
+        initComplete: function () {
+            var btns = $('.btn');
+            var btns_group = $('.btn-group');
+            btns.addClass('btn btn-sm pull-right');
+            btns_group.addClass('float-right');
+            btns.removeClass('buttons-html5 btn-secondary');
+
+        }
+        //fixedHeader: true,
+    });
     $('#tbl_uploading_progress_af').DataTable({
         dom: '',
         paging: false,

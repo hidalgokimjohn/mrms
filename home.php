@@ -118,6 +118,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
                                 ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='by_brgy') ? include('resources/views/actView_rpmo_by_brgy.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
@@ -168,6 +169,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'act' && $_GET['m']=='main') ? include('resources/views/actMain.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='upload') ? include('resources/views/upload.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='by_brgy') ? include('resources/views/by_brgy.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='findings') ? include('resources/views/actDqa.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_dqa') ? include('resources/views/actDqaItems.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='nyu') ? include('resources/views/actNyu.php') : '';
