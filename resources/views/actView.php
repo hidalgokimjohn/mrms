@@ -27,6 +27,10 @@ $sp = new \app\SubProject();
                         </div>
                     </div>
                 </div>
+                <div class="m-3 mt-1">
+                    <a href="home.php?p=act&m=by_brgy&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-bars"></span> By Barangay</a>
+                    <a href="#" class="p-1"><span class="fa fa-users"></span> Set up members</a>
+                </div>
             </div>
             <div class="row">
                 <style type="text/css">
@@ -65,8 +69,6 @@ $sp = new \app\SubProject();
                                 </table>
                             </div>
                         </div>
-
-
                     <?php }
                 }
                 ?>
