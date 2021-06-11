@@ -2688,7 +2688,7 @@ WHERE
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             INNER JOIN lib_activity ON lib_form.fk_activity = lib_activity.id
-            WHERE (form_target.fk_psgc_mun = '$cadt_id' OR form_target.fk_cadt = '$cadt_id') AND form_target.fk_cycle = '$cycle_id' and lib_activity.id = '$activity_id'
+            WHERE (form_target.fk_psgc_mun = '$cadt_id' OR form_target.fk_cadt = '$cadt_id') AND form_target.fk_cycle = '$cycle_id' AND lib_activity.id = '$activity_id' AND form_target.target>0
             ORDER BY lib_form.form_name,lib_barangay.brgy_name ASC";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
@@ -3660,7 +3660,6 @@ WHERE
             $row = $result->fetch_assoc();
             $row['is_reviewed'] = number_format($row['is_reviewed'] / $row['total_file'] * 100, 2);
             $row['compliance'] = number_format($row['compliance'] / $row['with_findings'] * 100, 2);
-
             $data[] = $row['is_reviewed'];
             $data[] = $row['compliance'];
             echo json_encode($data);
@@ -3673,71 +3672,71 @@ WHERE
         $cycle = $mysql->real_escape_string($cycle);
         $cadt = $mysql->real_escape_string($cadt);
         $q = "SELECT
-	coalesce(concat('Brgy. ',`lib_barangay`.`brgy_name`),`lib_municipality`.`mun_name`,`lib_cadt`.`cadt_name`,'n/a') AS location, 
-	form_target.fk_cadt AS fk_cadt, 
-	form_target.fk_cycle AS fk_cycle, 
-	form_target.fk_psgc_mun AS fk_psgc_mun, 
-	form_target.fk_psgc_brgy AS fk_psgc_brgy, 
-	concat(`cycles`.`batch`,' ',`lib_cycle`.`cycle_name`) AS cycle_name,
-	format(((sum((case when (`lib_form`.`fk_activity` = 61) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 61) then `form_target`.`target` end))) * 100),1) AS `MDRRMC_TCM`,format(((sum((case when (`lib_form`.`fk_activity` = 62) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 62) then `form_target`.`target` end))) * 100),1) AS `MDRRMC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 63) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 63) then `form_target`.`target` end))) * 100),1) AS `SOC_Investigation`,format(((sum((case when (`lib_form`.`fk_activity` = 64) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 64) then `form_target`.`target` end))) * 100),1) AS `RACE_I`,format(((sum((case when (`lib_form`.`fk_activity` = 65) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 65) then `form_target`.`target` end))) * 100),1) AS `ICC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 66) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 66) then `form_target`.`target` end))) * 100),1) AS `BDRRMC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 67) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 67) then `form_target`.`target` end))) * 100),1) AS `MIAC_Tech`,format(((sum((case when (`lib_form`.`fk_activity` = 68) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 68) then `form_target`.`target` end))) * 100),1) AS `MIAC_TechIP`,format(((sum((case when (`lib_form`.`fk_activity` = 69) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 69) then `form_target`.`target` end))) * 100),1) AS `GRS`,format(((sum((case when (`lib_form`.`fk_activity` = 70) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 70) then `form_target`.`target` end))) * 100),1) AS `Finance_Training`,format(((sum((case when (`lib_form`.`fk_activity` = 71) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 71) then `form_target`.`target` end))) * 100),1) AS `Infra_Training`,format(((sum((case when (`lib_form`.`fk_activity` = 72) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 72) then `form_target`.`target` end))) * 100),1) AS `Proc_Training`,format(((sum((case when (`lib_form`.`fk_activity` = 73) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 73) then `form_target`.`target` end))) * 100),1) AS `CV_Profile`,format(((sum((case when (`lib_form`.`fk_activity` = 74) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 74) then `form_target`.`target` end))) * 100),1) AS `Opening_Bank`,format(((sum((case when (`lib_form`.`fk_activity` = 75) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 75) then `form_target`.`target` end))) * 100),1) AS `Proc_Act`,format(((sum((case when (`lib_form`.`fk_activity` = 76) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 76) then `form_target`.`target` end))) * 100),1) AS `SPI`,format(((sum((case when (`lib_form`.`fk_activity` = 77) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 77) then `form_target`.`target` end))) * 100),1) AS `ICC_BDRRMC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 78) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 78) then `form_target`.`target` end))) * 100),1) AS `Plan_OM`,format(((sum((case when (`lib_form`.`fk_activity` = 79) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 79) then `form_target`.`target` end))) * 100),1) AS `Reflection`,format(((sum((case when (`lib_form`.`fk_activity` = 80) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 80) then `form_target`.`target` end))) * 100),1) AS `AR`,format(((sum((case when (`lib_form`.`fk_activity` = 81) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 81) then `form_target`.`target` end))) * 100),1) AS `SUS_Plan`,format(((sum((case when (`lib_form`.`fk_activity` = 82) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 82) then `form_target`.`target` end))) * 100),1) AS `FA`,format(((sum((case when (`lib_form`.`fk_activity` = 83) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 83) then `form_target`.`target` end))) * 100),1) AS `Report_Liquidate`,format(((sum((case when (`lib_form`.`fk_activity` = 84) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 84) then `form_target`.`target` end))) * 100),1) AS `Closing_Accounts`,format(((sum(`form_target`.`actual`) / sum(`form_target`.`target`)) * 100),1) AS `overall`
-FROM
-	form_target
-	LEFT JOIN
-	lib_form
-	ON 
-		(
-			(
-				lib_form.form_code = form_target.fk_form
-			)
-		)
-	LEFT JOIN
-	lib_cadt
-	ON 
-		(
-			(
-				lib_cadt.id = form_target.fk_cadt
-			)
-		)
-	INNER JOIN
-	cycles
-	ON 
-		(
-			(
-				cycles.id = form_target.fk_cycle
-			)
-		)
-	INNER JOIN
-	lib_cycle
-	ON 
-		(
-			(
-				lib_cycle.id = cycles.fk_cycle
-			)
-		)
-	LEFT JOIN
-	lib_barangay
-	ON 
-		(
-			(
-				form_target.fk_psgc_brgy = lib_barangay.psgc_brgy
-			)
-		)
-	LEFT JOIN
-	lib_municipality
-	ON 
-		(
-			(
-				form_target.fk_psgc_mun = lib_municipality.psgc_mun
-			)
-		)
-WHERE
-	lib_form.form_type IN ('cadt','municipal','barangay') AND form_target.fk_cadt='$cadt' AND form_target.fk_cycle='$cycle'
-GROUP BY
-	form_target.fk_psgc_brgy, 
-	form_target.fk_psgc_mun, 
-	form_target.fk_cadt
-ORDER BY
-	lib_form.fk_activity ASC";
+                    coalesce(concat('Brgy. ',`lib_barangay`.`brgy_name`),`lib_municipality`.`mun_name`,`lib_cadt`.`cadt_name`,'n/a') AS location, 
+                    form_target.fk_cadt AS fk_cadt, 
+                    form_target.fk_cycle AS fk_cycle, 
+                    form_target.fk_psgc_mun AS fk_psgc_mun, 
+                    form_target.fk_psgc_brgy AS fk_psgc_brgy, 
+                    concat(`cycles`.`batch`,' ',`lib_cycle`.`cycle_name`) AS cycle_name,
+                    format(((sum((case when (`lib_form`.`fk_activity` = 61) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 61) then `form_target`.`target` end))) * 100),1) AS `MDRRMC_TCM`,format(((sum((case when (`lib_form`.`fk_activity` = 62) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 62) then `form_target`.`target` end))) * 100),1) AS `MDRRMC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 63) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 63) then `form_target`.`target` end))) * 100),1) AS `SOC_Investigation`,format(((sum((case when (`lib_form`.`fk_activity` = 64) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 64) then `form_target`.`target` end))) * 100),1) AS `RACE_I`,format(((sum((case when (`lib_form`.`fk_activity` = 65) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 65) then `form_target`.`target` end))) * 100),1) AS `ICC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 66) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 66) then `form_target`.`target` end))) * 100),1) AS `BDRRMC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 67) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 67) then `form_target`.`target` end))) * 100),1) AS `MIAC_Tech`,format(((sum((case when (`lib_form`.`fk_activity` = 68) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 68) then `form_target`.`target` end))) * 100),1) AS `MIAC_TechIP`,format(((sum((case when (`lib_form`.`fk_activity` = 69) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 69) then `form_target`.`target` end))) * 100),1) AS `GRS`,format(((sum((case when (`lib_form`.`fk_activity` = 70) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 70) then `form_target`.`target` end))) * 100),1) AS `Finance_Training`,format(((sum((case when (`lib_form`.`fk_activity` = 71) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 71) then `form_target`.`target` end))) * 100),1) AS `Infra_Training`,format(((sum((case when (`lib_form`.`fk_activity` = 72) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 72) then `form_target`.`target` end))) * 100),1) AS `Proc_Training`,format(((sum((case when (`lib_form`.`fk_activity` = 73) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 73) then `form_target`.`target` end))) * 100),1) AS `CV_Profile`,format(((sum((case when (`lib_form`.`fk_activity` = 74) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 74) then `form_target`.`target` end))) * 100),1) AS `Opening_Bank`,format(((sum((case when (`lib_form`.`fk_activity` = 75) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 75) then `form_target`.`target` end))) * 100),1) AS `Proc_Act`,format(((sum((case when (`lib_form`.`fk_activity` = 76) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 76) then `form_target`.`target` end))) * 100),1) AS `SPI`,format(((sum((case when (`lib_form`.`fk_activity` = 77) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 77) then `form_target`.`target` end))) * 100),1) AS `ICC_BDRRMC_Meeting`,format(((sum((case when (`lib_form`.`fk_activity` = 78) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 78) then `form_target`.`target` end))) * 100),1) AS `Plan_OM`,format(((sum((case when (`lib_form`.`fk_activity` = 79) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 79) then `form_target`.`target` end))) * 100),1) AS `Reflection`,format(((sum((case when (`lib_form`.`fk_activity` = 80) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 80) then `form_target`.`target` end))) * 100),1) AS `AR`,format(((sum((case when (`lib_form`.`fk_activity` = 81) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 81) then `form_target`.`target` end))) * 100),1) AS `SUS_Plan`,format(((sum((case when (`lib_form`.`fk_activity` = 82) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 82) then `form_target`.`target` end))) * 100),1) AS `FA`,format(((sum((case when (`lib_form`.`fk_activity` = 83) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 83) then `form_target`.`target` end))) * 100),1) AS `Report_Liquidate`,format(((sum((case when (`lib_form`.`fk_activity` = 84) then `form_target`.`actual` end)) / sum((case when (`lib_form`.`fk_activity` = 84) then `form_target`.`target` end))) * 100),1) AS `Closing_Accounts`,format(((sum(`form_target`.`actual`) / sum(`form_target`.`target`)) * 100),1) AS `overall`
+                FROM
+                    form_target
+                    LEFT JOIN
+                    lib_form
+                    ON 
+                        (
+                            (
+                                lib_form.form_code = form_target.fk_form
+                            )
+                        )
+                    LEFT JOIN
+                    lib_cadt
+                    ON 
+                        (
+                            (
+                                lib_cadt.id = form_target.fk_cadt
+                            )
+                        )
+                    INNER JOIN
+                    cycles
+                    ON 
+                        (
+                            (
+                                cycles.id = form_target.fk_cycle
+                            )
+                        )
+                    INNER JOIN
+                    lib_cycle
+                    ON 
+                        (
+                            (
+                                lib_cycle.id = cycles.fk_cycle
+                            )
+                        )
+                    LEFT JOIN
+                    lib_barangay
+                    ON 
+                        (
+                            (
+                                form_target.fk_psgc_brgy = lib_barangay.psgc_brgy
+                            )
+                        )
+                    LEFT JOIN
+                    lib_municipality
+                    ON 
+                        (
+                            (
+                                form_target.fk_psgc_mun = lib_municipality.psgc_mun
+                            )
+                        )
+                WHERE
+                    lib_form.form_type IN ('cadt','municipal','barangay') AND form_target.fk_cadt='$cadt' AND form_target.fk_cycle='$cycle'
+                GROUP BY
+                    form_target.fk_psgc_brgy, 
+                    form_target.fk_psgc_mun, 
+                    form_target.fk_cadt
+                ORDER BY
+                    lib_form.fk_activity ASC";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
