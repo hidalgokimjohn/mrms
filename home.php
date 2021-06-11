@@ -117,6 +117,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
                                 ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
                                 ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
+                                ($_GET['p'] == 'generate_findings') ? include('resources/views/generate_findings.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='by_brgy') ? include('resources/views/actView_rpmo_by_brgy.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
@@ -164,7 +165,17 @@ if (!$auth->loggedIn()) {
                             }
 
                             if($_SESSION['user_lvl']=='ACT'){
+                                echo '<div class="alert alert-primary alert-dismissible" role="alert">
+                                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                                            <div class="alert-icon">
+                                                <i class="far fa-fw fa-bell"></i>
+                                            </div>
+                                            <div class="alert-message">
+                                                <strong>Announcement!</strong> The uploading of SPCF under SPI activity has been moved to PDW. All the uploaded SPCF under SPI is now deleted, please consider uploading it again under PDW. Thank you!
+                                            </div>
+                                        </div>';
                                 echo '<div class="row">';
+                                
                                 include('resources/views/actMenu.php');
                                 ($_GET['p'] == 'act' && $_GET['m']=='main') ? include('resources/views/actMain.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='upload') ? include('resources/views/upload.php') : '';
@@ -235,6 +246,7 @@ if (!$auth->loggedIn()) {
 <!--End of Tawk.to Script-->
 <script src="resources/js/jquery-3.5.1.js"></script>
 <script src="resources/js/app.js"></script>
+
 <!-- 3rd Party Plugin-->
 <script src="//cdn.quilljs.com/1.3.6/quill.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
@@ -243,10 +255,22 @@ if (!$auth->loggedIn()) {
 <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.22/features/scrollResize/dataTables.scrollResize.min.js"></script>
 <script type="text/javascript" src="resources/node_modules/sweetalert/dist/sweetalert.min.js"></script>
 <!--Initialization-->
+<script type="text/javascript" src="resources/js/printThis.js"></script>
 <script type="text/javascript" src="vendor/PDFObject-master/pdfobject.min.js"></script>
 <script type="text/javascript" src="resources/js/dqa.js"></script>
 <script type="text/javascript" src="resources/js/home.js"></script>
 <script type="text/javascript" src="resources/js/ceac.js"></script>
 <script type="text/javascript" src="resources/js/search.js"></script>
 <script type="text/javascript" src="resources/js/apex.js"></script>
+<script>
+
+    $('#generate_findings').on("click", function () {
+        $('.generatedFindings').printThis({
+            importCSS: true,
+            importStyle: true,//thrown in for extra measure
+            loadCSS: "mrms/resources/css/app.css"
+        });
+    });
+
+</script>
 </html>
