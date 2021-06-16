@@ -1,29 +1,29 @@
-<h1 class="h3 mb-3">My Work</h1>
+<!--<h1 class="h3 mb-3">My Work</h1>-->
 <div class="row">
-    <div class="col-sm-3 col-xl-2">
-        <div class="card mb-3">
-            <div class="list-group list-group-flush" role="tablist">
-                <a class="list-group-item list-group-item-action <?php echo (isset($_GET['tab']) && $_GET['tab'] == 'main') ? 'active' : ''; ?>" data-toggle="list" href="#main" role="tab">
-                    Dashboard
-                </a>
-                <!--<a class="list-group-item list-group-item-action <?php /*echo (isset($_GET['tab']) && $_GET['tab'] == 'coverage') ? 'active' : ''; */?>" data-toggle="list" href="#coverage" role="tab">
-                    Coverage
-                </a>-->
-                <a class="list-group-item list-group-item-action" data-toggle="list" href="#reports" role="tab">
-                    Reports
-                </a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" href="#activity" role="tab">
-                    Activity Log
-                </a>
-                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account" role="tab">
-                    Account
-                </a>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-9 col-xl-10">
+<!--    <div class="col-sm-3 col-xl-2">-->
+<!--        <div class="card mb-3">-->
+<!--            <div class="list-group list-group-flush" role="tablist">-->
+<!--                <a class="list-group-item list-group-item-action --><?php //echo (isset($_GET['tab']) && $_GET['tab'] == 'main') ? 'active' : ''; ?><!--" data-toggle="list" href="#main" role="tab">-->
+<!--                    Dashboard-->
+<!--                </a>-->
+<!--                <a class="list-group-item list-group-item-action --><?php ///*echo (isset($_GET['tab']) && $_GET['tab'] == 'coverage') ? 'active' : ''; */?><!--" data-toggle="list" href="#coverage" role="tab">-->
+<!--                    Coverage-->
+<!--                </a>-->
+<!--                <a class="list-group-item list-group-item-action" data-toggle="list" href="#reports" role="tab">-->
+<!--                    Reports-->
+<!--                </a>-->
+<!--                <a class="list-group-item list-group-item-action" data-toggle="list" href="#activity" role="tab">-->
+<!--                    Activity Log-->
+<!--                </a>-->
+<!--                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account" role="tab">-->
+<!--                    Account-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <div class="col-sm-12 col-xl-12">
         <div class="tab-content">
-            <div class="tab-pane fade show <?php echo (isset($_GET['tab']) && $_GET['tab'] == 'main') ? 'active' : ''; ?>" id="main" role="tabpanel">
+            <div class="tab-pane fade show <?php echo (isset($_GET['m']) && $_GET['m'] == 'main') ? 'active' : ''; ?>" id="main" role="tabpanel">
                 <div class="row">
                     <div class="col-md-4 col-xl-4">
                         <div class="card">
@@ -158,7 +158,7 @@
                                         foreach ($userCoverage as $uc){
                                             foreach ($app->myWorkDashboard_ipcddDrom($uc['area_id'],$uc['cycle_id']) as $item) {
                                                 echo '<tr>';
-                                                echo '<td><a target="_blank" href="home.php?p=act&m=view_more&cycle='.$item['cycle_id'].'&area='.$item['cadt_id'].'">' . $item['cadt_name'] . '</a></td>';
+                                                echo '<td><a href="home.php?p=mywork&m=view_more&cycle='.$item['cycle_id'].'&area='.$item['cadt_id'].'">' . $item['cadt_name'] . '</a></td>';
                                                 echo '<td class="text-capitalize">' . $item['batch'].' - '. $item['cycle_name'] . '</td>';
                                                 echo '<td>' . $item['reviewedOverActual'] . '%</td>';
 /*                                              echo '<td>'.$item['reviewed'].'/'.$item['actual'].'=<strong>'.$item['reviewedOverActual'].'</strong></td>';*/
@@ -207,18 +207,18 @@
 
                 </div>
             </div>-->
-            <div class="tab-pane fade show <?php echo ($_GET['tab'] == 'reports') ? 'active' : ''; ?>" id="reports" role="tabpanel">
+            <!--<div class="tab-pane fade show <?php /*echo ($_GET['tab'] == 'reports') ? 'active' : ''; */?>" id="reports" role="tabpanel">
                 <div class="card mb-3">
                     <div class="card-body text-center">
                         <img src="resources/img/avatars/default.jpg" alt="Christina Mason" class="img-fluid rounded-circle mb-2" width="128" height="128" />
-                        <h5 class="card-title mb-0 text-capitalize"><?php echo strtolower($_SESSION['user_fullname']);
-                            ?></h5>
+                        <h5 class="card-title mb-0 text-capitalize"><?php /*echo strtolower($_SESSION['user_fullname']);
+                            */?></h5>
                         <div class="text-muted mb-2 text-capitalize">Monitoring & Evaluation Officer III</div>
                         <div class="text-muted mb-2 text-capitalize">16-10371</div>
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade show <?php echo ($_GET['tab'] == 'activity') ? 'active' : ''; ?>" id="activity" role="tabpanel">
+            <div class="tab-pane fade show <?php /*echo ($_GET['tab'] == 'activity') ? 'active' : ''; */?>" id="activity" role="tabpanel">
                 <div class="card mb-3">
                     <div class="card-body">
                         <ul class="timeline mt-2 mb-0">
@@ -251,16 +251,17 @@
                     </div>
                 </div>
             </div>
-            <div class="tab-pane fade show <?php echo ($_GET['tab'] == 'account') ? 'active' : ''; ?>" id="account" role="tabpanel">
+            <div class="tab-pane fade show <?php /*echo ($_GET['tab'] == 'account') ? 'active' : ''; */?>" id="account" role="tabpanel">
                 <div class="card mb-3">
                     <div class="card-body text-center">
                         <img src="resources/img/avatars/default.jpg" alt="Christina Mason" class="img-fluid rounded-circle mb-2" width="128" height="128" />
-                        <h5 class="card-title mb-0 text-capitalize"><?php echo strtolower($_SESSION['user_fullname']);
-                            ?></h5>
+                        <h5 class="card-title mb-0 text-capitalize"><?php /*echo strtolower($_SESSION['user_fullname']);
+                            */?></h5>
                         <div class="text-muted mb-2 text-capitalize">Monitoring & Evaluation Officer III</div>
                         <div class="text-muted mb-2 text-capitalize">16-10371</div>
                     </div>
                 </div>
             </div>
-        </div>
+        </div>-->
     </div>
+

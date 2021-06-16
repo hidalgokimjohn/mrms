@@ -214,6 +214,9 @@ class App
                 if ($_GET['p'] == 'mywork') {
                     $title = "My Work | MRMS";
                 }
+                if ($_GET['m'] == 'generate_findings') {
+                    $title = "Generate Findings | MRMS";
+                }
                 return $title;
                 break;
             case 'modules';
@@ -237,6 +240,7 @@ class App
                 }
                 return $title;
                 break;
+
             default:
                 return 'MRMS | Home';
                 break;

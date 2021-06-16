@@ -28,54 +28,45 @@ $sp = new \app\SubProject();
                     </div>
                 </div>
                 <div class="m-3 mt-1">
+                    <a href="home.php?p=mywork&m=view_more&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-arrow-left"></span> Back</a>
                     <a href="home.php?p=act&m=by_brgy&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-bars"></span> By Barangay</a>
                     <a href="#" class="p-1"><span class="fa fa-users"></span> Set up members</a>
-                    <a href="home.php?p=mywork&m=generate_findings&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-print"></span> Generate Findings</a>
+                    <a href="home.php?p=generate_findings&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-print"></span> Generate Findings</a>
                 </div>
             </div>
             <div class="row">
-                <style type="text/css">
-                    td a {
-                        display: block;
-                        color: #495057;
-                    }
-                </style>
+                <div class="col-xl-12">
+                    <button class="btn btn-success mb-3" id="generate_findings"><span class="fa fa-print"></span> Print</button>
+                    <button class="btn btn-success mb-3" onclick="Export()"><span class="fa fa-file-pdf"></span> PDF</button>
+                    <style type="text/css">
+                        table, thead, tbody,tr,td {
+                            border: 1px solid black;
+                            font-family: Calibri;
+                            font-size: 12px;
+                        }
+                    </style>
+                    <table id="generateFindings"class="table-bordered generatedFindings bg-white table-sm font-monospace text-dark" width="100%px;" style="border-collapse: collapse; width: 21cm; height: 29.7cm;">
+                        <thead>
+                        <tr>
+                            <td colspan="4" class="text-center font-weight-bold"><?php echo $area['area_name'].' '.$area['batch'].' '.$area['cycle_name']; ?></td>
+                        </tr>
+                        <tr CLASS="font-weight-bold">
+                            <td>Cadt/Mun/Barangay</td>
+                            <td>Form/Output</td>
+                            <td width="40%">Findings</td>
+                            <td>Status</td>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?php
 
-                <?php
-                $cat = $app->actCategoryProg($_GET['cycle'], $_GET['area']);
-                if ($cat) {
-                    foreach ($cat as $category) { ?>
-                        <div class="col-md-12 col-lg-12">
-                            <div class="card">
-                                <table class="table table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th colspan="2"><?php echo 'Stage ' . $category['stage_no']; ?><small><p
-                                                        title="<?php echo $category['category_name']; ?>"><?php echo ucwords($category['category_name']); ?></p>
-                                            </small></th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php
-                                    $activities = $app->actActivityProg($_GET['cycle'], $_GET['area'], $category['fk_category']);
-                                    if ($activities) {
-                                        foreach ($activities as $activity) {
-                                            echo '<tr>';
-                                            echo '<td><a href="#modalViewActivity" data-toggle="modal" data-cycle-id="' . $activity['fk_cycle'] . '" data-area-id="' . $activity['area_id'] . '" data-activity-id="' . $activity['id'] . '" data-activity-name="' . $activity['activity_name'] . '">' . $activity['activity_name'] . '</a></td>';
-                                            echo '<td><a href="#"><strong class="float-right">' . $activity['progress'] . '%</strong></a></td>';
-                                            echo '</tr>';
-                                        }
-                                    }
-                                    ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
+                        $dqa->generate_findings($_GET['area'],$_GET['cycle']);
 
+                        ?>
+                        </tbody>
+                    </table>
+                </div>
 
-                    <?php }
-                }
-                ?>
             </div>
         </div>
         <div class="col-12 col-md-6 col-lg-4">
