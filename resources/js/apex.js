@@ -59,7 +59,7 @@ $(document).ready(function () {
     };
 
     var chart = new ApexCharts(document.querySelector("#chart"), options);
-    $.ajax({
+    /*$.ajax({
         url: "resources/ajax/getDqaStat.php",
         type:'GET',
         dataType: 'json',
@@ -70,6 +70,6 @@ $(document).ready(function () {
             })
 
         }
-    });
+    });*/
 });
 

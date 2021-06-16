@@ -1,10 +1,12 @@
 <?php
 include_once('app/Database.php');
 include_once('app/App.php');
+include_once('app/DataQualityAssessment.php');
 include_once('app/SubProject.php');
 include_once('app/Auth.php');
 $app = new \app\App();
 $auth = new \app\Auth();
+$dqa = new \app\DataQualityAssessment();
 
 if (!$auth->loggedIn()) {
     header('location: index.php');
@@ -115,11 +117,12 @@ if (!$auth->loggedIn()) {
                             if($_SESSION['user_lvl']=='RPMO'){
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
-                                ($_GET['p'] == 'mywork') ? include('resources/views/myWork.php') : '';
-                                ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
-                                ($_GET['p'] == 'generate_findings') ? include('resources/views/generate_findings.php') : '';
-                                ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
+                                ($_GET['p'] == 'mywork' && $_GET['m']=='main') ? include('resources/views/myWork.php') : '';
+                                ($_GET['p'] == 'mywork' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='by_brgy') ? include('resources/views/actView_rpmo_by_brgy.php') : '';
+                                ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
+                                ($_GET['p'] == 'mywork' && $_GET['m']=='generate_findings') ? include('resources/views/generate_findings.php') : '';
+                                //($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileKcAf.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd.php') : '';
@@ -256,12 +259,31 @@ if (!$auth->loggedIn()) {
 <script type="text/javascript" src="resources/node_modules/sweetalert/dist/sweetalert.min.js"></script>
 <!--Initialization-->
 <script type="text/javascript" src="resources/js/printThis.js"></script>
+<script type="text/javascript" src="resources/js/jquery.rowspanizer.min.js"></script>
 <script type="text/javascript" src="vendor/PDFObject-master/pdfobject.min.js"></script>
 <script type="text/javascript" src="resources/js/dqa.js"></script>
 <script type="text/javascript" src="resources/js/home.js"></script>
 <script type="text/javascript" src="resources/js/ceac.js"></script>
 <script type="text/javascript" src="resources/js/search.js"></script>
 <script type="text/javascript" src="resources/js/apex.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.22/pdfmake.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+<script type="text/javascript">
+    function Export() {
+        html2canvas(document.getElementById('generateFindings'), {
+            onrendered: function (canvas) {
+                var data = canvas.toDataURL();
+                var docDefinition = {
+                    content: [{
+                        image: data,
+                        width: 500
+                    }]
+                };
+                pdfMake.createPdf(docDefinition).download("test.pdf");
+            }
+        });
+    }
+</script>
 <script>
 
     $('#generate_findings').on("click", function () {
@@ -271,6 +293,13 @@ if (!$auth->loggedIn()) {
             loadCSS: "mrms/resources/css/app.css"
         });
     });
+
+    $("#generateFindings").rowspanizer({
+
+        columns: [0,1]
+    });
+
+
 
 </script>
 </html>

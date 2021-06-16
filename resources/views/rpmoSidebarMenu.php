@@ -35,7 +35,7 @@
                 </ul>
             </li>
             <li class="sidebar-item <?php $app->sidebar_active('mywork', $_GET['p']); ?>">
-                <a class="sidebar-link" href="home.php?p=mywork&tab=main">
+                <a class="sidebar-link" href="home.php?p=mywork&m=main">
                     <i class="align-middle" data-feather="monitor"></i> <span class="align-middle">My Work</span>
                 </a>
             </li>

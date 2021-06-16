@@ -28,9 +28,11 @@ $sp = new \app\SubProject();
                     </div>
                 </div>
                 <div class="m-3 mt-1">
-                    <a href="home.php?p=act&m=view_more&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-arrow-left"></span> Back</a>
+                    <a href="home.php?p=mywork&m=view_more&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-arrow-left"></span> Back</a>
                     <a href="home.php?p=act&m=by_brgy&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-bars"></span> By Barangay</a>
                     <a href="#" class="p-1"><span class="fa fa-users"></span> Set up members</a>
+                    <a href="home.php?p=generate_findings&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-print"></span> Generate Findings</a>
+
                 </div>
             </div>
             <div class="row">
