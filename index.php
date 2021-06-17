@@ -20,7 +20,7 @@ if(!$_SESSION['mrms_auth']){
             'realm' => 'entdswd.local',
             'clientId' => 'kalahi-apps',
             'clientSecret' => '139995d3-fa97-4772-8bb8-b8680afc1334',
-            'redirectUri' => 'http://crg-kcapps-svr.entdswd.local/mrms/index.php'
+            'redirectUri' => 'https://crg-kcapps-svr.entdswd.local/mrms/index.php'
     ]);
 
     if (!isset($_GET['code'])) {
@@ -125,9 +125,6 @@ if(!$_SESSION['mrms_auth']){
         <div class="row vh-100">
             <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
                 <div class="d-table-cell align-middle">
-
-
-
                     <div class="card">
                         <div class="card-body">
                             <div class="m-sm-4">
@@ -135,7 +132,7 @@ if(!$_SESSION['mrms_auth']){
                                     <div class="text-center mt-4">
                                         <h1 class="h2">MOV Repository & Management System</h1>
                                         <p class="lead">
-                                            CARAGA | Kalahi-CIDSS <small>Beta 4.0</small>
+                                            CARAGA | Kalahi-CIDSS<!-- <small>Beta 4.0</small>-->
                                         </p>
                                     </div>
                                     <div class="mb-3 text-center">
@@ -164,7 +161,7 @@ if(!$_SESSION['mrms_auth']){
                                         </label>
                                     </div>-->
                                     <div class="text-center mt-3">
-                                        <!--<input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in"> or-->
+                                       <!-- <input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in"> or-->
                                         <a href="<?php echo $authUrl; ?>" class="btn btn-lg btn-success"><i data-feather="pinterest"></i> Login via Portal Account</a>
                                         <!-- <button type="submit" class="btn btn-lg btn-primary">Sign in</button> -->
                                     </div>
