@@ -1828,10 +1828,11 @@ WHERE
                 tbl_dqa_list.added_by = '$_SESSION[id_number]'
             AND (
                 form_target.fk_cadt = '$cadt_id'
-                OR form_target.fk_psgc_mun = '$cadt_id2'
+              
             )
             AND form_target.fk_cycle = '$cycle_id'
-            AND tbl_dqa_list.is_delete = 0";
+            AND tbl_dqa_list.is_delete = 0
+            AND tbl_dqa_list.is_reviewed=reviewed";
         $result = $mysql->query($q);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
