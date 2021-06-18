@@ -2371,7 +2371,7 @@ WHERE
     {
         $mysql = $this->connectDatabase();
         $id_number = $mysql->real_escape_string($id_number);
-        $q = "SELECT * FROM view_tbl_user_coverage where id_number='$id_number'";
+        $q = "SELECT * FROM view_tbl_user_coverage WHERE id_number='$id_number' group by area_id";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
