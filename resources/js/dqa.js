@@ -233,9 +233,9 @@ document.addEventListener("DOMContentLoaded", function () {
                 "data": null,
                 "render": function (data, type, row) {
                     if (data['original_filename'] !== null) {
-                        return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' +'http://apps2.caraga.dswd.gov.ph'+ data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="'+data['list_id']+'"><b>' + titleCase(data['original_filename']) + '</b></a>';
+                        return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' +data['host']+ data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="'+data['list_id']+'"><b>' + titleCase(data['original_filename']) + '</b></a>';
                     } else {
-                        return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' +'http://apps2.caraga.dswd.gov.ph'+ data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="'+data['list_id']+'"><strong class="text-danger">Not Yet Uploaded</strong></a>';
+                        return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' +data['host']+ data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="'+data['list_id']+'"><strong class="text-danger">Not Yet Uploaded</strong></a>';
                     }
                 },
             },
