@@ -1149,7 +1149,7 @@ document.addEventListener("DOMContentLoaded", function () {
             "targets": 1,
             "data": null,
             "render": function (data, type, row) {
-                return '<strong><a href="#modalReviewCompliance" data-toggle="modal" data-ft-guid="'+data['ft_guid']+'" data-file-path="'+data['file_path']+'" data-filename="'+data['original_filename']+'" data-parent-file-id="'+data['fk_file_guid']+'" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
+                return '<strong><a href="#modalReviewCompliance" data-toggle="modal" data-ft-guid="'+data['ft_guid']+'" data-file-path="'+data['host']+data['file_path']+'" data-filename="'+data['original_filename']+'" data-parent-file-id="'+data['fk_file_guid']+'" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
             },
         },{
             "targets": 2,
