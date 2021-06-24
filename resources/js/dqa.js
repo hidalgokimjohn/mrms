@@ -1233,6 +1233,8 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         };
         modalReviewCompliance.addEventListener('show.bs.modal', function (e) {
+            $('.spinner-border').prop('hidden',false);
+            $("#displayFindings").html('');
             fileName = $(e.relatedTarget).data('filename');
             fileId = $(e.relatedTarget).data('file-id');
             var parent_fileId = $(e.relatedTarget).data('parent-file-id');
@@ -1250,12 +1252,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 dataType: 'html',
                 success: function (data) {
-                    $("#displayFindings").html('');
+                    $('.spinner-border').prop('hidden',true);
                     $("#displayFindings").html(data);
                 }
             });
 
         });
+        modalReviewCompliance.addEventListener('hidden.bs.modal', function (e) {
+          
+        });
+
     }
 
     //DQA REVIEW COMPLIANCE END
