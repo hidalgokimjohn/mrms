@@ -6,8 +6,6 @@ include_once "../../app/Auth.php";
 $auth = new \app\Auth();
 $app = new \app\App();
 $d = $app->fileHistory($_POST['form_id']);
-echo '<h4 class="">Compliance</h4>';
-
 
 if($d){
     echo '<ul class="timeline mt-2 mb-0">';
