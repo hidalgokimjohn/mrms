@@ -8,7 +8,7 @@ $app = new \app\App();
 
     $displayFindings = $app->displayFindings($_POST['file_id'],$_POST['ft_guid']);
     if (!empty($displayFindings)) {
-        echo '<h3>Findings</h3>';
+
         foreach ($displayFindings as $displayFinding) {
             $today = date("Y-m-d");
             $date1 = date("Y-m-d", strtotime($displayFinding['created_at']));
@@ -18,7 +18,7 @@ $app = new \app\App();
             $months = floor(($diff - $years * 365 * 60 * 60 * 24) / (30 * 60 * 60 * 24));
             $days = floor(($diff - $years * 365 * 60 * 60 * 24 - $months * 30 * 60 * 60 * 24) / (60 * 60 * 24));
             if($displayFinding['is_checked']==0 && $displayFinding['added_by']==$_SESSION['id_number']){
-                $btnRemove = '<a class="btn btn-outline-danger" href="#" id="removeFinding" data-finding-id="'.$displayFinding['findings_guid'].'">Remove</a>';
+                $btnRemove = '<a class="btn btn-outline-danger" href="#" id="removeFinding" data-file-id="'.$displayFinding['fk_file_guid'].'" data-finding-id="'.$displayFinding['findings_guid'].'">Remove</a>';
             }else{
                 $btnRemove = '';
             }
