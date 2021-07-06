@@ -1,0 +1,268 @@
+<div class="container-fluid p-0">
+    <div class="row">
+        <div class="col-md-4 col-xl-3">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Profile Details</h5>
+                </div>
+                <div class="card-body text-center">
+                    <img src="<?php echo strtolower($_SESSION['avatar_path']); ?>" alt="Christina Mason" class="img-fluid rounded-circle mb-2" width="128" height="128" />
+                    <h5 class="card-title mb-0 text-capitalize"><?php echo strtolower($_SESSION['user_fullname']); ?></h5>
+                    <div class="text-muted mb-2 text-capitalize"><?php echo strtolower($_SESSION['user_position_desc']); ?></div>
+                    <div>
+                        <a class="btn btn-primary btn-sm" href="#">Follow</a>
+                        <a class="btn btn-primary btn-sm" href="#"><span data-feather="message-square"></span> Message</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-8 col-xl-9">
+            <div class="row">
+                <div class="col-md-4 col-xl-4">
+                    <div class="card">
+                        <div class="card-body h-100">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Reviewed</h5>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-primary-light">
+                                            <i class="align-middle" data-feather="file-text"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">
+                                <?php
+                                echo $dqa->totalReviewed($_SESSION['id_number']);
+                                ?>
+                            </h1>
+                            <div class="mb-0">
+                                    <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
+                                        <?php
+                                        //thisDayReviewedByUsername
+                                        echo $dqa->totalReviewedThisWeek($_SESSION['id_number'],'active');
+                                        ?> </span>
+                                <span class="text-muted">This week,</span>
+                                <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
+                                        <?php
+                                        //thisDayReviewedByUsername
+                                        echo $dqa->totalReviewedThisDay($_SESSION['id_number'],'active');
+                                        ?> </span>
+                                <span class="text-muted">Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xl-4">
+                    <div class="card">
+                        <div class="card-body h-100">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Findings</h5>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-primary-light">
+                                            <i class="align-middle" data-feather="file-minus"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">
+                                <?php
+                                echo $dqa->totalFindings($_SESSION['id_number'],'active');
+                                ?>
+                            </h1>
+                            <div class="mb-0">
+                                    <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
+                                        <?php
+                                        //thisDayReviewedByUsername
+                                        echo $dqa->totalFindingsThisWeek($_SESSION['id_number'],'active');
+                                        ?> </span>
+                                <span class="text-muted">This week,</span>
+                                <span class="text-success"> <i class="mdi m di-arrow-bottom-right"></i>
+                                        <?php
+                                        //thisDayReviewedByUsername
+                                        echo $dqa->totalFindingsThisDay($_SESSION['id_number'],'active');
+                                        ?> </span>
+                                <span class="text-muted">Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-xl-4">
+                    <div class="card">
+                        <div class="card-body h-100">
+                            <div class="row">
+                                <div class="col mt-0">
+                                    <h5 class="card-title">Technical Advice</h5>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="avatar">
+                                        <div class="avatar-title rounded-circle bg-primary-light">
+                                            <i class="align-middle" data-feather="info"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <h1 class="mt-1 mb-3">
+                                <?php
+                                echo $dqa->totalTA($_SESSION['id_number'],'active');
+                                ?>
+                            </h1>
+                            <div class="mb-0">
+                                    <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
+                                        <?php
+                                        echo $dqa->totalTAThisWeek($_SESSION['id_number'],'active');
+                                        ?> </span>
+                                <span class="text-muted">This week,</span>
+                                <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
+                                        <?php
+                                        echo $dqa->totalTAThisDay($_SESSION['id_number'],'active');
+                                        ?> </span>
+                                <span class="text-muted">Today</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card mb-3">
+                        <div class="table-responsive">
+                            <table id="tbl_dqa_user_list" class="table table-striped table-hover" style="width:100%">
+                                <thead>
+                                <tr class="border-bottom-0">
+                                    <th>Status</th>
+                                    <th>Filename</th>
+                                    <th>Form/Output</th>
+                                    <th>Mun/Barangay</th>
+                                    <th>Cycle</th>
+                                    <th>Date reviewed</th>
+                                </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</div>
+<div class="modal fade" id="modalViewFile" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-xxl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title file-name text-uppercase"></h4>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body m-3">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <form method="post" class="g-3 needs-validation" novalidate id="submitFinding">
+                                    <label for="choicesFinding" class="form-label">With Findings?</label>
+                                    <select id="choicesFinding" class="form-control choices-findings"
+                                            name="withFindings">
+                                        <option value="">Select Options</option>
+                                        <option value="yes">Yes</option>
+                                        <option value="no">No</option>
+                                        <option value="ta">Give TA</option>
+                                    </select>
+                                    <label for="choicesTypeOfFindings" class="form-label">Type of Findings</label>
+                                    <select id="choicesTypeOfFindings" class="form-control choices-type-of-findings"
+                                            name="typeOfFindings">
+                                        <option value="">Select Options</option>
+                                        <?php
+                                        foreach ($app->getTypeOfFindings() as $options) {
+                                            echo '<option value="' . $options['id'] . '" class="text-capitalize">' . strtoupper($options['findings_type']) . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                    <label for="text_findings">Findings/TA</label>
+                                    <textarea name="textFindings" id="text_findings" class="form-control"
+                                              required></textarea>
+                                    <br>
+                                    <label for="responsiblePerson" class="form-label">Responsible Person</label>
+                                    <select id="responsiblePerson" class="form-control choices-staff"
+                                            name="responsiblePerson">
+                                        <option value="">Select Staff</option>
+                                        <?php
+                                        foreach ($app->getActUser() as $act) {
+                                            echo '<option class="text-capitalize" value="' . $act['id_number'] . '">' . ucwords(strtolower($act['fname'] . ' ' . $act['mname'] . ' ' . $act['lname'])) . '</option>';
+                                        }
+                                        ?>
+                                    </select>
+                                    <label class="form-label">Date of Compliance</label>
+                                    <input type="text" name="dateOfCompliance" class="form-control flatpickr-minimum"
+                                           id="dateOfCompliance" placeholder="Select date.." required>
+                                    <br>
+                                    <label for="dqaLevel" class="form-label">DQA Level</label>
+                                    <select id="dqaLevel" class="form-control choices-dqa-level" name="dqaLevel">
+                                        <option value="">Select Options</option>
+                                        <option value="field office">Field Office</option>
+                                        <option value="field act">Field (ACT)</option>
+                                    </select>
+                                    <button class="btn btn-primary" type="submit" id="btnSubmitFinding"><span
+                                                class="fa fa-save"></span> Submit
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id="pdf" class="mb-3 bg-light">
+
+                                </div>
+                                <h3>Findings</h3>
+                                <div class="loading-screen">
+                                    <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100 p-3">
+                                        <div class="d-table-cell align-middle">
+                                            <div class="text-center">
+                                                <div class="spinner-border text-primary mr-2" role="status">
+                                                    <span class="sr-only">Loading...</span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="displayFindings">
+
+                                </div>
+                            </div>
+                        </div>
+                        <!-- <div class="col-sm-12">
+                             <div class="card">
+                                 <div class="card-header">
+                                     Findings
+                                 </div>
+
+                             </div>
+                         </div>-->
+                    </div>
+                    <!--<div class="col-sm-2">
+                        <div class="card">
+                            <div class="card-header">
+                                <h3>Related files</h3>
+                            </div>
+                            <div class="list-group list-group-flush" role="tablist" id="relatedFiles">
+
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
