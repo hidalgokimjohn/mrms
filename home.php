@@ -83,7 +83,7 @@ if (!$auth->loggedIn()) {
                                     class="text-dark text-capitalize"><?php echo strtolower($_SESSION['user_fullname']); ?></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right">
-                            <a class="dropdown-item" href="#"><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
+                            <a class="dropdown-item" href="home.php?p=user_profile"><i class="align-middle mr-1" data-feather="user"></i> Profile</a>
                             <a class="dropdown-item" href="#"><i class="align-middle mr-1" data-feather="pie-chart"></i> Analytics</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" href="#"><i class="align-middle mr-1" data-feather="settings"></i> Settings & Privacy</a>
@@ -117,8 +117,11 @@ if (!$auth->loggedIn()) {
                             if($_SESSION['user_lvl']=='RPMO'){
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
+                                ($_GET['p'] == 'user_profile') ? include('resources/views/userProfile.php') : '';
                                 ($_GET['p'] == 'mywork' && $_GET['m']=='main') ? include('resources/views/myWork.php') : '';
-                                ($_GET['p'] == 'mywork' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
+                                ($_GET['p'] == 'mywork' && $_GET['m']=='view_area') ? include('resources/views/view_area_rpmo_lvl.php') : '';
+                                ($_GET['p'] == 'mywork' && $_GET['m']=='view_activity') ? include('resources/views/view_activity_rpmo_lvl.php') : '';
+                                //($_GET['p'] == 'mywork' && $_GET['m']=='view_more') ? include('resources/views/actView_rpmo.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='by_brgy') ? include('resources/views/actView_rpmo_by_brgy.php') : '';
                                 ($_GET['p'] == 'upload') ? include( 'resources/views/upload.php') : '';
                                 ($_GET['p'] == 'mywork' && $_GET['m']=='generate_findings') ? include('resources/views/generate_findings.php') : '';
@@ -162,13 +165,13 @@ if (!$auth->loggedIn()) {
                                                     </nav>
                                                 </div>
                                             </div>';*/
-                                    include('resources/views/tblDqa.php');
+                                    include('resources/views/tbl_dqa_user_list.php');
                                 }
 
                             }
 
                             if($_SESSION['user_lvl']=='ACT'){
-                                echo '<div class="alert alert-primary alert-dismissible" role="alert">
+                               /* echo '<div class="alert alert-primary alert-dismissible" role="alert">
                                             <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
                                             <div class="alert-icon">
                                                 <i class="far fa-fw fa-bell"></i>
@@ -176,7 +179,7 @@ if (!$auth->loggedIn()) {
                                             <div class="alert-message">
                                                 <strong>Announcement!</strong> The uploading of SPCF under SPI activity has been moved to PDW. All the uploaded SPCF under SPI is now deleted, please consider uploading it again under PDW. Thank you!
                                             </div>
-                                        </div>';
+                                        </div>';*/
                                 echo '<div class="row">';
                                 
                                 include('resources/views/actMenu.php');
@@ -185,7 +188,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_more') ? include('resources/views/actView.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='by_brgy') ? include('resources/views/by_brgy.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='findings') ? include('resources/views/actDqa.php') : '';
-                                ($_GET['p'] == 'act' && $_GET['m']=='view_dqa') ? include('resources/views/actDqaItems.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='view_dqa') ? include('resources/views/actFindings.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='nyu') ? include('resources/views/actNyu.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp_act.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileAf_act.php') : '';
@@ -256,7 +259,7 @@ if (!$auth->loggedIn()) {
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/jszip-2.5.0/dt-1.10.23/af-2.3.5/b-1.6.5/b-colvis-1.6.5/b-flash-1.6.5/b-html5-1.6.5/b-print-1.6.5/cr-1.5.3/fc-3.3.2/fh-3.1.7/kt-2.5.3/r-2.2.7/rg-1.1.2/rr-1.2.7/sc-2.0.3/sb-1.0.1/sp-1.2.2/sl-1.3.1/datatables.min.js"></script>
 <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.22/features/scrollResize/dataTables.scrollResize.min.js"></script>
-<script type="text/javascript" src="resources/node_modules/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <!--Initialization-->
 <script type="text/javascript" src="resources/js/printThis.js"></script>
 <script type="text/javascript" src="resources/js/jquery.rowspanizer.min.js"></script>

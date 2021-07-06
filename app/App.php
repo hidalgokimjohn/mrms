@@ -150,7 +150,7 @@ class App
 
                 if (isset($_GET['p'])) {
                     $title = 'Search - ';
-                    if ($_GET['modality'] == 'ipcdd_drom') {
+                    if ($_GET['modality'] == 'ipcdd_drom')   {
                         $title .= "IPCDD DROM";
                     }
                     if ($_GET['modality'] == 'ncddp_drom') {
@@ -212,11 +212,22 @@ class App
                 break;
             case 'mywork';
                 if ($_GET['p'] == 'mywork') {
-                    $title = "My Work | MRMS";
+                    $title = "DQA Detailed Summary | MRMS";
                 }
                 if ($_GET['m'] == 'generate_findings') {
-                    $title = "Generate Findings | MRMS";
+                    $area_info = $this->actView_areaInfo($_GET['cycle'], $_GET['area']);
+                    $title = "Findings on ".$area_info['area_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'] . " | MRMS";
                 }
+                if ($_GET['m'] == 'view_area') {
+                    $area_info = $this->actView_areaInfo($_GET['cycle'], $_GET['area']);
+                    $title = $area_info['area_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'] . " | MRMS";
+                }
+
+                if ($_GET['m'] == 'view_activity') {
+                    $area_info = $this->actView_areaInfo($_GET['cycle'], $_GET['area']);
+                    $title = $area_info['area_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'] . " | MRMS";
+                }
+
                 return $title;
                 break;
             case 'modules';
@@ -990,42 +1001,17 @@ WHERE
         }
     }
 
-    public function submitNoFinding()
-    {
-        $mysql = $this->connectDatabase();
-        $listId = $_GET['list_id'];
 
-        if ($_GET['file_name'] == 'Not Yet Uploaded') {
-            //NYU stands for Not Yet Uploaded
-            echo 'notYetUploaded_';
-        } else {
-            //check if file has previous findings (not complied)
-            if (!$this->checkPreviousFindings()) {
-                //if no previous findings set no finding.
-                $fileId = $_GET['file_id'];
-                $q = "UPDATE `form_uploaded` SET `with_findings`='no findings', `is_reviewed`='reviewed',`date_reviewed`=NOW() WHERE (`file_id`='$fileId') LIMIT 1";
-                $result = $mysql->query($q) or die($mysql->error);
-                if ($mysql->affected_rows > 0) {
-                    $listUpdate = "UPDATE `tbl_dqa_list` SET `is_reviewed`='reviewed',`date_reviewed`=NOW() WHERE (`id`='$listId') LIMIT 1";
-                    $mysql->query($listUpdate);
-                    return true;
-                }
-                return true;
-            } else {
-                echo 'hasPreviousFindings_';
-            }
-        }
-    }
 
     public function checkPreviousFindings()
     {
         $mysql = $this->connectDatabase();
-        $fk_ft_guid = $_GET['ft_guid'];
+        $file_id = $_GET['file_id'];
         $q = "SELECT
-            tbl_dqa_findings.fk_ft_guid
+            tbl_dqa_findings.fk_file_guid
             FROM
             tbl_dqa_findings
-            WHERE fk_ft_guid='$fk_ft_guid' AND is_checked=0 AND is_deleted=0";
+            WHERE fk_file_guid='$file_id' AND is_checked=0 AND is_deleted=0";
         $result = $mysql->query($q) or die($mysql->error);
         if ($mysql->affected_rows > 0) {
             return true;
@@ -1034,86 +1020,8 @@ WHERE
         }
     }
 
-    public function submitWithFinding()
-    {
-        $mysql = $this->connectDatabase();
-        $finding_guid = $this->v4();
-        $fk_ft_guid = $_GET['ft_guid'];
-        $fk_dqa_guid = $_GET['dqa_id'];
-        $fileId = $_GET['file_id'];
-        $listId = $_GET['list_id'];
-        $textFindings = $mysql->real_escape_string($_POST['textFindings']);
-        $responsiblePerson = $_POST['responsiblePerson'];
-        $typeOfFindings = $_POST['typeOfFindings'];
-        $dateOfCompliance = $_POST['dateOfCompliance'];
-        $addedBy = $_SESSION['id_number'];
-        $dqaLevel = $_POST['dqaLevel'];
-        $q = "";
-        if ($_GET['file_name'] == 'Not Yet Uploaded') {
-            $q = "INSERT INTO `tbl_dqa_findings` (`findings_guid`, `fk_ft_guid`, `fk_dqa_guid`, `fk_findings`, `findings`, `responsible_person`, `is_deleted`, `created_at`, `is_checked`, `added_by`, `dqa_level`, `deadline_for_compliance`) VALUES ('$finding_guid', '$fk_ft_guid', '$fk_dqa_guid', '$typeOfFindings', '$textFindings', '$responsiblePerson', '0', NOW(), '0', '$addedBy', '$dqaLevel', '$dateOfCompliance')";
-            $result = $mysql->query($q) or die($mysql->error);
-            if ($mysql->affected_rows > 0) {
-                $listUpdate = "UPDATE `tbl_dqa_list` SET `is_reviewed`='reviewed',`in_hard_copy`='yes',`date_reviewed`=NOW() WHERE (`id`='$listId') LIMIT 1";
-                $resultFileUpdate = $mysql->query($listUpdate) or die($mysql->error);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            $q = "INSERT INTO `tbl_dqa_findings` (`findings_guid`, `fk_ft_guid`, `fk_dqa_guid`, `fk_findings`, `findings`, `responsible_person`, `is_deleted`, `created_at`, `is_checked`, `added_by`, `dqa_level`, `deadline_for_compliance`,`fk_file_guid`) VALUES ('$finding_guid', '$fk_ft_guid', '$fk_dqa_guid', '$typeOfFindings', '$textFindings', '$responsiblePerson', '0', NOW(), '0', '$addedBy', '$dqaLevel', '$dateOfCompliance','$fileId')";
-            //Update file status
-            $result = $mysql->query($q) or die($mysql->error);
-            if ($mysql->affected_rows > 0) {
-                $listUpdate = "UPDATE `tbl_dqa_list` SET `is_reviewed`='reviewed',`date_reviewed`=NOW() WHERE (`id`='$listId') LIMIT 1";
-                $resultFileUpdate = $mysql->query($listUpdate) or die($mysql->error);
-                $fileUpdate = "UPDATE `form_uploaded` SET `with_findings`='with findings', `is_reviewed`='reviewed', `date_reviewed`=NOW() WHERE (`file_id`='$fileId') LIMIT 1";
-                $mysql->query($fileUpdate) or die($mysql->error);
-                return true;
-            } else {
-                return false;
-            }
-        }
-    }
 
-    public function submitGiveTa()
-    {
-        $mysql = $this->connectDatabase();
-        $mysql = $this->connectDatabase();
-        $finding_guid = $this->v4();
-        $fk_ft_guid = $_GET['ft_guid'];
-        $fk_dqa_guid = $_GET['dqa_id'];
-        $fileId = $_GET['file_id'];
-        $textFindings = $_POST['textFindings'];
-        $listId = $_GET['list_id'];
-        $addedBy = $_SESSION['id_number'];
-        $dqaLevel = $_POST['dqaLevel'];
-        $q = "";
-        if ($_GET['file_name'] == 'Not Yet Uploaded') {
-            $q = "INSERT INTO `tbl_dqa_findings` (`findings_guid`, `fk_ft_guid`, `fk_dqa_guid`,`findings`, `is_deleted`, `created_at`, `added_by`, `dqa_level`,`technical_advice`) VALUES ('$finding_guid', '$fk_ft_guid', '$fk_dqa_guid', '$textFindings', '0',NOW(),'$addedBy','$dqaLevel','technical advice')";
-            $result = $mysql->query($q) or die($mysql->error);
-            if ($mysql->affected_rows > 0) {
-                $listUpdate = "UPDATE `tbl_dqa_list` SET `is_reviewed`='reviewed',`date_reviewed`=NOW() WHERE (`id`='$listId') LIMIT 1";
-                $mysql->query($listUpdate);
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            $q = "INSERT INTO `tbl_dqa_findings` (`findings_guid`, `fk_ft_guid`, `fk_dqa_guid`, `findings`, `is_deleted`, `created_at`, `added_by`,`fk_file_guid`,`dqa_level`,`technical_advice`) VALUES ('$finding_guid', '$fk_ft_guid', '$fk_dqa_guid', '$textFindings', '0', NOW(), '$addedBy','$fileId','$dqaLevel','technical advice')";
-            //Update file status
-            $result = $mysql->query($q) or die($mysql->error);
-            if ($mysql->affected_rows > 0) {
-                // $fileUpdate = "UPDATE `form_uploaded` SET `is_reviewed`='reviewed', `date_reviewed`=NOW() WHERE (`file_id`='$fileId') LIMIT 1";
-                // $resultFileUpdate = $mysql->query($fileUpdate) or die($mysql->error);
-                $listUpdate = "UPDATE `tbl_dqa_list` SET `is_reviewed`='reviewed',`date_reviewed`=NOW() WHERE (`id`='$listId') LIMIT 1";
-                $mysql->query($listUpdate);
-                return true;
-            } else {
-                return false;
-            }
-        }
-        return true;
-    }
+
 
     public function displayFindings($fileId, $ft_guid)
     {
@@ -1128,7 +1036,8 @@ WHERE
         tbl_dqa_findings.date_complied,
         tbl_dqa_findings.added_by,
         tbl_dqa_findings.findings_guid,
-        tbl_dqa_findings.technical_advice
+        tbl_dqa_findings.technical_advice,
+        tbl_dqa_findings.fk_file_guid
         FROM
         tbl_dqa_findings
         WHERE  (fk_ft_guid='$ft_guid' AND fk_file_guid='$fileId') AND is_deleted=0
@@ -1216,17 +1125,7 @@ WHERE
         }
     }
 
-    public function removeFinding($id)
-    {
-        $mysql = $this->connectDatabase();
-        $q = "UPDATE `tbl_dqa_findings` SET `is_deleted`='1' WHERE (`findings_guid`='$id') LIMIT 1";
-        $result = $mysql->query($q) or die($mysql->error);
-        if ($mysql->affected_rows > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
+
 
     public function noFindings($fileId)
     {
@@ -1828,7 +1727,6 @@ WHERE
                 tbl_dqa_list.added_by = '$_SESSION[id_number]'
             AND (
                 form_target.fk_cadt = '$cadt_id'
-              
             )
             AND form_target.fk_cycle = '$cycle_id'
             AND tbl_dqa_list.is_delete = 0
@@ -2835,14 +2733,14 @@ WHERE
     {
         $fileName = basename($_FILES['fileToUpload']['name']);
         $extension = pathinfo($fileName, PATHINFO_EXTENSION);
-        $fk_ft = $_GET['form_id'];
+
 
         $date = new \DateTime();
         $mysql = $this->connectDatabase();
         $uniqueFileName = uniqid($date->getTimestamp(), false) . "." . $extension;
         $file_id = $this->v4();
         $rp_id = $mysql->real_escape_string($_GET['rp_id']);
-
+        $fk_ft = $mysql->real_escape_string($_GET['form_id']);
         if ($this->check_modality($fk_ft) == 'ncddp_drom') {
             $dir = '../../storage/ncddp_drom_2020/';
             $mov_path = '/mrms/storage/ncddp_drom_2020/' . $uniqueFileName;
@@ -2870,8 +2768,14 @@ WHERE
             $q->bind_param('sssssss', $file_id, $fk_ft, $fileName, $uniqueFileName, $mov_path, $_SESSION['id_number'], $rp_id);
             $q->execute();
             if ($q->affected_rows > 0) {
-                //if ($this->update_count($fk_ft) && $this->set_canUpload($fk_ft))
-                echo 'uploaded';
+                //insert to compliance table
+                $file_id_with_findings = $mysql->real_escape_string($_GET['file_id']);
+                $q2="INSERT INTO `tbl_dqa_compliance`(`file_with_findings`, `file_compliance`, `created_date`, `id_number`, `fk_ft_guid`) 
+                VALUES ('$file_id_with_findings', '$file_id', NOW(), '$rp_id', '$fk_ft')";
+                $result2 = $mysql->query($q2) or die($mysql->error);
+                if($mysql->affected_rows>0){
+                    echo 'uploaded';
+                }
             } else {
                 echo 'Something went upon saving';
             }
@@ -2953,7 +2857,8 @@ WHERE
                     'n/a'
                 ) AS area,
             form_uploaded.host,
-            form_uploaded.date_uploaded
+            form_uploaded.date_uploaded,
+            form_target.ft_guid
             FROM
             form_target
             LEFT JOIN form_uploaded ON form_uploaded.fk_ft_guid = form_target.ft_guid
@@ -2966,7 +2871,7 @@ WHERE
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             WHERE lib_activity.id = '$activity_id' AND form_target.fk_cycle='$cycle_id'
             AND(form_target.fk_cadt ='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id')
-            AND (form_uploaded.is_deleted = 0 OR form_uploaded.is_deleted IS NULL)";
+            AND (form_uploaded.is_deleted =0 OR (form_target.actual>=0 AND form_uploaded.is_deleted is NULL))";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -3002,6 +2907,40 @@ WHERE
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
             WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id') AND lib_activity.fk_category='$cat_id'
             GROUP BY lib_activity.id";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    public function actActivity($cycle, $cadt_id, $activity_id)
+    {
+        $mysql = $this->connectDatabase();
+        $cycle = $mysql->real_escape_string($cycle);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
+        $activity_id = $mysql->real_escape_string($activity_id);
+        $q = "SELECT
+            lib_activity.id,
+            lib_activity.activity_name,
+            form_target.fk_cycle,
+            COALESCE(
+                form_target.fk_cadt,
+                    form_target.fk_psgc_mun,
+                form_target.fk_psgc_brgy
+                    ) as area_id,
+            FORMAT(SUM(form_target.actual)/SUM(form_target.target)*100,2) AS progress,
+            lib_activity.fk_category
+            FROM
+            form_target
+            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+            INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
+            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id') AND lib_activity.fk_category='$cat_id'
+            AND lib_activity.id='$activity_id'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -3302,12 +3241,13 @@ WHERE
         $this->getUserActiveAreas();
         $cadt_id = "'" . implode("','", $this->area_id) . "'";
         $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
+        $id_number = $_SESSION['id_number'];
         $q = "SELECT
                 COUNT(tbl_dqa_findings.findings_guid) as notif_findings
                 FROM
                 tbl_dqa_findings
                 INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
-                WHERE tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=0 AND form_target.fk_cycle IN ($cycle_id) AND (form_target.fk_psgc_mun IN ($cadt_id) OR form_target.fk_cadt IN ($cadt_id))";
+                WHERE tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=0 AND tbl_dqa_findings.responsible_person='$id_number' AND tbl_dqa_findings.technical_advice is NULL";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
@@ -3533,15 +3473,21 @@ WHERE
     public function notif_dqa_compliance()
     {
         $mysql = $this->connectDatabase();
+        $id_number = $_SESSION['id_number'];
         $q = "SELECT
-        COUNT(view_tbl_dqa_compliance.is_reviewed) notifDqaCompliance
-        FROM
-        view_tbl_dqa_compliance
-        WHERE view_tbl_dqa_compliance.added_by='$_SESSION[id_number]' AND view_tbl_dqa_compliance.is_reviewed='for review'";
+	            COUNT(form_uploaded.original_filename) notif_dqa_compliance
+            FROM
+                tbl_dqa_compliance
+                INNER JOIN tbl_dqa_user_list ON tbl_dqa_compliance.file_with_findings = tbl_dqa_user_list.fk_file_id
+                INNER JOIN form_uploaded ON tbl_dqa_compliance.file_compliance = form_uploaded.file_id
+            WHERE
+                tbl_dqa_user_list.id_number = '$id_number' 
+                AND form_uploaded.is_reviewed = 'for review'
+                AND form_uploaded.is_deleted=0";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
-            return $row['notifDqaCompliance'];
+            return $row['notif_dqa_compliance'];
         } else {
             return false;
         }
@@ -3752,5 +3698,16 @@ WHERE
             return false;
         }
 
+    }
+
+    public function getActivityName($activity_id){
+        $mysql = $this->connectDatabase();
+        $activity_id = $mysql->real_escape_string($activity_id);
+        $q="SELECT lib_activity.activity_name FROM lib_activity WHERE id='$activity_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            $row = $result->fetch_assoc();
+            return $row['activity_name'];
+        }
     }
 }
