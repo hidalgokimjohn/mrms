@@ -1,6 +1,6 @@
-<div class="col-auto d-none d-sm-block">
+<!--<div class="col-auto d-none d-sm-block">
     <h3 class="h3 mb-3">Compliance</h3>
-</div>
+</div>-->
 <div class="card mb-3">
     <div class="table-responsive">
         <table id="tbl_dqaCompliance" class="table table-striped table-hover" style="width:100%">
@@ -12,8 +12,6 @@
                 <th style="">Cycle</th>
                 <th>Area</th>
                 <th title="Responsible Person">RP</th>
-                <th title="">DQA #</th>
-                <th class="">w/findings?</th>
                 <th class="">isComplied?</th>
             </tr>
             </thead>
@@ -27,7 +25,7 @@
         <div class="modal-content">
             <form method="post" id="formReviewCompliance">
                 <div class="modal-header">
-                    <h5 class="modal-title"><strong><span class="compliance-filename"></span></strong></h5>
+                    <h5 class="modal-title"><strong>Compliance: <span class="compliance-filename"></span></strong></h5>
                     <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body m-3">
@@ -35,12 +33,23 @@
                         <div class="col-sm-4">
                             <div class="card">
                                 <div class="card-body">
-                                    <div class="spinner-border text-primary mr-2" role="status">
-                                                <span class="sr-only">Loading...</span>
+                                    <div class="loading-screen">
+                                        <div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+                                            <div class="d-table-cell align-middle">
+                                                <div class="text-center">
+                                                    <div class="spinner-border text-primary mr-2" role="status">
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
                                     </div>
                                     <div id="displayFindings">
 
                                     </div>
+                                    <button class="btn btn-primary btn-complied" hidden><span class="fa fa-check"></span> Complied</button>
+                                    <button class="btn btn-danger btn-notcomplied float-right" hidden><span class="fa fa-times"></span> Not Complied</button>
                                 </div>
                             </div>
                         </div>
