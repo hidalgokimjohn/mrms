@@ -6,4 +6,4 @@ include_once("../../app/Auth.php");
 $auth = new \app\Auth();
 $app = new \app\App();
 $dqa = new \app\DataQualityAssessment();
-$dqa->tbl_dqa_act_findings();
+$dqa->findings_notcomplied();

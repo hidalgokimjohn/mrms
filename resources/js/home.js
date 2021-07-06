@@ -6,14 +6,14 @@ $(document).ready(function () {
 
 
 
-    if (m == 'dqa_conducted') {
+    /*if (m == 'dqa_conducted') {
         new Choices(document.querySelector(".choices-muni"));
         new Choices(document.querySelector(".choicesCycle"));
         new Choices(document.querySelector(".choicesAc"));
         new Choices(document.querySelector(".editChoicesAc"));
-    }
+    }*/
 
-    if(m=='upload' || p=='upload' ){
+    if (m == 'upload' || p == 'upload') {
         var choiceTypeOfCadt = new Choices(".choices-of-cadt", {
             shouldSort: false
         });
@@ -21,28 +21,28 @@ $(document).ready(function () {
             shouldSort: false
         }).disable();
 
-        var choiceTypeOfActivity= new Choices(".choices-of-activity", {
+        var choiceTypeOfActivity = new Choices(".choices-of-activity", {
             shouldSort: false
         }).disable();
 
-        var choiceTypeOfForm= new Choices(".choices-of-form", {
+        var choiceTypeOfForm = new Choices(".choices-of-form", {
             shouldSort: false
         }).disable();
 
-        var choiceTypeOfrp= new Choices(".choices-of-rp", {
+        var choiceTypeOfrp = new Choices(".choices-of-rp", {
             shouldSort: false
         });
 
-        $('.choices-of-cadt').on('change', function() {
+        $('.choices-of-cadt').on('change', function () {
             choiceTypeOfCycle.enable();
             var area = $('.choices-of-cadt').val();
-            if(area==''){
+            if (area == '') {
                 choiceTypeOfCycle.clearChoices();
                 choiceTypeOfCycle.disable();
             }
         });
 
-        $('.choices-of-cycle').on('change', function() {
+        $('.choices-of-cycle').on('change', function () {
             var cycle_id = $('.choices-of-cycle').val();
             var area_id = $('.choices-of-cadt').val();
             choiceTypeOfActivity.clearStore();
@@ -51,20 +51,20 @@ $(document).ready(function () {
             $.ajax({
                 type: 'POST',
                 url: 'resources/ajax/uploadCycleOnChange.php',
-                data: {"cycle_id":cycle_id,"area_id":area_id},
+                data: {"cycle_id": cycle_id, "area_id": area_id},
                 async: true,
                 dataType: 'json',
-                success: function(data) {
+                success: function (data) {
                     //$('#selectActivity').html(data);
                     console.log(data);
-                    if(data){
+                    if (data) {
                         choiceTypeOfActivity.enable();
                         choiceTypeOfActivity.setChoices(data);
                     }
                 }
             });
         });
-        $('.choices-of-activity').on('change', function() {
+        $('.choices-of-activity').on('change', function () {
             var cycle_id = $('.choices-of-cycle').val();
             var area_id = $('.choices-of-cadt').val();
             var activity_id = $('.choices-of-activity').val();
@@ -72,13 +72,13 @@ $(document).ready(function () {
             $.ajax({
                 type: 'POST',
                 url: 'resources/ajax/uploadActivityOnChange.php',
-                data: {"cycle_id":cycle_id,"area_id":area_id,"activity_id":activity_id},
+                data: {"cycle_id": cycle_id, "area_id": area_id, "activity_id": activity_id},
                 async: true,
                 dataType: 'json',
-                success: function(data) {
+                success: function (data) {
                     //$('#selectActivity').html(data);
                     console.log(data);
-                    if(data){
+                    if (data) {
                         choiceTypeOfForm.enable();
                         choiceTypeOfForm.setChoices(data);
                     }
@@ -86,13 +86,13 @@ $(document).ready(function () {
             });
         });
 
-        $('.choices-of-form').on('change', function() {
-            $("#fileInfo").prop('hidden',false);
-            setTimeout(function() {
-                $('.fileInfo_body').prop('hidden',false)
+        $('.choices-of-form').on('change', function () {
+            $("#fileInfo").prop('hidden', false);
+            setTimeout(function () {
+                $('.fileInfo_body').prop('hidden', false)
             }, 2000);
-            setTimeout(function() {
-                $('.spinner-border').prop('hidden',true)
+            setTimeout(function () {
+                $('.spinner-border').prop('hidden', true)
             }, 2000);
 
         });
@@ -124,7 +124,7 @@ $(document).ready(function () {
                                 }
                             });
                             tbl_uploadedFiles.ajax.reload();
-                        }else{
+                        } else {
                             window.notyf.open({
                                 type: 'error',
                                 message: '<strong>Sorry</strong>, reviewed documents can\'t be removed.',
@@ -153,7 +153,7 @@ $(document).ready(function () {
                     }
                 });
 
-            }else{
+            } else {
                 var title = $(this).text();
                 $(this).html('<a href="#uploadModal" data-toggle="modal">\n' +
                     '                <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span></button>\n' +
@@ -186,7 +186,7 @@ $(document).ready(function () {
             language: {
                 "emptyTable": "<b>No records <found class=''></found></b>"
             },
-            initComplete: function(settings, json) {
+            initComplete: function (settings, json) {
                 $('.dataTables_paginate').addClass('p-3');
                 $('.dataTables_info').addClass('p-3');
             },
@@ -194,32 +194,32 @@ $(document).ready(function () {
                 "targets": 0,
                 "data": null,
                 "render": function (data, type, row) {
-                    if(data['is_reviewed']=='for review'){
-                        return '<a href="#" class="btn btn-outline-danger btn-pill delete-file" data-file-id="'+data['file_id']+'" data-form-id="'+data['ft_guid']+'"><span class="fa fa-times"></span></a>'
-                    }else{
-                        return '<a href="#" class="btn btn-outline-danger disabled btn-pill delete-file" data-file-id="'+data['file_id']+'" data-form-id="'+data['ft_guid']+'"><span class="fa fa-times"></span></a>'
+                    if (data['is_reviewed'] == 'for review') {
+                        return '<a href="#" class="btn btn-outline-danger btn-pill delete-file" data-file-id="' + data['file_id'] + '" data-form-id="' + data['ft_guid'] + '"><span class="fa fa-times"></span></a>'
+                    } else {
+                        return '<a href="#" class="btn btn-outline-danger disabled btn-pill delete-file" data-file-id="' + data['file_id'] + '" data-form-id="' + data['ft_guid'] + '"><span class="fa fa-times"></span></a>'
                     }
                 },
             },
                 {
-                "targets": 1,
-                "data": null,
-                "render": function (data, type, row) {
-                    if(data['original_filename']!==null){
+                    "targets": 1,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (data['original_filename'] !== null) {
 
-                        return '<a href="'+data['host']+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
-                    }else{
-                        return '<strong>Not Yet Uploaded</strong>'
-                    }
+                            return '<a href="' + data['host'] + data['file_path'] + '" target="_blank" title="' + data['activity_name'] + ', ' + data['form_name'] + '"><strong>' + data['original_filename'] + '</strong></a>';
+                        } else {
+                            return '<strong>Not Yet Uploaded</strong>'
+                        }
+                    },
                 },
-            },
                 {
                     "targets": 2,
                     "data": null,
                     "render": function (data, type, row) {
-                        if(data['original_filename']!==''){
-                            return data['form_name']+"<br/>"+'<small>Activity: '+data['activity_name']+'</small>';
-                        }else{
+                        if (data['original_filename'] !== '') {
+                            return data['form_name'] + "<br/>" + '<small>Activity: ' + data['activity_name'] + '</small>';
+                        } else {
                             return '<strong>Not Yet Uploaded</strong>'
                         }
 
@@ -229,9 +229,9 @@ $(document).ready(function () {
                     "targets": 3,
                     "data": null,
                     "render": function (data, type, row) {
-                        if(data['original_filename']!==''){
-                            return '<span title="'+data['cadt_name']+', '+data['mun_name']+'">'+data['area']+'</span>';
-                        }else{
+                        if (data['original_filename'] !== '') {
+                            return '<span title="' + data['cadt_name'] + ', ' + data['mun_name'] + '">' + data['area'] + '</span>';
+                        } else {
                             return '<strong class="text-danger">Not Yet Uploaded</strong>'
                         }
                     },
@@ -247,22 +247,22 @@ $(document).ready(function () {
                     "targets": 5,
                     "data": null,
                     "render": function (data, type, row) {
-                      return data['date_uploaded'];
+                        return data['date_uploaded'];
                     },
                 },
                 {
                     "targets": 6,
                     "data": null,
                     "render": function (data, type, row) {
-                        if(data['original_filename']!==''){
-                            if(data['is_reviewed']=='for review'){
+                        if (data['original_filename'] !== '') {
+                            if (data['is_reviewed'] == 'for review') {
                                 return '<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For Review</div>'
-                            }else if(data['is_reviewed']=='reviewed'){
+                            } else if (data['is_reviewed'] == 'reviewed') {
                                 return '<div class="badge bg-primary"><span class="fa fa-check-circle"></span> Reviewed</div>'
-                            }else{
+                            } else {
                                 return '-';
                             }
-                        }else{
+                        } else {
                             return '<strong>Not Yet Uploaded</strong>'
                         }
                     },
@@ -279,7 +279,7 @@ $(document).ready(function () {
             $('.btn-upload-file-text').text(' Uploading...');
             var formData = new FormData($(this)[0]);
             $.ajax({
-                url: 'resources/ajax/uploadFile.php?form_id='+form_id,
+                url: 'resources/ajax/uploadFile.php?form_id=' + form_id,
                 type: 'POST',
                 dataType: 'html',
                 data: formData,
@@ -348,29 +348,9 @@ $(document).ready(function () {
 
     }
 
-    var tbl_actFiles='';
-    var tbl_nyu='';
 
-    $('#tbl_actFiles thead tr').clone(true).appendTo('#tbl_actFiles thead');
-    $('#tbl_actFiles thead tr:eq(1) th').each(function (i) {
-        var title = $(this).text();
-        $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
-        $('input', this).on('keyup change', function (e) {
-            if (tbl_actFiles.column(i).search() !== this.value) {
-                tbl_actFiles.column(i).search(this.value).draw();
-            }
-        });
-        /*   if (i !== 0) {
+    var tbl_nyu = '';
 
-
-           }else{
-               var title = $(this).text();
-               $(this).html('<a href="#uploadModal" data-toggle="modal">\n' +
-                   '                <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span></button>\n' +
-                   '            </a>');
-           }*/
-
-    });
     $('#tbl_nyu thead tr').clone(true).appendTo('#tbl_nyu thead');
     $('#tbl_nyu thead tr:eq(1) th').each(function (i) {
         var title = $(this).text();
@@ -382,8 +362,8 @@ $(document).ready(function () {
         });
     });
 
-    if(m=='nyu'){
-         tbl_nyu = $('#tbl_nyu').DataTable({
+    if (m == 'nyu') {
+        tbl_nyu = $('#tbl_nyu').DataTable({
             orderCellsTop: true,
             bDestroy: true,
             columnDefs: [{
@@ -406,7 +386,7 @@ $(document).ready(function () {
             language: {
                 "emptyTable": "<b>No records <found class=''></found></b>"
             },
-            initComplete: function(settings, json) {
+            initComplete: function (settings, json) {
                 $('.dataTables_paginate').addClass('p-3');
                 $('.dataTables_info').addClass('p-3');
             },
@@ -414,11 +394,11 @@ $(document).ready(function () {
                 "targets": 0,
                 "data": null,
                 "render": function (data, type, row) {
-                    var mun_name='';
-                    if(data['mun_name']!==null){
+                    var mun_name = '';
+                    if (data['mun_name'] !== null) {
                         mun_name = data['mun_name'];
                     }
-                    return data['cadt_muni']+'<br/><small>'+mun_name+'</small>';
+                    return data['cadt_muni'] + '<br/><small>' + mun_name + '</small>';
                 },
             },
                 {
@@ -439,7 +419,7 @@ $(document).ready(function () {
                     "targets": 3,
                     "data": null,
                     "render": function (data, type, row) {
-                        return data['form_name']+'<br/><small class="text-danger font-weight-bold">Target: '+data['target']+' Actual: '+data['actual']+'</small>';
+                        return data['form_name'] + '<br/><small class="text-danger font-weight-bold">Target: ' + data['target'] + ' Actual: ' + data['actual'] + '</small>';
                     },
                 }
             ],
@@ -447,128 +427,7 @@ $(document).ready(function () {
         });
     }
 
-    if(m=='view_more'){
-        const modalViewActivity = document.getElementById('modalViewActivity');
-        if (modalViewActivity) {
-            modalViewActivity.addEventListener('show.bs.modal', function (e) {
-                var activity_id = $(e.relatedTarget).data('activity-id');
-                var activity_name = $(e.relatedTarget).data('activity-name');
-                var cycle_id = $(e.relatedTarget).data('cycle-id');
-                var area_id = $(e.relatedTarget).data('area-id');
-
-                $('.activity_title').text(activity_name);
-                tbl_actFiles = $('#tbl_actFiles').DataTable({
-                    orderCellsTop: true,
-                    bDestroy: true,
-                    order: [
-                        [4, "desc"]
-                    ],
-                    columnDefs: [{
-                        orderable: false,
-                        targets: 0
-                    }],
-                    dom: '<<t>ip>',
-                    //dom: '<"html5buttons">bitpr',
-                    ajax: {
-                        url: "resources/ajax/tbl_actFiles.php?activity_id="+activity_id+"&cycle_id="+cycle_id+"&area_id="+area_id,
-                        type: "POST",
-                        processData: false,
-                        contentType: false,
-                        cache: false,
-                        dataType: 'json',
-                        error: function () {
-                            $("post_list_processing").css("display", "none");
-                        }
-                    },
-                    language: {
-                        "emptyTable": "<b>No records <found class=''></found></b>"
-                    },
-                    initComplete: function(settings, json) {
-                        $('.dataTables_paginate').addClass('p-3');
-                        $('.dataTables_info').addClass('p-3');
-                    },
-                    createdRow: function( row, data, dataIndex){
-                        if( data['original_filename'] == null){
-                            $(row).addClass('bg-danger-light text-danger');
-                        }
-                    },
-                    columnDefs: [{
-                        "targets": 0,
-                        "data": null,
-                        "render": function (data, type, row) {
-
-                            if(data['original_filename']!==null){
-                                if(data['is_reviewed']=='for review'){
-                                    return '</strong> <span class="badge bg-warning "> For review</span>';
-                                }else{
-                                    return '</strong> <span class="badge bg-success "> Reviewed</span>';
-
-                                }
-                            }else{
-                                return '<strong>Not yet uploaded</strong>'
-                            }
-                        },
-                    },
-                        {
-                            "targets": 1,
-                            "data": null,
-                            "render": function (data, type, row) {
-
-                                if(data['original_filename']!==null){
-                                    if(data['is_reviewed']!=='for review'){
-                                        var file_stat='</strong> <span class="badge bg-warning "> For review</span>';
-                                    }else{
-                                        var file_stat='</strong> <span class="badge bg-success "> Reviewed</span>';
-
-                                    }
-                                    return '<a class="text-primary" href="'+data['host']+data['file_path']+'" target="_blank" title="'+data['activity_name']+', '+data['form_name']+'"><strong>'+data['original_filename']+'</strong></a>';
-                                }else{
-                                    return '<div class="text-center"><strong>-</strong></div>'
-                                }
-                            },
-                        },
-                        {
-                            "targets": 2,
-                            "data": null,
-                            "render": function (data, type, row) {
-                                if(data['original_filename']!==''){
-                                    return data['form_name']+"<br/>"+'<small>Activity: '+data['activity_name']+'</small>';
-                                }else{
-                                    return '<strong class="text-center">-</strong>'
-                                }
-
-                            },
-                        },
-                        {
-                            "targets": 3,
-                            "data": null,
-                            "render": function (data, type, row) {
-                                if(data['area']!==null){
-                                    return '<span title="'+data['area']+'">'+data['area']+'</span>';
-                                }else{
-                                    return '<div class="text-center"><strong>-</strong></div>'
-                                }
-                            },
-                        },
-                        {
-                            "targets": 4,
-                            "data": null,
-                            "render": function (data, type, row) {
-                                if(data['date_uploaded']!==null){
-                                    return '<span>'+data['date_uploaded']+'</span>';
-                                }else{
-                                    return '<div class="text-center"><strong>-</strong></div>'
-                                }
-                            },
-                        }
-                    ],
-
-                });
-            });
-        }
-    }
-
-    if(p=='user_coverage'){
+    if (p == 'user_coverage') {
         var id_number = url.searchParams.get("id");
         var choiceOfModality = new Choices(".choices-modality", {
             shouldSort: false
@@ -585,42 +444,42 @@ $(document).ready(function () {
         choiceOfCycle.disable();
         choiceOfArea.disable();
 
-        $('.choices-modality').on('change', function() {
+        $('.choices-modality').on('change', function () {
             var modality_id = $('.choices-modality').val();
             choiceOfCycle.clearStore();
             choiceOfArea.clearStore();
             $.ajax({
                 type: 'POST',
                 url: 'resources/ajax/selectModalityOnChange.php',
-                data: {"modality_id":modality_id},
+                data: {"modality_id": modality_id},
                 async: true,
                 dataType: 'json',
-                success: function(data) {
+                success: function (data) {
                     //$('#selectActivity').html(data);
                     console.log(data);
-                    if(data){
+                    if (data) {
                         choiceOfCycle.enable();
                         choiceOfCycle.setChoices(data);
-                    }else{
+                    } else {
                         choiceOfCycle.disable();
                         choiceOfArea.disable();
                     }
                 }
             });
         });
-        $('.choices-cycle').on('change', function() {
+        $('.choices-cycle').on('change', function () {
             var cycle_id = $('.choices-cycle').val();
             choiceOfArea.clearStore();
             $.ajax({
                 type: 'POST',
                 url: 'resources/ajax/selectCycleOnChange.php',
-                data: {"cycle_id":cycle_id},
+                data: {"cycle_id": cycle_id},
                 async: true,
                 dataType: 'json',
-                success: function(data) {
+                success: function (data) {
                     //$('#selectActivity').html(data);
                     console.log(data);
-                    if(data){
+                    if (data) {
                         choiceOfArea.enable();
                         choiceOfArea.clearChoices();
                         choiceOfArea.setChoices(data);
@@ -636,7 +495,7 @@ $(document).ready(function () {
             $('#btnSubmitUserArea').attr("disabled", "disabled");
             var formData = new FormData($(this)[0]);
             $.ajax({
-                url: 'resources/ajax/addUserCoverage.php?id_number='+id_number,
+                url: 'resources/ajax/addUserCoverage.php?id_number=' + id_number,
                 type: 'POST',
                 data: formData,
                 async: true,
@@ -644,18 +503,17 @@ $(document).ready(function () {
                 contentType: false,
                 processData: false,
                 success: function (returndata) {
-                    if (returndata=='coverage_added') {
+                    if (returndata == 'coverage_added') {
                         notyf.success({
                             message: '<strong>Coverage </strong>successfully added',
                             duration: 10000,
                             ripple: true,
                             dismissible: true
                         });
-                            $('#btnSubmitUserArea').prop('disabled', false);
-                            $('#btnSubmitUserArea').text('Submit');
+                        $('#btnSubmitUserArea').prop('disabled', false);
+                        $('#btnSubmitUserArea').text('Submit');
                         tbl_userCoverage.ajax.reload();
-                    }
-                    else {
+                    } else {
                         notyf.error({
                             message: 'Something went wrong. Please try again',
                             duration: 10000,
@@ -670,8 +528,8 @@ $(document).ready(function () {
     }
 
 
-    if (m == 'dqa_items') {
-        new Choices(document.querySelector(".choices-dqa-level"));
+   if(p=='user_profile'){
+     new Choices(document.querySelector(".choices-dqa-level"));
         flatpickr(".flatpickr-minimum", {
             minDate: 'today'
         });
@@ -706,8 +564,10 @@ $(document).ready(function () {
                 document.getElementById("text_findings").disabled = false;
             }
         });
+   }
+       
 
-    }
+    
     $('#tbl_users thead tr').clone(true).appendTo('#tbl_users thead');
     $('#tbl_users thead tr:eq(1) th').each(function (i) {
         if (i !== 0) {
@@ -746,7 +606,7 @@ $(document).ready(function () {
         language: {
             "emptyTable": "<b>No records <found class=''></found></b>"
         },
-        initComplete: function(settings, json) {
+        initComplete: function (settings, json) {
             $('.dataTables_paginate').addClass('p-3');
             $('.dataTables_info').addClass('p-3');
         },
@@ -757,37 +617,37 @@ $(document).ready(function () {
                 //<button class="btn btn-danger btn-sm">Delete</button>
                 return '<div class="btn-group">' +
                     '<button type="button" class="btn btn-pill btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                    '<div class="dropdown-menu"><a class="dropdown-item" href="home.php?p=user_coverage&id='+data['id_number']+'">Coverage</a>' +
+                    '<div class="dropdown-menu"><a class="dropdown-item" href="home.php?p=user_coverage&id=' + data['id_number'] + '">Coverage</a>' +
                     '<a class="dropdown-item" href="#">Another action</a><a class="dropdown-item" href="#">Something else here</a>' +
-                    '<div class="dropdown-divider"></div><a class="dropdown-item" href="#">ID-Number: '+data['id_number']+'</a></div></div>'
+                    '<div class="dropdown-divider"></div><a class="dropdown-item" href="#">ID-Number: ' + data['id_number'] + '</a></div></div>'
             },
-        },{
+        }, {
             "targets": 1,
             "data": null,
             "render": function (data, type, row) {
                 //<button class="btn btn-danger btn-sm">Delete</button>
-                return '<img src="resources/img/avatars/default.jpg" width="48" height="48" class="rounded-circle my-n1"></img> '+data['fname']+' '+data['lname'];
+                return '<img src="resources/img/avatars/default.jpg" width="48" height="48" class="rounded-circle my-n1"></img> ' + data['fname'] + ' ' + data['lname'];
             },
-        },{
+        }, {
             "targets": 2,
             "data": null,
             "render": function (data, type, row) {
                 //<button class="btn btn-danger btn-sm">Delete</button>
                 return data['position_desc'];
             },
-        },{
+        }, {
             "targets": 3,
             "data": null,
             "render": function (data, type, row) {
                 //<button class="btn btn-danger btn-sm">Delete</button>
                 return data['office_name'];
             },
-        },{
+        }, {
             "targets": 4,
             "data": null,
             "render": function (data, type, row) {
                 //<button class="btn btn-danger btn-sm">Delete</button>
-                return '<div class="badge bg-success"><span class="fa fa-check-circle"></span> '+data['status_name']+'</div>';
+                return '<div class="badge bg-success"><span class="fa fa-check-circle"></span> ' + data['status_name'] + '</div>';
             },
         }
         ],
@@ -818,7 +678,7 @@ $(document).ready(function () {
         dom: '<<t>ip>',
         //dom: '<"html5buttons">bitpr',
         ajax: {
-            url: "resources/ajax/tbl_userCoverage.php?id_number="+id_number,
+            url: "resources/ajax/tbl_userCoverage.php?id_number=" + id_number,
             type: "POST",
             processData: false,
             contentType: false,
@@ -840,32 +700,32 @@ $(document).ready(function () {
                 //<button class="btn btn-danger btn-sm">Delete</button>
                 return '<div class="btn-group">' +
                     '<button type="button" class="btn btn-pill btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
-                    '<div class="dropdown-menu"><a class="dropdown-item" href="home.php?p=user_coverage&id='+data['fk_username']+'">Active</a>' +
+                    '<div class="dropdown-menu"><a class="dropdown-item" href="home.php?p=user_coverage&id=' + data['fk_username'] + '">Active</a>' +
                     '<a class="dropdown-item" href="#">Open</a>' +
                     '<a class="dropdown-item" href="#">Close</a>'
             },
-        },{
+        }, {
             "targets": 1,
             "data": null,
             "render": function (data, type, row) {
                 //<button class="btn btn-danger btn-sm">Delete</button>
                 return data['area_name'];
             },
-        },{
+        }, {
             "targets": 2,
             "data": null,
             "render": function (data, type, row) {
                 //<button class="btn btn-danger btn-sm">Delete</button>
-                return '<div class="text-capitalize">'+data['batch']+' '+data['cycle_name']+'</div>';
+                return '<div class="text-capitalize">' + data['batch'] + ' ' + data['cycle_name'] + '</div>';
             },
-        },{
+        }, {
             "targets": 3,
             "data": null,
             "render": function (data, type, row) {
                 //<button class="btn btn-danger btn-sm">Delete</button>
-                return '<div class="badge bg-success text-capitalize" title="Has access and can perform actions">'+data['status']+'</div>';
+                return '<div class="badge bg-success text-capitalize" title="Has access and can perform actions">' + data['status'] + '</div>';
             },
-        },{
+        }, {
             "targets": 4,
             "data": null,
             "render": function (data, type, row) {

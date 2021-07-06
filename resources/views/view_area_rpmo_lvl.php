@@ -5,7 +5,7 @@ $sp = new \app\SubProject();
 ?>
 <div class="col-sm-12 col-lg-12 col-xl-12">
     <div class="row">
-        <div class="col-12 col-md-6 col-lg-8">
+        <div class="col-12 col-md-6 col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title mb-0 text-capitalize"><strong><?php echo $area['area_name']; ?></strong></h5>
@@ -61,7 +61,8 @@ $sp = new \app\SubProject();
                                     if ($activities) {
                                         foreach ($activities as $activity) {
                                             echo '<tr>';
-                                            echo '<td><a href="#modalViewActivity" data-toggle="modal" data-cycle-id="' . $activity['fk_cycle'] . '" data-area-id="' . $activity['area_id'] . '" data-activity-id="' . $activity['id'] . '" data-activity-name="' . $activity['activity_name'] . '">' . $activity['activity_name'] . '</a></td>';
+                                            echo '<td><a href="home.php?p=mywork&m=view_activity&cycle='.$activity['fk_cycle'].'&area='.$activity['area_id'].'&activity_id='.$activity['id'].'" data-activity-name="' . $activity['activity_name'] . '">' . $activity['activity_name'] . '</a></td>';
+                                            /*echo '<td><a href="#modalViewActivity" data-toggle="modal" data-cycle-id="' . $activity['fk_cycle'] . '" data-area-id="' . $activity['area_id'] . '" data-activity-id="' . $activity['id'] . '" data-activity-name="' . $activity['activity_name'] . '">' . $activity['activity_name'] . '</a></td>';*/
                                             echo '<td><a href="#"><strong class="float-right">' . $activity['progress'] . '%</strong></a></td>';
                                             echo '</tr>';
                                         }
@@ -78,7 +79,7 @@ $sp = new \app\SubProject();
                 ?>
             </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-4">
+        <div class="col-12 col-md-6 col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title mb-0"><strong>Sub Project Implementation </strong><br><span><small>GWA as of <?php echo date('M d, Y', strtotime($sp->last_update())); ?>. Data is based from Geotagging WebApp (updated weekly). <br>To update the data visit <a href="https://geotagging.dswd.gov.ph/" target="_blank">https://geotagging.dswd.gov.ph/</a> <br/></small></span></h5>
@@ -108,11 +109,11 @@ $sp = new \app\SubProject();
                     <div class="row pt-1">
                         <div class="col-sm-12">
                             <div class="row">
-                                <div class="col-3">
+                                <div class="col-4">
                                     <h4><?php echo $sp->totalHH_target_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
                                     Target
                                 </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <h4><?php echo $sp->totalHH_actual_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
                                     Actual
                                 </div>
@@ -126,15 +127,15 @@ $sp = new \app\SubProject();
                     <div class="row pt-1">
                         <div class="col-sm-12">
                             <div class="row">
-                                <div class="col-6">
+                                <div class="col-4">
                                     <h4 class="font-weight-bolder">PHP <?php echo $sp->final_grantMibf_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
                                     Final Grant Amount MIBF
                                 </div>
-                                <div class="col-6">
+                                <div class="col-4">
                                     <h4 class="font-weight-bolder">PHP <?php echo $sp->final_amntDownloaded_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
                                     Final Amount Downloaded (BTF)
                                 </div>
-                                <div class="col-6 pt-2">
+                                <div class="col-4">
                                     <h4 class="font-weight-bolder">PHP <?php echo $sp->final_LccDelivery_subProject($area['area_name'],$area['batch'],$area['cycle_name']); ?></h4>
                                     Final LCC Amount Delivery
                                 </div>
@@ -146,7 +147,7 @@ $sp = new \app\SubProject();
                     <a href="home.php?p=act&amp;m=view_more&amp;cycle=14&amp;area=10" class="text-light">View more</a>
                 </div>
             </div>
-            <div class="card">
+           <!-- <div class="card">
                 <div class="card-body">
                     <h5>Activity log</h5>
                     <ul class="timeline mt-2 mb-0">
@@ -177,7 +178,7 @@ $sp = new \app\SubProject();
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div>-->
         </div>
     </div>
 </div>

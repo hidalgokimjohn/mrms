@@ -10,17 +10,27 @@ document.addEventListener("DOMContentLoaded", function () {
     var ft_guid;
     var fileName;
     var file_id;
+    var fileId;
     var file_path;
     var listId;
     var rp_id;
     var area_id;
     var cycle_id;
+    var parent_fileId;
+    var date_uploaded
 
     //DQA Table
 
-    $('#tbl_dqa thead tr').clone(true).appendTo('#tbl_dqa thead');
-    $('#tbl_dqa thead tr:eq(1) th').each(function (i) {
-        if (i !== 0) {
+    $('#tbl_dqa_user_list thead tr').clone(true).appendTo('#tbl_dqa_user_list thead');
+    $('#tbl_dqa_user_list thead tr:eq(1) th').each(function (i) {
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+        $('input', this).on('keyup change', function (e) {
+            if (tbl_dqa.column(i).search() !== this.value) {
+                tbl_dqa.column(i).search(this.value).draw();
+            }
+        });
+        /*if (i !== 0) {
             var title = $(this).text();
             $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
             $('input', this).on('keyup change', function (e) {
@@ -35,13 +45,185 @@ document.addEventListener("DOMContentLoaded", function () {
                 '                    Add' +
                 '                </button>\n' +
                 '            </a>');
-        }
+        }*/
     });
-    
-    var tbl_dqa = $('#tbl_dqa').DataTable({
+
+    var tbl_actFiles = '';
+    $('#tbl_actFiles thead tr').clone(true).appendTo('#tbl_actFiles thead');
+    $('#tbl_actFiles thead tr:eq(1) th').each(function (i) {
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+        $('input', this).on('keyup change', function (e) {
+            if (tbl_actFiles.column(i).search() !== this.value) {
+                tbl_actFiles.column(i).search(this.value).draw();
+            }
+        });
+        /*   if (i !== 0) {
+           }else{
+               var title = $(this).text();
+               $(this).html('<a href="#uploadModal" data-toggle="modal">\n' +
+                   '                <button type="button" class="btn btn-primary"><span class="fa fa-plus"></span></button>\n' +
+                   '            </a>');
+           }*/
+
+    });
+
+
+    if (m == 'view_activity') {
+
+
+        new Choices(document.querySelector(".choices-dqa-level"));
+        flatpickr(".flatpickr-minimum", {
+            minDate: 'today'
+        });
+        $("#dateOfCompliance").removeAttr('readonly')
+        const choicesFinding = new Choices(".choices-findings", {
+            shouldSort: false
+        });
+        const choiceTypeOfFindings = new Choices(".choices-type-of-findings", {
+            shouldSort: false
+        });
+        const choicesStaff = new Choices(".choices-staff");
+        document.getElementById("choicesFinding").addEventListener("change", function (e) {
+            if (this.value == 'no') {
+                choiceTypeOfFindings.disable();
+                choicesStaff.disable();
+                document.getElementById("text_findings").disabled = true;
+                document.getElementById("text_findings").value = '';
+                document.getElementById("dateOfCompliance").value = '';
+                document.getElementById("responsiblePerson").value = '';
+                $("#dateOfCompliance").prop('disabled', true);
+            }
+            if (this.value == 'yes') {
+                choiceTypeOfFindings.enable();
+                choicesStaff.enable();
+                document.getElementById("text_findings").disabled = false;
+                $('.flatpickr-minimum').prop('disabled', false);
+            }
+            if (this.value == 'ta') {
+                choiceTypeOfFindings.disable();
+                choicesStaff.disable();
+                $("#dateOfCompliance").prop('disabled', true);
+                document.getElementById("text_findings").disabled = false;
+            }
+        });
+
+
+        var activity_id = url.searchParams.get("activity_id");
+        var cycle = url.searchParams.get("cycle");
+        var area = url.searchParams.get("area");
+
+        tbl_actFiles = $('#tbl_actFiles').DataTable({
+            orderCellsTop: true,
+            bDestroy: true,
+            order: [
+                [4, "desc"]
+            ],
+            columnDefs: [{
+                orderable: false,
+                targets: 0
+            }],
+            dom: '<<t>ip>',
+            //dom: '<"html5buttons">bitpr',
+            ajax: {
+                url: "resources/ajax/tbl_actFiles.php?activity_id=" + activity_id + "&cycle_id=" + cycle + "&area_id=" + area,
+                type: "POST",
+                processData: false,
+                contentType: false,
+                cache: false,
+                dataType: 'json',
+                error: function () {
+                    $("post_list_processing").css("display", "none");
+                }
+            },
+            language: {
+                "emptyTable": "<b>No records <found class=''></found></b>"
+            },
+            initComplete: function (settings, json) {
+                $('.dataTables_paginate').addClass('p-3');
+                $('.dataTables_info').addClass('p-3');
+            },
+            createdRow: function (row, data, dataIndex) {
+                if (data['original_filename'] == null) {
+                    $(row).addClass('bg-danger-light text-danger');
+                }
+            },
+            columnDefs: [{
+                "targets": 0,
+                "data": null,
+                "render": function (data, type, row) {
+
+                    if (data['original_filename'] !== null) {
+                        if (data['is_reviewed'] == 'for review') {
+                            return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-warning "> <span class="fa fa-edit"> </span> For review</a>';
+                        } else if (data['is_reviewed'] == 'reviewed') {
+                            if (data['with_findings'] == 'with findings') {
+                                return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-danger "> <span class="fa fa-thumbs-down"> </span> With findings</a>';
+                            }
+                            if (data['with_findings'] == 'no findings') {
+                                return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-primary "> <span class="fa fa-thumbs-up"> </span> No findings</a>';
+                            }
+                        }
+                    } else {
+                        return '<strong>Not yet uploaded</strong>'
+                    }
+                },
+            },
+                {
+                    "targets": 1,
+                    "data": null,
+                    "render": function (data, type, row) {
+
+                        if (data['original_filename'] !== null) {
+                            return '<a class="text-primary" href="' + data['host'] + data['file_path'] + '" target="_blank" title="' + data['activity_name'] + ', ' + data['form_name'] + '"><strong>' + data['original_filename'] + '</strong></a>';
+                        } else {
+                            return '<div class="text-center"><strong>-</strong></div>'
+                        }
+                    },
+                },
+                {
+                    "targets": 2,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (data['original_filename'] !== '') {
+                            return data['form_name'] + "<br/>" + '<small>Activity: ' + data['activity_name'] + '</small>';
+                        } else {
+                            return '<strong class="text-center">-</strong>'
+                        }
+
+                    },
+                },
+                {
+                    "targets": 3,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (data['area'] !== null) {
+                            return '<span title="' + data['area'] + '">' + data['area'] + '</span>';
+                        } else {
+                            return '<div class="text-center"><strong>-</strong></div>'
+                        }
+                    },
+                },
+                {
+                    "targets": 4,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (data['date_uploaded'] !== null) {
+                            return '<span>' + data['date_uploaded'] + '</span>';
+                        } else {
+                            return '<div class="text-center"><strong>-</strong></div>'
+                        }
+                    },
+                }
+            ],
+
+        });
+    }
+
+    var tbl_dqa = $('#tbl_dqa_user_list').DataTable({
         orderCellsTop: true,
         order: [
-            [1, "desc"]
+            [5, "desc"]
         ],
         dom: 'B<<t>ip>',
         //dom: '<"html5buttons">btpr',
@@ -76,7 +258,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         },
         ajax: {
-            url: "resources/ajax/tbl_dqaConducted.php?modality="+modality,
+            url: "resources/ajax/tbl_dqa_user_list.php?modality=" + modality,
             type: "POST",
             processData: false,
             contentType: false,
@@ -88,64 +270,72 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         language: {
             "emptyTable": "<b>No records found.</b>"
+        }, columnDefs: [{
+            "targets": 0,
+            "data": null,
+            "render": function (data, type, row) {
+
+                if (data['original_filename'] !== null) {
+                    if (data['is_reviewed'] == 'for review') {
+                        return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-warning "> <span class="fa fa-edit"> </span> For review</a>';
+                    } else if (data['is_reviewed'] == 'reviewed') {
+                        if (data['with_findings'] == 'with findings') {
+                            return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-danger "> <span class="fa fa-thumbs-down"> </span> With findings</a>';
+                        }
+                        if (data['with_findings'] == 'no findings') {
+                            return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-primary "> <span class="fa fa-thumbs-up"> </span> No findings</a>';
+                        }
+                    }
+                } else {
+                    return '<strong>Not yet uploaded</strong>'
+                }
+            },
         },
-        columnDefs: [{
-                "targets": 0,
-                "data": null,
-                "render": function (data, type, row) {
-                    //<button class="btn btn-danger btn-sm">Delete</button>
-                    return ' <span><button class="btn btn-primary" id="btn_editDqaTitle" data-toggle="modal" data-target="#editDqaTitle" data-dqaguid="' + data['dqa_guid'] + '" data-dqatitle="' + data['title'] + '">Edit</button></span>';
-                },
-            }, {
+            {
                 "targets": 1,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<strong>#' + pad(data['dqa_id'], 4) + '</strong>';
+
+                    if (data['original_filename'] !== null) {
+                        return '<a class="text-primary" href="' + data['host'] + data['file_path'] + '" target="_blank" title="' + data['activity_name'] + ', ' + data['form_name'] + '"><strong>' + data['original_filename'] + '</strong></a>';
+                    } else {
+                        return '<div class="text-center"><strong>-</strong></div>'
+                    }
                 },
             },
             {
                 "targets": 2,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<div class=" font-bold"><a href="home.php?p=modules&m=dqa_items&modality=' + data['modality_group'] + '&dqaid=' + data['dqa_guid'] + '&title=' + data['title'] + '&cycle='+data['cycle_id']+'&area_id='+data['area_id']+'"><strong>' + htmlspecialchars(data['title']) + '</strong></a></div>';
+                    if (data['original_filename'] !== '') {
+                        return data['form_name'] + "<br/>" + '<small>Activity: ' + data['activity_name'] + '</small>';
+                    } else {
+                        return '<strong class="text-center">-</strong>'
+                    }
+
                 },
             },
             {
                 "targets": 3,
                 "data": null,
                 "render": function (data, type, row) {
-                    if (data['fk_psgc_mun'] === null) {
-                        return '<div class="text-uppercase">' + data['cadt_name'] + '</div>';
-                    } else {
-                        return '<div class="text-uppercase">' + data['mun_name'] +'</div>';
-                    }
+
+                    return data['location'];
+
                 },
             },
             {
                 "targets": 4,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<div class="text-uppercase">' + data['batch'] +' - '+data['cycle_name']+ '</div>';
+                    return data['batch'] + ' ' + data['cycle_name'];
                 },
             },
             {
                 "targets": 5,
                 "data": null,
                 "render": function (data, type, row) {
-                    return '<div class="text-capitalize">' + data['responsible_person'] + '</div>';
-                },
-            },
-            {
-                "targets": 6,
-                "data": null,
-                "render": function (data, type, row) {
-                    return '<div class="text-capitalize">' + data['conducted_by'] + '</div>';
-                },
-            }, {
-                "targets": 7,
-                "data": null,
-                "render": function (data, type, row) {
-                    return '<div class="text-capitalize">' + data['created_at'] + '</div>';
+                    return data['created_date'];
                 },
             }
         ],
@@ -209,9 +399,9 @@ document.addEventListener("DOMContentLoaded", function () {
         },
         buttons: [
             {
-                text: '<div href="#modalAddFiles" data-toggle="modal" data-area="'+area_id+'" data-cycle="'+cycle_id+'"><span class="fa fa-plus"></span> Add files</div>',
+                text: '<div href="#modalAddFiles" data-toggle="modal" data-area="' + area_id + '" data-cycle="' + cycle_id + '"><span class="fa fa-plus"></span> Add files</div>',
                 className: "btn btn-outline-primary btn-addFile",
-            },['copy','print','excel','pdf'],
+            }, ['copy', 'print', 'excel', 'pdf'],
 
         ],
         ajax: {
@@ -229,21 +419,21 @@ document.addEventListener("DOMContentLoaded", function () {
             "emptyTable": "<b>No data found.</b>"
         },
         "columnDefs": [{
-                "targets": 0,
-                "data": null,
-                "render": function (data, type, row) {
-                    if (data['original_filename'] !== null) {
-                        return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' +data['host']+ data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="'+data['list_id']+'"><b>' + titleCase(data['original_filename']) + '</b></a>';
-                    } else {
-                        return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' +data['host']+ data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="'+data['list_id']+'"><strong class="text-danger">Not Yet Uploaded</strong></a>';
-                    }
-                },
+            "targets": 0,
+            "data": null,
+            "render": function (data, type, row) {
+                if (data['original_filename'] !== null) {
+                    return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="' + data['list_id'] + '"><b>' + titleCase(data['original_filename']) + '</b></a>';
+                } else {
+                    return '<a href="#modalViewFile" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" data-list-id="' + data['list_id'] + '"><strong class="text-danger">Not Yet Uploaded</strong></a>';
+                }
             },
+        },
             {
                 "targets": 1,
                 "data": null,
                 "render": function (data, type, row) {
-                    return data['form_name']+'<br/><small>'+data['activity_name']+'</small>';
+                    return data['form_name'] + '<br/><small>' + data['activity_name'] + '</small>';
 
                 },
             },
@@ -345,11 +535,12 @@ document.addEventListener("DOMContentLoaded", function () {
     const modalCreateDqa = document.getElementById('modalCreateDqa');
     const modalAddFiles = document.getElementById('modalAddFiles');
     const modalViewFile = document.getElementById('modalViewFile');
+    const modalViewActivity = document.getElementById('modalViewActivity');
     const modalViewFindings = document.getElementById('modalViewFindings');
     const modalReviewCompliance = document.getElementById('modalReviewCompliance');
     if (modalCreateDqa) {
         modalCreateDqa.addEventListener('show.bs.modal', function (e) {
-            
+
         });
     }
     //DQA AddFiles Table
@@ -397,29 +588,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 language: {
                     "emptyTable": "<b>No data found.</b>"
                 },
-                initComplete: function(settings, json) {
+                initComplete: function (settings, json) {
                     $('.dataTables_paginate').addClass('p-3');
                     $('.dataTables_info').addClass('p-3');
                 },
                 "columnDefs": [{
-                        "targets": 0,
-                        "data": null,
-                        "render": function (data, type, row) {
-                            var file_id;
-                            if (data['file_id'] !== null) {
-                                file_id = data['file_id'];
-                            } else {
-                                file_id = '';
-                            }
-                            return '<button class="btn btn-success file_id" data-file-id="' + file_id + '" data-ft-guid="' + data['ft_guid'] + '" data-dqa-id="' + dqaId + '"><span class="fa fa-plus"></span> Add</button>';
-                        },
+                    "targets": 0,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        var file_id;
+                        if (data['file_id'] !== null) {
+                            file_id = data['file_id'];
+                        } else {
+                            file_id = '';
+                        }
+                        return '<button class="btn btn-success file_id" data-file-id="' + file_id + '" data-ft-guid="' + data['ft_guid'] + '" data-dqa-id="' + dqaId + '"><span class="fa fa-plus"></span> Add</button>';
                     },
+                },
                     {
                         "targets": 1,
                         "data": null,
                         "render": function (data, type, row) {
                             if (data['file_id'] !== null) {
-                                return '<a href="' +data['host']+ data['file_path'] + '" target="_blank"><strong>' + data['original_filename'] + '</strong></a>';
+                                return '<a href="' + data['host'] + data['file_path'] + '" target="_blank"><strong>' + data['original_filename'] + '</strong></a>';
                             } else {
                                 return '<strong class="text-danger">Not Yet Uploaded</strong>';
                             }
@@ -441,7 +632,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         "data": null,
                         "render": function (data, type, row) {
                             if (data['location'] !== null) {
-                                return '<span class="text-capitalize">' + data['location'] +' - '+data['batch']+' '+data['cycle_name']+ '</span>';
+                                return '<span class="text-capitalize">' + data['location'] + ' - ' + data['batch'] + ' ' + data['cycle_name'] + '</span>';
                             } else {
                                 return '<strong class="text-danger">N/A</strong>'
                             }
@@ -456,7 +647,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 return '<strong class="text-danger">N/A</strong>'
                             }
                         },
-                    },{
+                    }, {
                         "targets": 6,
                         "data": null,
                         "render": function (data, type, row) {
@@ -517,6 +708,8 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     if (modalViewFile) {
         modalViewFile.addEventListener('show.bs.modal', function (e) {
+            $(".loading-screen").prop('hidden', false);
+            $("#displayFindings").html('');
             fileName = $(e.relatedTarget).data('file-name');
             file_path = $(e.relatedTarget).data('file-path');
             fileId = $(e.relatedTarget).data('file-id');
@@ -526,7 +719,7 @@ document.addEventListener("DOMContentLoaded", function () {
             //alert(fileId+': listId:'+listId);
             PDFObject.embed(file_path, "#pdf", options);
 
-            $.ajax({
+            /*$.ajax({
                 type: "post",
                 url: "resources/ajax/getRelatedFiles.php",
                 data: {
@@ -537,7 +730,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     $("#relatedFiles").html('');
                     $("#relatedFiles").html(data);
                 }
-            });
+            });*/
             $.ajax({
                 type: "post",
                 url: "resources/ajax/displayFindings.php",
@@ -547,7 +740,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 dataType: 'html',
                 success: function (data) {
-                    $("#displayFindings").html('');
+                    $(".loading-screen").prop('hidden', true);
                     $("#displayFindings").html(data);
                 }
             });
@@ -558,9 +751,127 @@ document.addEventListener("DOMContentLoaded", function () {
             $('.file-name').text(fileName);
         });
     }
+
+    if (modalViewActivity) {
+        modalViewActivity.addEventListener('show.bs.modal', function (e) {
+            var activity_id = $(e.relatedTarget).data('activity-id');
+            var cycle = $(e.relatedTarget).data('cycle-id');
+            var area = $(e.relatedTarget).data('area-id');
+            tbl_actFiles = $('#tbl_actFiles').DataTable({
+                orderCellsTop: true,
+                bDestroy: true,
+                order: [
+                    [4, "desc"]
+                ],
+                columnDefs: [{
+                    orderable: false,
+                    targets: 0
+                }],
+                dom: '<<t>ip>',
+                //dom: '<"html5buttons">bitpr',
+                ajax: {
+                    url: "resources/ajax/tbl_actFiles.php?activity_id=" + activity_id + "&cycle_id=" + cycle + "&area_id=" + area,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    cache: false,
+                    dataType: 'json',
+                    error: function () {
+                        $("post_list_processing").css("display", "none");
+                    }
+                },
+                language: {
+                    "emptyTable": "<b>No records <found class=''></found></b>"
+                },
+                initComplete: function (settings, json) {
+                    $('.dataTables_paginate').addClass('p-3');
+                    $('.dataTables_info').addClass('p-3');
+                },
+                createdRow: function (row, data, dataIndex) {
+                    if (data['original_filename'] == null) {
+                        $(row).addClass('bg-danger-light text-danger');
+                    }
+                },
+                columnDefs: [{
+                    "targets": 0,
+                    "data": null,
+                    "render": function (data, type, row) {
+
+                        if (data['original_filename'] !== null) {
+                            if (data['is_reviewed'] == 'for review') {
+                                return '<a href="#" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-warning "> <span class="fa fa-edit"> </span> For review</a>';
+                            } else if (data['is_reviewed'] == 'reviewed') {
+                                if (data['with_findings'] == 'with findings') {
+                                    return '<a href="#" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-danger "> <span class="fa fa-thumbs-down"> </span> With findings</a>';
+                                }
+                                if (data['with_findings'] == 'no findings') {
+                                    return '<a href="#" data-toggle="modal" data-ft-guid="' + data['ft_guid'] + '" data-file-id="' + data['file_id'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-name="' + data['original_filename'] + '" class="badge bg-primary "> <span class="fa fa-thumbs-up"> </span> No findings</a>';
+                                }
+                            }
+                        } else {
+                            return '<strong>Not yet uploaded</strong>'
+                        }
+                    },
+                },
+                    {
+                        "targets": 1,
+                        "data": null,
+                        "render": function (data, type, row) {
+
+                            if (data['original_filename'] !== null) {
+                                return '<a class="text-primary" href="' + data['host'] + data['file_path'] + '" target="_blank" title="' + data['activity_name'] + ', ' + data['form_name'] + '"><strong>' + data['original_filename'] + '</strong></a>';
+                            } else {
+                                return '<div class="text-center"><strong>-</strong></div>'
+                            }
+                        },
+                    },
+                    {
+                        "targets": 2,
+                        "data": null,
+                        "render": function (data, type, row) {
+                            if (data['original_filename'] !== '') {
+                                return data['form_name'] + "<br/>" + '<small>Activity: ' + data['activity_name'] + '</small>';
+                            } else {
+                                return '<strong class="text-center">-</strong>'
+                            }
+
+                        },
+                    },
+                    {
+                        "targets": 3,
+                        "data": null,
+                        "render": function (data, type, row) {
+                            if (data['area'] !== null) {
+                                return '<span title="' + data['area'] + '">' + data['area'] + '</span>';
+                            } else {
+                                return '<div class="text-center"><strong>-</strong></div>'
+                            }
+                        },
+                    },
+                    {
+                        "targets": 4,
+                        "data": null,
+                        "render": function (data, type, row) {
+                            if (data['date_uploaded'] !== null) {
+                                return '<span>' + data['date_uploaded'] + '</span>';
+                            } else {
+                                return '<div class="text-center"><strong>-</strong></div>'
+                            }
+                        },
+                    }
+                ],
+
+            });
+        });
+    }
     //modalViewFindings
-    if(modalViewFindings){
+    if (modalViewFindings) {
         modalViewFindings.addEventListener('show.bs.modal', function (e) {
+
+            $(".loading-screen-file-history").prop('hidden', false);
+            $(".loading-screen").prop('hidden', false);
+            $("#displayFileHistory").html('');
+            $("#displayFindings").html('');
             fileName = $(e.relatedTarget).data('file-name');
             file_path = $(e.relatedTarget).data('file-path');
             fileId = $(e.relatedTarget).data('file-id');
@@ -580,6 +891,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 dataType: 'html',
                 success: function (data) {
+                    $(".loading-screen").prop('hidden', true);
                     $("#displayFindings").html('');
                     $("#displayFindings").html(data);
                 }
@@ -593,6 +905,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 },
                 dataType: 'html',
                 success: function (data) {
+                    $(".loading-screen-file-history").prop('hidden', true);
                     $("#displayFileHistory").html('');
                     $("#displayFileHistory").html(data);
                 }
@@ -612,7 +925,7 @@ document.addEventListener("DOMContentLoaded", function () {
             var dqaTitle = $(e.relatedTarget).data('dqatitle');
             var newDdaTitle = $('.dqaTitle').val();
             $('.dqaTitle').val(dqaTitle);
-            
+
         });
     }
     //Submit Findings
@@ -642,7 +955,7 @@ document.addEventListener("DOMContentLoaded", function () {
         //console.log(fileId +": listId:"+listId+ ' submitFindings');
         if (!hasError) {
             $.ajax({
-                url: 'resources/ajax/submitFinding.php?dqa_id=' + dqaId + '&ft_guid=' + ft_guid + '&file_name=' + encodeURIComponent(fileName) + '&file_id=' + fileId +'&list_id=' + listId,
+                url: 'resources/ajax/submitFinding.php?dqa_id=' + dqaId + '&ft_guid=' + ft_guid + '&file_name=' + encodeURIComponent(fileName) + '&file_id=' + fileId + '&list_id=' + listId,
                 type: 'POST',
                 data: formData,
                 async: true,
@@ -651,7 +964,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 processData: false,
                 success: function (data) {
                     if (data == 'submitted') {
-                        tbl_viewDqaItems.ajax.reload();
                         window.notyf.open({
                             type: 'success',
                             message: '<strong>Good job!, </strong>your review has been submitted.',
@@ -663,6 +975,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 y: 'top'
                             }
                         });
+                        $("#btnSubmitFinding").html('<i class="fa fa-save"></i> Submit');
+                        $("#btnSubmitFinding").prop('disabled', false);
                         $.ajax({
                             type: "post",
                             url: "resources/ajax/displayFindings.php",
@@ -674,6 +988,7 @@ document.addEventListener("DOMContentLoaded", function () {
                             success: function (data) {
                                 $("#displayFindings").html('');
                                 $("#displayFindings").html(data);
+                                tbl_actFiles.ajax.reload();
                             }
                         });
 
@@ -690,6 +1005,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 y: 'top'
                             }
                         });
+                        $("#btnSubmitFinding").html('<i class="fa fa-save"></i> Submit');
+                        $("#btnSubmitFinding").prop('disabled', false);
                     }
                     if (data == 'error_on_required_fields') {
                         window.notyf.open({
@@ -703,6 +1020,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 y: 'top'
                             }
                         });
+                        $("#btnSubmitFinding").html('<i class="fa fa-save"></i> Submit');
+                        $("#btnSubmitFinding").prop('disabled', false);
                     }
                     if (data == 'notYetUploaded_submit_error') {
                         window.notyf.open({
@@ -716,6 +1035,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 y: 'top'
                             }
                         });
+                        $("#btnSubmitFinding").html('<i class="fa fa-save"></i> Submit');
+                        $("#btnSubmitFinding").prop('disabled', false);
                     }
                     if (data == 'hasPreviousFindings_submit_error') {
                         window.notyf.open({
@@ -729,6 +1050,8 @@ document.addEventListener("DOMContentLoaded", function () {
                                 y: 'top'
                             }
                         });
+                        $("#btnSubmitFinding").html('<i class="fa fa-save"></i> Submit');
+                        $("#btnSubmitFinding").prop('disabled', false);
                     }
                 }
             });
@@ -744,10 +1067,9 @@ document.addEventListener("DOMContentLoaded", function () {
                     y: 'top'
                 }
             });
+            $("#btnSubmitFinding").html('<i class="fa fa-save"></i> Submit');
+            $("#btnSubmitFinding").prop('disabled', false);
         }
-
-        $("#btnSubmitFinding").html('<i class="fa fa-save"></i> Submit');
-        $("#btnSubmitFinding").prop('disabled', false);
     });
     //Remove findings
     $(document).on('click', '#removeFinding', function (e) {
@@ -761,6 +1083,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     url: "resources/ajax/removeFinding.php",
                     data: {
                         "finding_id": $(this).data('finding-id'),
+                        "file_id": $(this).data('file-id'),
                     },
                     dataType: 'html',
                     success: function (data) {
@@ -770,7 +1093,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 url: "resources/ajax/displayFindings.php",
                                 data: {
                                     "file_id": fileId,
-                                    "ft_guid":ft_guid
+                                    "ft_guid": ft_guid
                                 },
                                 dataType: 'html',
                                 success: function (data) {
@@ -808,7 +1131,7 @@ document.addEventListener("DOMContentLoaded", function () {
         console.log(hasError);
         if (!hasError) {
             $.ajax({
-                url: 'resources/ajax/editDqaTitle.php?dqa_id='+dqaId,
+                url: 'resources/ajax/editDqaTitle.php?dqa_id=' + dqaId,
                 type: 'POST',
                 data: formData,
                 async: true,
@@ -865,13 +1188,13 @@ document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_actDqa thead tr').clone(true).appendTo('#tbl_actDqa thead');
     $('#tbl_actDqa thead tr:eq(1) th').each(function (i) {
 
-            var title = $(this).text();
-            $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
-            $('input', this).on('keyup change', function (e) {
-                if (tbl_actDqa.column(i).search() !== this.value) {
-                    tbl_actDqa.column(i).search(this.value).draw();
-                }
-            });
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+        $('input', this).on('keyup change', function (e) {
+            if (tbl_actDqa.column(i).search() !== this.value) {
+                tbl_actDqa.column(i).search(this.value).draw();
+            }
+        });
 
     });
 
@@ -887,7 +1210,7 @@ document.addEventListener("DOMContentLoaded", function () {
             targets: 0
         }],
         ajax: {
-                url: "resources/ajax/tbl_actDqa.php?dqaid="+dqaId,
+            url: "resources/ajax/tbl_actDqa.php?dqaid=" + dqaId,
             type: "POST",
             processData: false,
             contentType: false,
@@ -904,33 +1227,33 @@ document.addEventListener("DOMContentLoaded", function () {
             "targets": 0,
             "data": null,
             "render": function (data, type, row) {
-                return '<strong><a href="#">#'+data['dqa_id']+'</a></strong>';
+                return '<strong><a href="#">#' + data['dqa_id'] + '</a></strong>';
             },
-        },{
+        }, {
             "targets": 1,
             "data": null,
             "render": function (data, type, row) {
                 return data['area_name'];
             },
-        },{
+        }, {
             "targets": 2,
             "data": null,
             "render": function (data, type, row) {
-                return '<a href="home.php?p=act&m=view_dqa&dqaid='+data['dqa_guid']+'"><strong>'+data['title']+'</strong></a>';
+                return '<a href="home.php?p=act&m=view_dqa&dqaid=' + data['dqa_guid'] + '"><strong>' + data['title'] + '</strong></a>';
             },
-        },{
+        }, {
             "targets": 3,
             "data": null,
             "render": function (data, type, row) {
                 return '13/15 = <span class="badge bg-warning rounded-pill">92%</span>';
             },
-        },{
+        }, {
             "targets": 4,
             "data": null,
             "render": function (data, type, row) {
                 return data['created_at'];
             },
-        },{
+        }, {
             "targets": 5,
             "data": null,
             "render": function (data, type, row) {
@@ -941,7 +1264,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     $('#tbl_actDqaItems thead tr').clone(true).appendTo('#tbl_actDqaItems thead');
     $('#tbl_actDqaItems thead tr:eq(1) th').each(function (i) {
-        if(i!==0){
+        if (i !== 0) {
             var title = $(this).text();
             $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
             $('input', this).on('keyup change', function (e) {
@@ -949,7 +1272,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     tbl_actDqaItems.column(i).search(this.value).draw();
                 }
             });
-        }else{
+        } else {
             ''
         }
 
@@ -968,7 +1291,7 @@ document.addEventListener("DOMContentLoaded", function () {
             targets: 0
         }],
         ajax: {
-            url: "resources/ajax/tbl_actDqaItems.php?dqaid="+dqaId,
+            url: "resources/ajax/tbl_actDqaItems.php?",
             type: "POST",
             processData: false,
             contentType: false,
@@ -985,48 +1308,53 @@ document.addEventListener("DOMContentLoaded", function () {
             "targets": 0,
             "data": null,
             "render": function (data, type, row) {
-                return '<a href="#modalViewFindings" data-toggle="modal" data-ft-guid="'+data['fk_ft_guid']+'" data-file-name="'+data['original_filename']+'" data-file-path="'+data['host']+data['file_path']+'" data-file-id="'+data['file_id']+'" data-rp-id="'+data['rp_id']+'" class="btn btn-outline-primary btn-pill" title="Comply"><span class="fa fa-edit"></span></a>';
+                return '<a href="#modalViewFindings" data-toggle="modal" data-ft-guid="' + data['fk_ft_guid'] + '" data-file-name="' + data['original_filename'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-file-id="' + data['file_id'] + '" data-rp-id="' + data['responsible_person'] + '" class="btn btn-outline-primary btn-pill" title="Comply"><span class="fa fa-edit"></span></a>';
             },
-        },{
+        }, {
             "targets": 1,
             "data": null,
             "render": function (data, type, row) {
-                return '<strong><a href="#" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
+                return '<strong><a href="#" data-file-id="' + data['file_id'] + '">' + data['original_filename'] + '</a></strong>';
             },
-        },{
+        }, {
             "targets": 2,
             "data": null,
             "render": function (data, type, row) {
-                return data['form_name']+'<br/><small>Activity: '+data['activity_name']+'</small>';
+                return data['form_name'] + '<br/><small>Activity: ' + data['activity_name'] + '</small>';
             },
-        },{
+        }, {
             "targets": 3,
             "data": null,
             "render": function (data, type, row) {
                 return data['location'];
             },
-        },{
+        }, {
             "targets": 4,
             "data": null,
             "render": function (data, type, row) {
                 return data['uploaded_by'];
             },
-        },{
+        }, {
             "targets": 5,
             "data": null,
             "render": function (data, type, row) {
                 return data['reviewed_by'];
             },
-        },{
+        }, {
             "targets": 6,
             "data": null,
             "render": function (data, type, row) {
-                if(data['is_findings_complied']=='complied'){
-                    var x = '<div class="badge bg-success"><span class="fa fa-check-circle"></span> Complied</div>'
+                if (data['is_reviewed'] == 'reviewed') {
+                    if (data['is_findings_complied'] == 'complied') {
+                        var x = '<div class="badge bg-success"><span class="fa fa-check-circle"></span> Complied</div>'
+                    }
+                    if (data['is_findings_complied'] !== 'complied') {
+                        var x = '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> Not Complied</div>'
+                    }
+                } else {
+                    var x = '<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For review</div>'
                 }
-                if(data['is_findings_complied']!=='complied'){
-                    var x = '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> Not Complied</div>'
-                }
+
                 return x;
             },
         }],
@@ -1040,7 +1368,7 @@ document.addEventListener("DOMContentLoaded", function () {
         $('.btn-upload-file-text').text(' Uploading compliance please wait...');
         var formData = new FormData($(this)[0]);
         $.ajax({
-            url: 'resources/ajax/uploadComplianceFile.php?form_id='+ft_guid+'&rp_id='+rp_id,
+            url: 'resources/ajax/uploadComplianceFile.php?form_id=' + ft_guid + '&rp_id=' + rp_id + "&file_id=" + fileId,
             type: 'POST',
             dataType: 'html',
             data: formData,
@@ -1077,7 +1405,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     $("#status").text('');
                     $("#fileToUpload").val('');
-                    $('.btn-upload-file-text').text('Upload compliance');
+                    $('.btn-upload-file-text').text(' Upload compliance');
                     $(".upload_percent").text('');
                     $('.btn-upload-file').prop('disabled', false);
                     tbl_uploadedFiles.ajax.reload();
@@ -1105,13 +1433,13 @@ document.addEventListener("DOMContentLoaded", function () {
     $('#tbl_dqaCompliance thead tr').clone(true).appendTo('#tbl_dqaCompliance thead');
     $('#tbl_dqaCompliance thead tr:eq(1) th').each(function (i) {
 
-            var title = $(this).text();
-            $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
-            $('input', this).on('keyup change', function (e) {
-                if (tbl_dqaCompliance.column(i).search() !== this.value) {
-                    tbl_dqaCompliance.column(i).search(this.value).draw();
-                }
-            });
+        var title = $(this).text();
+        $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+        $('input', this).on('keyup change', function (e) {
+            if (tbl_dqaCompliance.column(i).search() !== this.value) {
+                tbl_dqaCompliance.column(i).search(this.value).draw();
+            }
+        });
     });
 
     var tbl_dqaCompliance = $('#tbl_dqaCompliance').DataTable({
@@ -1145,75 +1473,51 @@ document.addEventListener("DOMContentLoaded", function () {
             "render": function (data, type, row) {
                 return data['date_uploaded'];
             },
-        },{
+        }, {
             "targets": 1,
             "data": null,
             "render": function (data, type, row) {
-                return '<strong><a href="#modalReviewCompliance" data-toggle="modal" data-ft-guid="'+data['ft_guid']+'" data-file-path="'+data['file_path']+'" data-filename="'+data['original_filename']+'" data-parent-file-id="'+data['fk_file_guid']+'" data-file-id="'+data['file_id']+'">'+data['original_filename']+'</a></strong>';
+                return '<strong><a href="#modalReviewCompliance" data-toggle="modal" data-date-uploaded="' + data['date_uploaded'] + '" data-rp-id="' + data['rp_id'] + '" data-ft-guid="' + data['fk_ft_guid'] + '" data-file-path="' + data['host'] + data['file_path'] + '" data-filename="' + data['original_filename'] + '" data-parent-file-id="' + data['file_with_findings'] + '" data-file-id="' + data['file_compliance'] + '">' + data['original_filename'] + '</a></strong>';
             },
-        },{
+        }, {
             "targets": 2,
             "data": null,
             "render": function (data, type, row) {
-                return '<span class="text-capitalize">'+data['form_name']+'<br/><small>Activity: '+data['activity_name']+'</small></span>';
+                return '<span class="text-capitalize">' + data['form_name'] + '<br/><small>Activity: ' + data['activity_name'] + '</small></span>';
             },
-        },{
+        }, {
             "targets": 3,
             "data": null,
             "render": function (data, type, row) {
-                return '<span class="text-capitalize">'+data['batch']+' - '+data['cycle_name']+'</span>';
+                return '<span class="text-capitalize">' + data['batch'] + ' - ' + data['cycle_name'] + '</span>';
             },
-        },{
+        }, {
             "targets": 4,
             "data": null,
             "render": function (data, type, row) {
                 return data['location'];
             },
-        },{
+        }, {
             "targets": 5,
             "data": null,
             "render": function (data, type, row) {
-                return data['responsible_person'];
+                return data['rp_id'];
             },
-        },{
+        }, {
             "targets": 6,
             "data": null,
             "render": function (data, type, row) {
-                return '#'+data['id']+'<br><small>'+data['title']+'</small>';
-            },
-        },{
-            "targets": 7,
-            "data": null,
-            "render": function (data, type, row) {
-                var x ='';
-                if(data['is_reviewed']==='for review'){
-                    x='<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For review</div>'
-                }
-                if(data['is_reviewed']==='reviewed'){
-                    if(data['with_findings']==='with findings'){
-                        x= '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> With findings</div>'
-                    }
-                    if(data['with_findings']!=='no findings'){
-                        x= '<div class="badge bg-primary"><span class="fa fa-check-circle"></span> No findings</div>'
-                    }
-                }
-                return x;
-            },
-        },{
-            "targets": 8,
-            "data": null,
-            "render": function (data, type, row) {
 
-                var x ='';
-                if(data['is_reviewed']==='for review'){
-                    x='<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For review</div>'
+                var x = '';
+                if (data['is_reviewed'] === 'for review') {
+                    x = '<div class="badge bg-warning"><span class="fa fa-exclamation-circle"></span> For review</div>'
                 }
-                if(data['is_reviewed']==='reviewed'){
-                    if(data['is_complied']=='complied'){
-                        x= '<div class="badge bg-success"><span class="fa fa-check-circle"></span> Complied</div>'
+                if (data['is_reviewed'] === 'reviewed') {
+                    if (data['is_complied'] == 'complied') {
+                        x = '<div class="badge bg-success"><span class="fa fa-check-circle"></span> Complied</div>'
                     }
-                    if(data['is_complied']!=='complied'){
-                        x= '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> Not Complied</div>'
+                    if (data['is_complied'] !== 'complied') {
+                        x = '<div class="badge bg-danger"><span class="fa fa-times-circle"></span> Not Complied</div>'
                     }
                 }
                 return x;
@@ -1232,14 +1536,20 @@ document.addEventListener("DOMContentLoaded", function () {
                 pagemode: 'thumbs'
             }
         };
+        $.fn.modal.Constructor.prototype._enforceFocus = function() {};
         modalReviewCompliance.addEventListener('show.bs.modal', function (e) {
-            $('.spinner-border').prop('hidden',false);
+            $('.spinner-border').prop('hidden', false);
+            $('.btn-complied').prop('hidden', true);
+            $('.btn-notcomplied').prop('hidden', true);
             $("#displayFindings").html('');
+            modalReviewCompliance
             fileName = $(e.relatedTarget).data('filename');
             fileId = $(e.relatedTarget).data('file-id');
-            var parent_fileId = $(e.relatedTarget).data('parent-file-id');
+            parent_fileId = $(e.relatedTarget).data('parent-file-id');
             ft_guid = $(e.relatedTarget).data('ft-guid');
             file_path = $(e.relatedTarget).data('file-path');
+            rp_id = $(e.relatedTarget).data('rp-id');
+            date_uploaded = $(e.relatedTarget).data('date-uploaded');
             PDFObject.embed(file_path, "#pdf", options);
             $('.compliance-filename').html(fileName);
             $.ajax({
@@ -1248,22 +1558,120 @@ document.addEventListener("DOMContentLoaded", function () {
                 data: {
                     "file_id": fileId,
                     "parent_file_id": parent_fileId,
-                    "ft_guid": ft_guid
+                    "ft_guid": ft_guid,
+                    "date_uploaded": date_uploaded
                 },
                 dataType: 'html',
                 success: function (data) {
-                    $('.spinner-border').prop('hidden',true);
+                    $('.spinner-border').prop('hidden', true);
+                    $('.btn-complied').prop('hidden', false);
+                    $('.btn-notcomplied').prop('hidden', false);
                     $("#displayFindings").html(data);
                 }
             });
 
         });
         modalReviewCompliance.addEventListener('hidden.bs.modal', function (e) {
-          
+
         });
 
     }
 
+    //submit complied
+
+    $('.btn-complied').on("click", function (event) {
+        event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Mark findings as complied",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: 'resources/ajax/findingsComplied.php',
+                    data: {
+                        "compliance_file_id": fileId,
+                        "with_findings_file_id": parent_fileId,
+                        "ft_guid": ft_guid,
+                        "rp_id": rp_id,
+                        "date_uploaded": date_uploaded
+                    },
+                    async: true,
+                    dataType: 'html',
+                    success: function (data) {
+                        if (data === 'complied') {
+                            Swal.fire(
+                                'Findings complied!',
+                                'Thank you',
+                                'success'
+                            )
+                            tbl_dqaCompliance.ajax.reload();
+                        }
+                        if (data === 'already_updated') {
+                            Swal.fire(
+                                'Findings complied already',
+                                'Thank you',
+                                'info'
+                            )
+                        }
+                    }
+                });
+            }
+        })
+
+    });
+    $('.btn-notcomplied').click(async function() { // note use of 'async' here
+        event.preventDefault();
+        const { value: text } = await Swal.fire({
+            input: 'textarea',
+            inputLabel: 'Not Complied',
+            inputPlaceholder: 'Type your findings here...',
+            inputAttributes: {
+                'aria-label': 'Type your findings here'
+            },
+            showCancelButton: true
+        })
+
+        if (text) {
+            $.ajax({
+                type: 'POST',
+                url: 'resources/ajax/findingsNotComplied.php',
+                data: {
+                    "compliance_file_id": fileId,
+                    "with_findings_file_id": parent_fileId,
+                    "ft_guid": ft_guid,
+                    "rp_id": rp_id,
+                    "date_uploaded": date_uploaded,
+                    "findings":text
+                },
+                async: true,
+                dataType: 'html',
+                success: function (data) {
+                    if (data === 'not complied') {
+                        Swal.fire(
+                            'Findings not complied!',
+                            'Thank you',
+                            'success'
+                        )
+                        tbl_dqaCompliance.ajax.reload();
+                    }
+                    if (data === 'not_complied_already') {
+                        Swal.fire(
+                            'Findings not complied aready',
+                            'Thank you',
+                            'info'
+                        )
+                    }
+                }
+            });
+        }
+
+    })
     //DQA REVIEW COMPLIANCE END
 });
 

@@ -24,7 +24,7 @@
     <div class="col-sm-12 col-xl-12">
         <div class="tab-content">
             <div class="tab-pane fade show <?php echo (isset($_GET['m']) && $_GET['m'] == 'main') ? 'active' : ''; ?>" id="main" role="tabpanel">
-                <div class="row">
+                <!-- <div class="row">
                     <div class="col-md-4 col-xl-4">
                         <div class="card">
                             <div class="card-body h-100">
@@ -42,20 +42,20 @@
                                 </div>
                                 <h1 class="mt-1 mb-3">
                                     <?php
-                                    echo $app->myWorkReviewedAll($_SESSION['id_number'],'active');
+                                    echo $dqa->totalReviewed($_SESSION['id_number']);
                                     ?>
                                 </h1>
                                 <div class="mb-0">
                                     <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
                                         <?php
                                         //thisDayReviewedByUsername
-                                        echo $app->myWorkThisWeekReviewed('active');
+                                        echo $dqa->totalReviewedThisWeek($_SESSION['id_number'],'active');
                                         ?> </span>
                                     <span class="text-muted">This week,</span>
                                     <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
                                         <?php
                                         //thisDayReviewedByUsername
-                                        echo $app->myWorkThisDayReviewed('active');
+                                        echo $dqa->totalReviewedThisDay($_SESSION['id_number'],'active');
                                         ?> </span>
                                     <span class="text-muted">Today</span>
                                 </div>
@@ -79,20 +79,20 @@
                                 </div>
                                 <h1 class="mt-1 mb-3">
                                 <?php
-                                    echo $app->myWorkFindingAll('active');
+                                    echo $dqa->totalFindings($_SESSION['id_number'],'active');
                                     ?>
                                 </h1>
                                 <div class="mb-0">
                                     <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
                                         <?php
                                         //thisDayReviewedByUsername
-                                        echo $app->myWorkThisWeekFinding('active');
+                                        echo $dqa->totalFindingsThisWeek($_SESSION['id_number'],'active');
                                         ?> </span>
                                     <span class="text-muted">This week,</span>
-                                    <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
+                                    <span class="text-success"> <i class="mdi m di-arrow-bottom-right"></i>
                                         <?php
                                         //thisDayReviewedByUsername
-                                        echo $app->myWorkThisDayFinding('active');
+                                        echo $dqa->totalFindingsThisDay($_SESSION['id_number'],'active');
                                         ?> </span>
                                     <span class="text-muted">Today</span>
                                 </div>
@@ -116,29 +116,29 @@
                                 </div>
                                 <h1 class="mt-1 mb-3">
                                     <?php
-                                        echo $app->myWorkTaAll('active');
+                                        echo $dqa->totalTA($_SESSION['id_number'],'active');
                                     ?>
                                 </h1>
                                 <div class="mb-0">
                                     <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
                                         <?php
-                                        echo $app->myWorkTaThisWeek('active');
+                                        echo $dqa->totalTAThisWeek($_SESSION['id_number'],'active');
                                         ?> </span>
                                     <span class="text-muted">This week,</span>
                                     <span class="text-success"> <i class="mdi mdi-arrow-bottom-right"></i>
                                         <?php
-                                        echo $app->myWorkTaThisDay('active');
+                                        echo $dqa->totalTAThisDay($_SESSION['id_number'],'active');
                                         ?> </span>
                                     <span class="text-muted">Today</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="row">
                     <div class="col-md-12 col-xl-12">
                         <div class="card mb-3">
-                            <h5 class="p-3">Coverage Area <span class="badge bg-primary float-right"> IPCDD</span></h5>
+                            <h5 class="p-3">DQA Detailed Summary <span class="badge bg-primary float-right">IPCDD DROM</span> </h5>
                             <table id="tbl_mywork" class="table table-striped table-hover">
                                 <thead>
                                     <tr>
@@ -152,13 +152,12 @@
                                 </thead>
                                 <tbody>
                                     <?php
-
                                     $userCoverage = $app->getUserCoverage();
                                     if($userCoverage){
                                         foreach ($userCoverage as $uc){
-                                            foreach ($app->myWorkDashboard_ipcddDrom($uc['area_id'],$uc['cycle_id']) as $item) {
+                                            foreach ($dqa->dqaDetailedSummarry_ipcdd($uc['area_id'],$uc['cycle_id']) as $item) {
                                                 echo '<tr>';
-                                                echo '<td><a href="home.php?p=mywork&m=view_more&cycle='.$item['cycle_id'].'&area='.$item['cadt_id'].'">' . $item['cadt_name'] . '</a></td>';
+                                                echo '<td class="font-weight-bold"><a href="home.php?p=mywork&m=view_area&cycle='.$item['cycle_id'].'&area='.$item['cadt_id'].'">' . $item['cadt_name'] . '</a></td>';
                                                 echo '<td class="text-capitalize">' . $item['batch'].' - '. $item['cycle_name'] . '</td>';
                                                 echo '<td>' . $item['reviewedOverActual'] . '%</td>';
 /*                                              echo '<td>'.$item['reviewed'].'/'.$item['actual'].'=<strong>'.$item['reviewedOverActual'].'</strong></td>';*/
@@ -169,7 +168,6 @@
                                             }
                                         }
                                     }
-
                                     ?>
                                 </tbody>
                             </table>
