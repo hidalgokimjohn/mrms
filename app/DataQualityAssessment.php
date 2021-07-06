@@ -739,13 +739,13 @@ class DataQualityAssessment extends App
             $result1 = $mysql->query($q1) or die($mysql->error);
 
             while ($row1 = $result1->fetch_assoc()) {
-                $q3 = "INSERT INTO `kalahi_mrms`.`tbl_dqa_compliance`(`file_with_findings`, `file_compliance`, `id_number`, `fk_ft_guid`) 
+                $q3 = "INSERT INTO `tbl_dqa_compliance`(`file_with_findings`, `file_compliance`, `id_number`, `fk_ft_guid`) 
                     VALUES ('$row1[with_findings]', '$compliance', '$id_number', '$ft_guid')";
                 $result2 = $mysql->query($q3);
                 if ($mysql->affected_rows > 0) {
                     echo 'Record inserted<br>';
                 } else {
-                    return false;
+                    echo 'error not successfull';
                 }
             }
         }
