@@ -5,7 +5,7 @@ $sp = new \app\SubProject();
 ?>
 <div class="col-sm-12 col-lg-12 col-xl-12">
     <div class="row">
-        <div class="col-12 col-md-6 col-lg-8">
+        <div class="col-12 col-md-6 col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title mb-0 text-capitalize"><strong><?php echo $area['area_name']; ?></strong></h5>
@@ -28,7 +28,7 @@ $sp = new \app\SubProject();
                     </div>
                 </div>
                 <div class="m-3 mt-1">
-                    <a href="home.php?p=mywork&m=view_more&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-arrow-left"></span> Back</a>
+                    <a href="home.php?p=mywork&m=view_area&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-arrow-left"></span> Back</a>
                     <a href="home.php?p=act&m=by_brgy&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-bars"></span> By Barangay</a>
                     <a href="#" class="p-1"><span class="fa fa-users"></span> Set up members</a>
                     <a href="home.php?p=generate_findings&cycle=<?php echo $_GET['cycle'] ?>&area=<?php echo $_GET['area'] ?>" class="p-1"><span class="fa fa-print"></span> Generate Findings</a>
@@ -69,7 +69,7 @@ $sp = new \app\SubProject();
 
             </div>
         </div>
-        <div class="col-12 col-md-6 col-lg-4">
+        <div class="col-12 col-md-6 col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title mb-0"><strong>Sub Project Implementation </strong><br><span><small>GWA as of <?php echo date('M d, Y', strtotime($sp->last_update())); ?>. Data is based from Geotagging WebApp (updated weekly). <br>To update the data visit <a href="https://geotagging.dswd.gov.ph/" target="_blank">https://geotagging.dswd.gov.ph/</a> <br/></small></span></h5>
