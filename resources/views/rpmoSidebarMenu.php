@@ -36,7 +36,7 @@
             </li>
             <li class="sidebar-item <?php $app->sidebar_active('mywork', $_GET['p']); ?>">
                 <a class="sidebar-link" href="home.php?p=mywork&m=main">
-                    <i class="align-middle" data-feather="monitor"></i> <span class="align-middle">My Work</span>
+                    <i class="align-middle" data-feather="monitor"></i> <span class="align-middle">DQA</span>
                 </a>
             </li>
            <!-- <li class="sidebar-item <?php /*$app->sidebar_active('dashboards', $_GET['p']); */?>">
@@ -52,33 +52,34 @@
                     </li>
                     <li class="sidebar-item <?php /*$app->sidebar_active('ipcdd_drom', $_GET['modality']); */?>"><a
                                 class="sidebar-link" href="home.php?p=dashboards&modality=ipcdd_drom">IPCDD DROM</a>
+                                class="sidebar-link" href="home.php?p=dashboards&modality=ipcdd_drom">IPCDD DROM</a>
                     </li>
                 </ul>
             </li>-->
-            <li class="sidebar-item <?php $app->sidebar_active('modules', $_GET['p']); ?>">
+            <!--<li class="sidebar-item <?php /*$app->sidebar_active('modules', $_GET['p']); */?>">
                 <a data-target="#dqa" data-toggle="collapse"
-                   class="sidebar-link <?php $app->sidebar_collapsed('dqa_conducted', $_GET['m']); ?>">
-                        <i class="align-middle" data-feather="edit-3"></i> <span class="align-middle">DQA</span>
+                   class="sidebar-link <?php /*$app->sidebar_collapsed('dqa_conducted', $_GET['m']); */?>">
+                        <i class="align-middle" data-feather="edit-3"></i> <span class="align-middle">DQA Consolidated <span class="sidebar-badge badge bg-primary">New</span></span>
                 </a>
                 <ul id="dqa"
-                    class="sidebar-dropdown list-unstyled collapse <?php if ($_GET['m'] == 'dqa_conducted' || $_GET['m'] == 'dqa_items') {
+                    class="sidebar-dropdown list-unstyled collapse <?php /*if ($_GET['m'] == 'dqa_conducted' || $_GET['m'] == 'dqa_items') {
                         echo 'show';
-                    } ?>">
-                    <li class="sidebar-item <?php $app->sidebar_active('af_cbrc', $_GET['modality']); ?>">
+                    } */?>">
+                    <li class="sidebar-item <?php /*$app->sidebar_active('af_cbrc', $_GET['modality']); */?>">
                         <a class="sidebar-link" href="home.php?p=modules&m=dqa_conducted&modality=af_cbrc">KC-AF
                             CBRC</a>
                     </li>
-                    <li class="sidebar-item <?php $app->sidebar_active('ipcdd_drom', $_GET['modality']); ?>">
+                    <li class="sidebar-item <?php /*$app->sidebar_active('ipcdd_drom', $_GET['modality']); */?>">
                         <a class="sidebar-link"  href="home.php?p=modules&m=dqa_conducted&modality=ipcdd_drom">IPCDD
-                            DROM</a>
+                            DROM <span class="sidebar-badge badge bg-primary">Conso</span></a>
                     </li>
                 </ul>
-            </li>
+            </li>-->
             <li class="sidebar-item <?php $app->sidebar_active('compliance', $_GET['p']); ?>">
                 <?php
-                $notifDqaCompliance = $app->notif_dqa_compliance();
-                if($notifDqaCompliance){
-                    $ndc='<span class="sidebar-badge badge bg-primary">'.$notifDqaCompliance.'</span>';
+                $ndc = $app->notif_dqa_compliance();
+                if($ndc){
+                    $ndc='<span class="sidebar-badge badge bg-primary">'.$ndc.'</span>';
                 }else{
                     $ndc='';
                 }
@@ -159,8 +160,14 @@
                 <a class="sidebar-link" href="https://caraga-portal.dswd.gov.ph/dashboard/" target="_blank">
                     <i class="align-middle" data-feather="grid"></i> <span class="align-middle">DSWD Caraga Portal</span>
                 </a>
-                <a class="sidebar-link" href="http://crg-kcapps-svr.entdswd.local/kc/" target="_blank">
+                <a class="sidebar-link" href="https://crg-kcapps-svr.entdswd.local/kc/" target="_blank">
                     <i class="align-middle" data-feather="layout"></i> <span class="align-middle">KC Dashboard</span>
+                </a>
+                <a class="sidebar-link" href="http://apps2.caraga.dswd.gov.ph/kc-movs/v2/kcdashboard/" target="_blank">
+                    <i class="align-middle" data-feather="globe"></i> <span class="align-middle">GWA Dashboard</span>
+                </a>
+                <a class="sidebar-link" href="https://kalahi-caraga-kb.tawk.help/" target="_blank">
+                    <i class="align-middle" data-feather="link"></i> <span class="align-middle">KC Knowledge Base</span>
                 </a>
             </li>
         </ul>
