@@ -716,7 +716,8 @@ class DataQualityAssessment extends App
         $q = "SELECT
                 file_id as compliance,
                 form_uploaded.fk_ft_guid,
-                form_uploaded.uploaded_by
+                form_uploaded.uploaded_by,
+                form_uploaded.date_uploaded
             FROM
                 form_uploaded
                 INNER JOIN form_target ON form_uploaded.fk_ft_guid = form_target.ft_guid
@@ -730,6 +731,7 @@ class DataQualityAssessment extends App
             $ft_guid = $row['fk_ft_guid'];
             $compliance = $row['compliance'];
             $id_number = $row['uploaded_by'];
+            $date_uploaded = $row['date_uploaded'];
 
             $q1 = "SELECT
                 file_id as with_findings
@@ -739,14 +741,46 @@ class DataQualityAssessment extends App
             $result1 = $mysql->query($q1) or die($mysql->error);
 
             while ($row1 = $result1->fetch_assoc()) {
-                $q3 = "INSERT INTO `tbl_dqa_compliance`(`file_with_findings`, `file_compliance`, `id_number`, `fk_ft_guid`) 
-                    VALUES ('$row1[with_findings]', '$compliance', '$id_number', '$ft_guid')";
-                $result2 = $mysql->query($q3);
+                $q3 = "INSERT INTO `tbl_dqa_compliance`(`file_with_findings`, `file_compliance`,`created_date`, `id_number`, `fk_ft_guid`) 
+                    VALUES ('$row1[with_findings]', '$compliance', '$date_uploaded','$id_number', '$ft_guid')";
+                $result2 = $mysql->query($q3) or die($mysql->error);
                 if ($mysql->affected_rows > 0) {
                     echo 'Record inserted<br>';
                 } else {
-                    echo 'error not successfull';
+                    echo 'error not successfull<br>';
                 }
+            }
+        }
+
+    }
+
+    public function migrateReviewed_movs(){
+        $mysql=$this->connectDatabase();
+        $q="SELECT
+            tbl_dqa_list.fk_file_guid,
+            form_uploaded.is_reviewed,
+            form_uploaded.with_findings,
+            tbl_dqa_list.added_by,
+            tbl_dqa_list.is_delete,
+            tbl_dqa_list.created_at 
+        FROM
+            tbl_dqa_list
+            INNER JOIN form_uploaded ON tbl_dqa_list.fk_file_guid = form_uploaded.file_id
+            INNER JOIN form_target ON form_uploaded.fk_ft_guid = form_target.ft_guid
+            INNER JOIN cycles ON form_target.fk_cycle = cycles.id 
+        WHERE
+            form_uploaded.is_deleted = 0 
+            AND cycles.fk_modality = 4 
+            AND form_uploaded.is_reviewed = 'reviewed'";
+        $result = $mysql->query($q) or die($mysql->error);
+        while($row = $result->fetch_assoc()){
+            $file_id = $row['fk_file_guid'];
+            $id_number = $row['added_by'];
+            $created_date = $row['created_at'];
+            $q2 = "INSERT INTO `tbl_dqa_user_list`(`fk_file_id`, `id_number`, `created_date`) VALUES ('$file_id', '$id_number', '$created_date')";
+            $result1 = $mysql->query($q2) or die($mysql->error);
+            if($mysql->affected_rows>0){
+                echo 'Migrated Successfully<br>';
             }
         }
 
