@@ -218,7 +218,7 @@ $(document).ready(function () {
                     "data": null,
                     "render": function (data, type, row) {
                         if (data['original_filename'] !== '') {
-                            return data['form_name'] + "<br/>" + '<small>Activity: ' + data['activity_name'] + '</small>';
+                            return data['batch'] + " " +data['cycle_name'];
                         } else {
                             return '<strong>Not Yet Uploaded</strong>'
                         }
@@ -230,6 +230,18 @@ $(document).ready(function () {
                     "data": null,
                     "render": function (data, type, row) {
                         if (data['original_filename'] !== '') {
+                            return data['form_name'] + "<br/>" + '<small>Activity: ' + data['activity_name'] + '</small>';
+                        } else {
+                            return '<strong>Not Yet Uploaded</strong>'
+                        }
+
+                    },
+                },
+                {
+                    "targets": 4,
+                    "data": null,
+                    "render": function (data, type, row) {
+                        if (data['original_filename'] !== '') {
                             return '<span title="' + data['cadt_name'] + ', ' + data['mun_name'] + '">' + data['area'] + '</span>';
                         } else {
                             return '<strong class="text-danger">Not Yet Uploaded</strong>'
@@ -237,21 +249,21 @@ $(document).ready(function () {
                     },
                 },
                 {
-                    "targets": 4,
+                    "targets": 5,
                     "data": null,
                     "render": function (data, type, row) {
                         return data['rp'];
                     },
                 },
                 {
-                    "targets": 5,
+                    "targets": 6,
                     "data": null,
                     "render": function (data, type, row) {
                         return data['date_uploaded'];
                     },
                 },
                 {
-                    "targets": 6,
+                    "targets": 7,
                     "data": null,
                     "render": function (data, type, row) {
                         if (data['original_filename'] !== '') {
