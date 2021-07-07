@@ -2788,38 +2788,37 @@ WHERE
     public function getUploadedFiles()
     {
         $mysql = $this->connectDatabase();
-
-        // $cadt_id= "'".implode("','", $this->area_id)."'";
-        // $cycle_id= "'".implode("','", $this->cycle_id)."'";
+        $this->getUserActiveAreas();
+        $cadt_id= "'".implode("','", $this->area_id)."'";
+        $cycle_id= "'".implode("','", $this->cycle_id)."'";
 
         $q = "SELECT
-                form_uploaded.original_filename,
-                form_uploaded.generated_filename,
-                form_target.ft_guid,
-                form_uploaded.file_id,
-                form_uploaded.with_findings,
-                form_uploaded.date_uploaded,
-                form_uploaded.file_path,
-                lib_form.form_name,
-                lib_activity.activity_name,
-                form_uploaded.rp_id,
-                form_uploaded.is_reviewed,
-                COALESCE (
-                    lib_barangay.brgy_name,
-                    lib_municipality.mun_name,
-                    lib_cadt.cadt_name,
-                    'n/a'
-                ) AS area,
-                form_uploaded.host
-            FROM
-                form_uploaded
+            form_uploaded.original_filename,
+            form_uploaded.generated_filename,
+            form_target.ft_guid,
+            form_uploaded.file_id,
+            form_uploaded.with_findings,
+            form_uploaded.date_uploaded,
+            form_uploaded.file_path,
+            lib_form.form_name,
+            lib_activity.activity_name,
+            form_uploaded.rp_id,
+            form_uploaded.is_reviewed,
+            COALESCE ( lib_barangay.brgy_name, lib_municipality.mun_name, lib_cadt.cadt_name, 'n/a' ) AS area,
+            form_uploaded.`host`,
+            cycles.batch,
+            lib_cycle.cycle_name 
+        FROM
+            form_uploaded
             INNER JOIN form_target ON form_target.ft_guid = form_uploaded.fk_ft_guid
             INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
             LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
-            WHERE form_uploaded.is_deleted = 0 AND  (form_uploaded.rp_id='$_SESSION[id_number]' OR form_uploaded.uploaded_by='$_SESSION[id_number]')";
+            INNER JOIN cycles ON form_target.fk_cycle = cycles.id
+            INNER JOIN lib_cycle ON cycles.fk_cycle = lib_cycle.id
+            WHERE form_uploaded.is_deleted = 0 AND form_target.fk_cycle IN ($cycle_id) AND form_target.fk_cadt IN ($cadt_id)";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
