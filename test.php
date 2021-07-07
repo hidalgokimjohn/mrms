@@ -5,9 +5,9 @@ include ('app/DataQualityAssessment.php');
 $app = new \app\App();
 $dqa = new \app\DataQualityAssessment();
 
-$dqa->migrate_compliance();
+//$dqa->migrate_compliance();
 
-//$dqa->migrateReviewed_movs();
+$dqa->migrateReviewed_movs();
 ///*echo '<pre>';
 //$r=$app->weeklyUpload('ipcdd_drom',2021);
 //var_dump($r);*/

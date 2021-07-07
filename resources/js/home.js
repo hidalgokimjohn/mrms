@@ -195,9 +195,9 @@ $(document).ready(function () {
                 "data": null,
                 "render": function (data, type, row) {
                     if (data['is_reviewed'] == 'for review') {
-                        return '<a href="#" class="btn btn-outline-danger btn-pill delete-file" data-file-id="' + data['file_id'] + '" data-form-id="' + data['ft_guid'] + '"><span class="fa fa-times"></span></a>'
+                        return '<a href="#" class="btn btn-outline-danger btn-pill delete-file" data-file-id="' + data['file_id'] + '" data-form-id="' + data['ft_guid'] + '"><span class="fa fa-trash-alt"></span></a>'
                     } else {
-                        return '<a href="#" class="btn btn-outline-danger disabled btn-pill delete-file" data-file-id="' + data['file_id'] + '" data-form-id="' + data['ft_guid'] + '"><span class="fa fa-times"></span></a>'
+                        return '<a href="#" class="btn btn-outline-danger disabled btn-pill delete-file" data-file-id="' + data['file_id'] + '" data-form-id="' + data['ft_guid'] + '"><span class="fa fa-trash-alt"></span></a>'
                     }
                 },
             },
