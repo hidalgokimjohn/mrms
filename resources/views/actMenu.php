@@ -30,7 +30,9 @@
                 </div>
             </a>
             </div>
-
+            <a class="list-group-item list-group-item-action <?php echo $app->sidebar_active('generate_checklist', $_GET['m']); ?>" href="home.php?p=act&m=generate_checklist" role="tab">
+                Generate Checklist <span class="badge bg-success rounded float-right">New</span>
+            </a>
         </div>
     </div>
 </div>

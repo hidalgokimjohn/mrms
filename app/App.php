@@ -290,6 +290,32 @@ class App
         }
     }
 
+    public function getCadtInfo($cadt_id,$cycle_id){
+        $mysql = $this->connectDatabase();
+        $cycle_id = $mysql->real_escape_string($cycle_id);
+        $cadt_id = $mysql->real_escape_string($cadt_id);
+        $q = "SELECT
+            lib_cadt.id,
+            implementing_cadt_ipcdd.fk_cadt,
+            implementing_cadt_ipcdd.fk_cycles,
+            lib_cadt.cadt_name,
+            cycles.batch,
+            lib_cycle.cycle_name 
+        FROM
+            implementing_cadt_ipcdd
+            INNER JOIN lib_cadt ON implementing_cadt_ipcdd.fk_cadt = lib_cadt.id
+            INNER JOIN cycles ON implementing_cadt_ipcdd.fk_cycles = cycles.id
+            INNER JOIN lib_cycle ON cycles.fk_cycle = lib_cycle.id
+            WHERE implementing_cadt_ipcdd.fk_cadt='$cadt_id' AND implementing_cadt_ipcdd.fk_cycles='$cycle_id' LIMIT 1";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
     public function sidebar_active($m, $url)
     {
         echo ($m == $url) ? 'active' : '';
@@ -2870,7 +2896,7 @@ WHERE
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             WHERE lib_activity.id = '$activity_id' AND form_target.fk_cycle='$cycle_id'
             AND(form_target.fk_cadt ='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id')
-            AND (form_uploaded.is_deleted =0 OR (form_target.actual>=0 AND form_uploaded.is_deleted is NULL))";
+            AND (form_uploaded.is_deleted =0 OR (form_target.target>0 AND form_uploaded.is_deleted is NULL))";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -2904,7 +2930,7 @@ WHERE
             form_target
             INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
             INNER JOIN lib_activity ON lib_activity.id = lib_form.fk_activity
-            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$cadt_id' OR form_target.fk_psgc_mun='$cadt_id') AND lib_activity.fk_category='$cat_id'
+            WHERE form_target.fk_cycle='$cycle' AND (form_target.fk_cadt='$cadt_id') AND lib_activity.fk_category='$cat_id'
             GROUP BY lib_activity.id";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
@@ -3707,6 +3733,142 @@ WHERE
         if($result->num_rows>0){
             $row = $result->fetch_assoc();
             return $row['activity_name'];
+        }
+    }
+
+    public function generateIpcddChecklist(){
+
+    }
+
+    public function ipcdd_col($cadt_id, $cycle_id, $level)
+    {
+        $mysql = $this->connectDatabase();
+        $cadt_id = $mysql->real_escape_string($_POST['cadt_id']);
+        $cycle_id = $mysql->real_escape_string($_POST['cycle_id']);
+        $q ="SELECT
+            implementing_cadt_icc.fk_cycles,
+            implementing_cadt_icc.fk_cadt_id,
+            implementing_cadt_icc.fk_psgc_mun,
+            implementing_cadt_icc.fk_psgc_brgy,
+            lib_municipality.mun_name,
+            lib_barangay.brgy_name,
+            lib_sitio.sitio_name,
+            implementing_cadt_icc.`level`
+            FROM
+            implementing_cadt_icc
+            LEFT JOIN lib_sitio ON lib_sitio.psgc_sitio = implementing_cadt_icc.fk_psgc_sitio
+            LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = implementing_cadt_icc.fk_psgc_brgy
+            LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = implementing_cadt_icc.fk_psgc_mun
+            WHERE implementing_cadt_icc.fk_cadt_id='$cadt_id' 
+              AND implementing_cadt_icc.fk_cycles='$cycle_id' 
+              AND implementing_cadt_icc.`level`='$level'
+            ORDER BY lib_municipality.mun_name,lib_barangay.brgy_name,lib_sitio.sitio_name";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            while($row = $result->fetch_assoc()){
+                $data[] = $row;
+            }
+            return $data;
+        }else{
+            return false;
+        }
+
+    }
+
+    public function checklistRowIpcdd($cadt_id, $cycle_id)
+    {
+        $mysql = $this->connectDatabase();
+        $cadt_id = $mysql->escape_string($cadt_id);
+        $cycle_id = $mysql->escape_string($cycle_id);
+        $q = "SELECT
+                lib_activity.activity_name,
+                lib_form.form_name,
+                form_target.fk_form,
+                lib_form.form_type,
+                sum(form_target.target) as tot_target,
+                sum(form_target.actual) as tot_actual,
+                format(sum(form_target.actual)/sum(form_target.target)*100,2) as percentage,
+                lib_form.form_type
+            FROM
+                form_target
+            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+            INNER JOIN lib_activity ON lib_form.fk_activity = lib_activity.id
+            INNER JOIN lib_category ON lib_activity.fk_category = lib_category.id
+            WHERE
+                form_target.fk_cycle = '$cycle_id'
+            AND form_target.fk_cadt = '$cadt_id' AND form_target.target>0
+            GROUP BY
+                form_target.fk_form
+            ORDER BY
+                lib_activity.id ASC";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    public function checklistRowBrgyIpcdd($cadt_id, $cycle_id, $form_code)
+    {
+        $mysql = $this->connectDatabase();
+        $cadt_id = $mysql->escape_string($cadt_id);
+        $cycle_id = $mysql->escape_string($cycle_id);
+        $form_type = "('municipal','barangay')";
+        $q = "SELECT
+            form_target.fk_form,
+            form_target.fk_psgc_mun,
+            form_target.fk_cycle,
+            form_target.target,
+            form_target.actual,
+            form_target.ft_guid,
+            form_target.fk_psgc_brgy,
+            lib_form.form_type,
+            form_target.can_upload,
+            lib_municipality.mun_name,
+            lib_barangay.brgy_name,
+            lib_sitio.sitio_name
+            FROM
+            form_target
+            INNER JOIN lib_form ON lib_form.form_code = form_target.fk_form
+            LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
+            LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
+            LEFT JOIN lib_sitio ON lib_sitio.psgc_sitio = form_target.fk_psgc_sitio
+            WHERE form_target.fk_cycle = '$cycle_id' AND form_target.fk_cadt = '$cadt_id'
+            AND form_target.fk_form = '$form_code'
+            AND lib_form.form_type IN $form_type
+            GROUP BY form_target.ft_guid
+            ORDER BY lib_municipality.mun_name, lib_barangay.brgy_name,lib_sitio.sitio_name";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    public function checklistColspanIpcdd($cadt, $cycle)
+    {
+        $mysql = $this->connectDatabase();
+        $psgc_mun = $mysql->escape_string($cadt);
+        $cycle = $mysql->escape_string($cycle);
+        $q = "SELECT
+            COUNT(implementing_cadt_icc.fk_cadt_id) as colspan
+            FROM
+            implementing_cadt_icc
+            WHERE implementing_cadt_icc.fk_cycles='$cycle' AND implementing_cadt_icc.`level` in ('cadt','municipal') AND implementing_cadt_icc.fk_cadt_id='$cadt'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result) {
+            $row = $result->fetch_assoc();
+            return $row['colspan'];
+        } else {
+            return false;
         }
     }
 }
