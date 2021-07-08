@@ -1,4 +1,4 @@
-<div class="col-xl-10">
+<div class="col-xl-12">
     <div class="row">
         <div class="col-xl-12">
             <div class="card">
