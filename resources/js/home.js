@@ -5,13 +5,23 @@ $(document).ready(function () {
     var p = url.searchParams.get("p");
 
 
-
     /*if (m == 'dqa_conducted') {
         new Choices(document.querySelector(".choices-muni"));
         new Choices(document.querySelector(".choicesCycle"));
         new Choices(document.querySelector(".choicesAc"));
         new Choices(document.querySelector(".editChoicesAc"));
     }*/
+
+    //generate checklist module//
+    if (p === 'generate_checklist' || m==='generate_checklist') {
+        var choiceCadt = new Choices(".choices-generate-checklist-cadt", {
+            shouldSort: false
+        });
+        var choiceCycle = new Choices(".choices-generate-checklist-cycle", {
+            shouldSort: false
+        });
+    }
+
 
     if (m == 'upload' || p == 'upload') {
         var choiceTypeOfCadt = new Choices(".choices-of-cadt", {
@@ -218,7 +228,7 @@ $(document).ready(function () {
                     "data": null,
                     "render": function (data, type, row) {
                         if (data['original_filename'] !== '') {
-                            return data['batch'] + " " +data['cycle_name'];
+                            return data['batch'] + " " + data['cycle_name'];
                         } else {
                             return '<strong>Not Yet Uploaded</strong>'
                         }
@@ -540,8 +550,8 @@ $(document).ready(function () {
     }
 
 
-   if(p=='user_profile'){
-     new Choices(document.querySelector(".choices-dqa-level"));
+    if (p == 'user_profile') {
+        new Choices(document.querySelector(".choices-dqa-level"));
         flatpickr(".flatpickr-minimum", {
             minDate: 'today'
         });
@@ -576,10 +586,9 @@ $(document).ready(function () {
                 document.getElementById("text_findings").disabled = false;
             }
         });
-   }
-       
+    }
 
-    
+
     $('#tbl_users thead tr').clone(true).appendTo('#tbl_users thead');
     $('#tbl_users thead tr:eq(1) th').each(function (i) {
         if (i !== 0) {
@@ -824,6 +833,49 @@ $(document).ready(function () {
             [2, "desc"]
         ],
     });
+
+    //start generate checklist module//
+
+    $('.btn-generate-checklist').on('click', function () {
+        var cadt_id = $('.choices-generate-checklist-cadt').val();
+        var cycle_id = $('.choices-generate-checklist-cycle').val();
+        //disable button//
+        $('.btn-generate-checklist').html('<i class="fa fa-circle-notch fa-spin"></i> Generating');
+        $('.btn-generate-checklist').attr("disabled", "disabled");
+
+        //showloading screen//
+        $('.loading-screen').prop('hidden', false);
+
+        //reset displayed data//
+        $('.display-generated-checklist').html('');
+
+        //request data//
+        $.ajax({
+            type: 'POST',
+            url: 'resources/ajax/generateIpcddChecklist.php',
+            data: {
+                "cycle_id": cycle_id,
+                "cadt_id": cadt_id
+            },
+            async: true,
+            dataType: 'html',
+            success: function (data) {
+                //hideloading screen//
+                $('.loading-screen').prop('hidden', true);
+
+                //display data//
+                $('.display-generated-checklist').html(data);
+                //rowspanizer
+                $("#generated_checklist").rowspanizer({
+                    columns: [0, 1]
+                });
+                $('.btn-generate-checklist').prop('disabled', false);
+                $('.btn-generate-checklist').html('<i class="fa fa-print"></i> Generate');
+            }
+        });
+    });
+
+    //end generate checklist module//
 
     $('.dataTables_paginate').addClass('p-3');
     $('.dataTables_info').addClass('p-3');

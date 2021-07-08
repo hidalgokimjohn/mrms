@@ -88,6 +88,11 @@
                     <i class="align-middle" data-feather="file-text"></i> <span class="align-middle">Compliance</span> <?php echo $ndc ?>
                 </a>
             </li>
+            <li class="sidebar-item <?php $app->sidebar_active('generate_checklist', $_GET['p']); ?>">
+                <a class="sidebar-link" href="home.php?p=generate_checklist">
+                    <i class="align-middle" data-feather="list"></i> <span class="align-middle">Generate Checklist</span>
+                </a>
+            </li>
             <!-- <li class="sidebar-header">
                 Modality
             </li>

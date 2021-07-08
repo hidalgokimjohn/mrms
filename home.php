@@ -134,6 +134,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'ceac_mngt' && $_GET['m']==='list' &&$_GET['modality'] == 'ipcdd_drom') ? include('resources/views/ceac_ipcdd.php') : '';
                                 ($_GET['p'] == 'ceac_mngt' && $_GET['m']==='edit_target' &&$_GET['modality'] == 'ipcdd_drom') ? include('resources/views/ceac_ipcdd_targets.php') : '';
                                 ($_GET['p'] == 'compliance' && $_GET['tab'] == 'main') ? include('resources/views/tblCompliance.php') : '';
+                                ($_GET['p'] == 'generate_checklist') ? include('resources/views/generate_checklist.php') : '';
 
                                 //dqa module
                                 $getModality = '';
@@ -189,6 +190,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'act' && $_GET['m']=='by_brgy') ? include('resources/views/by_brgy.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='findings') ? include('resources/views/actDqa.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_dqa') ? include('resources/views/actFindings.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='generate_checklist') ? include('resources/views/generate_checklist_act.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='nyu') ? include('resources/views/actNyu.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp_act.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileAf_act.php') : '';
@@ -301,8 +303,5 @@ if (!$auth->loggedIn()) {
 
         columns: [0,1]
     });
-
-
-
 </script>
 </html>
