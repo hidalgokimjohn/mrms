@@ -202,6 +202,10 @@ class App
                         $title = $area_info['area_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'] . " | MRMS";
                     }
                 }
+                if ($_GET['m'] == 'generate_findings' && $_GET['m']) {
+                    $area_info = $this->actView_areaInfo($_GET['cycle'], $_GET['area']);
+                    $title = "Findings on ".$area_info['area_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'] . " | MRMS";
+                }
                 return ucwords($title);
                 break;
             case 'dashboards';
