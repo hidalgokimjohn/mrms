@@ -192,6 +192,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'act' && $_GET['m']=='view_dqa') ? include('resources/views/actFindings.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='generate_checklist') ? include('resources/views/generate_checklist_act.php') : '';
                                 ($_GET['p'] == 'act' && $_GET['m']=='nyu') ? include('resources/views/actNyu.php') : '';
+                                ($_GET['p'] == 'act' && $_GET['m']=='generate_findings') ? include('resources/views/generate_findings_act.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ncddp_drom') ? include('resources/views/searchFileNcddp_act.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'af_cbrc') ? include('resources/views/searchFileAf_act.php') : '';
                                 ($_GET['p'] == 'search' && $_GET['modality'] == 'ipcdd_drom') ? include('resources/views/searchFileIpcdd_act.php') : '';
