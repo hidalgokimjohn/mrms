@@ -842,7 +842,9 @@ WHERE
     public function tbl_dqa_act_findings()
     {
         $mysql = $this->connectDatabase();
-        $id_number = $_SESSION['id_number'];
+        $this->getUserActiveAreas();
+        $cadt_id= "'".implode("','", $this->area_id)."'";
+        $cycle_id= "'".implode("','", $this->cycle_id)."'";
         $q = "SELECT
                 tbl_dqa_user_list.created_date,
                 lib_activity.activity_name,
@@ -879,10 +881,10 @@ WHERE
                 AND form_uploaded.with_findings = 'with findings' 
                 AND cycles.fk_modality = 4 
                 AND tbl_dqa_findings.is_deleted = 0 
-                AND tbl_dqa_findings.responsible_person = '$id_number' 
+                AND form_target.fk_cycle IN ($cycle_id)
+                AND form_target.fk_cadt IN ($cadt_id)
             GROUP BY
-                tbl_dqa_findings.fk_file_guid,
-                tbl_dqa_findings.responsible_person 
+                tbl_dqa_findings.fk_file_guid
             ORDER BY
                 tbl_dqa_user_list.created_date desc";
         $result = $mysql->query($q) or die($mysql->error);

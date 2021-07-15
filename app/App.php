@@ -197,6 +197,11 @@ class App
                     }
                 }
                 if (isset($_GET['m'])) {
+                    if ($_GET['m'] == 'view_dqa') {
+                        $title = "Findings | MRMS";
+                    }
+                }
+                if (isset($_GET['m'])) {
                     if ($_GET['m'] == 'by_brgy') {
                         $area_info = $this->actView_areaInfo($_GET['cycle'], $_GET['area']);
                         $title = $area_info['area_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'] . " | MRMS";
@@ -3272,11 +3277,16 @@ WHERE
         $cycle_id = "'" . implode("','", $this->cycle_id) . "'";
         $id_number = $_SESSION['id_number'];
         $q = "SELECT
-                COUNT(tbl_dqa_findings.findings_guid) as notif_findings
-                FROM
-                tbl_dqa_findings
-                INNER JOIN form_target ON form_target.ft_guid = tbl_dqa_findings.fk_ft_guid
-                WHERE tbl_dqa_findings.is_deleted=0 AND tbl_dqa_findings.is_checked=0 AND tbl_dqa_findings.responsible_person='$id_number' AND tbl_dqa_findings.technical_advice is NULL";
+                COUNT( form_uploaded.file_id ) notif_findings
+            FROM
+                form_uploaded
+                INNER JOIN form_target ON form_uploaded.fk_ft_guid = form_target.ft_guid 
+            WHERE
+                form_uploaded.is_deleted = 0 
+                AND form_uploaded.with_findings = 'with findings' 
+                AND form_uploaded.is_findings_complied IS NULL
+                AND form_target.fk_cadt IN ($cadt_id)
+                AND form_target.fk_cycle IN ($cycle_id)";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             $row = $result->fetch_assoc();
