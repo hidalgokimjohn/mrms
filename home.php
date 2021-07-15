@@ -172,15 +172,14 @@ if (!$auth->loggedIn()) {
                             }
 
                             if($_SESSION['user_lvl']=='ACT'){
-                               /* echo '<div class="alert alert-primary alert-dismissible" role="alert">
+                                echo '<div class="alert alert-primary alert-dismissible" role="alert">
                                             <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
                                             <div class="alert-icon">
                                                 <i class="far fa-fw fa-bell"></i>
                                             </div>
                                             <div class="alert-message">
-                                                <strong>Announcement!</strong> The uploading of SPCF under SPI activity has been moved to PDW. All the uploaded SPCF under SPI is now deleted, please consider uploading it again under PDW. Thank you!
-                                            </div>
-                                        </div>';*/
+                                                <strong>Update!</strong> All MOVs with findings are now accessible to all the members of the team. Please comply as soon as possible. </div>
+                                        </div>';
                                 echo '<div class="row">';
                                 
                                 include('resources/views/actMenu.php');

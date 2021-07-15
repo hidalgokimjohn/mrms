@@ -1,14 +1,14 @@
 
     <div class="col-md-9 col-xl-10">
-        <div class="alert alert-primary alert-dismissible" role="alert">
-            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
-            <div class="alert-icon">
-                <i class="far fa-fw fa-bell"></i>
-            </div>
-            <div class="alert-message">
-                <strong>Update!</strong> All uploaded files are now accessible to all the members of your team.
-            </div>
-        </div>
+            <!--<div class="alert alert-primary alert-dismissible" role="alert">
+                <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                <div class="alert-icon">
+                    <i class="far fa-fw fa-bell"></i>
+                </div>
+                <div class="alert-message">
+                    <strong>Update!</strong> All uploaded files are now accessible to all the members of your team.
+                </div>
+            </div>-->
         <div class="card mb-2">
             <div class="table-responsive">
                 <table id="tbl_uploadedFiles" class="table table-striped table-hover" style="width:100%">
