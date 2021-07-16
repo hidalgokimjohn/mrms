@@ -49,9 +49,35 @@
                             </div>
                         </div>
                     </div>
-                    <div class="display-generated-checklist pt-3">
+                    <style>
+                        .tableFixHead {
+                            overflow-y: auto;
+                            height: 650px;
+                        }
 
+                        .tableFixHead thead th {
+                            position: sticky;
+                            top: 0;
+                            background: white;
+                        }
+
+                        table {
+                            border-collapse: collapse;
+                            width: 100%;
+                        }
+
+                        th, td {
+                            padding: 8px 16px;
+                        }
+                    </style>
+                    <div class="table-responsive">
+                        <div class="tableFixHead">
+                            <div class="display-generated-checklist pt-3">
+
+                            </div>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>
