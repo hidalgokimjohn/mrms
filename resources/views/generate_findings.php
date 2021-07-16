@@ -45,7 +45,7 @@ $sp = new \app\SubProject();
                             font-size: 12px;
                         }
                     </style>
-                    <table id="generateFindings"class="table-bordered generatedFindings bg-white table-sm font-monospace text-dark" width="100%px;" style="border-collapse: collapse; width: 21cm; height: 29.7cm;">
+                    <table id="generateFindings"class="table-bordered generatedFindings bg-white table-sm font-monospace text-dark" width="100%px;" style="border-collapse: collapse; width: 21cm;">
                         <thead>
                         <tr>
                             <td colspan="4" class="text-center font-weight-bold"><?php echo $area['area_name'].' '.$area['batch'].' '.$area['cycle_name']; ?></td>
