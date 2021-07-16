@@ -8,9 +8,9 @@ $area_info = $app->getCadtInfo($_POST['cadt_id'], $_POST['cycle_id']);
 $ts = time();
 $title = $area_info['cadt_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_info['batch'].'_'.$ts;
 ?>
-<div class="table-responsive">
+
     <table id="generated_checklist" class="table table-bordered table-sm generatedFindings bg-white table-sm text-dark" width="100%px;" style="border-collapse: collapse;">
-        <thead>
+        <thead class="bg-white">
         <tr>
             <th>Activity</th>
             <th>Form</th>
@@ -66,7 +66,7 @@ $title = $area_info['cadt_name'] . ' ' . $area_info['cycle_name'] . ' ' . $area_
         ?>
         </tbody>
     </table>
-</div>
+
 <script>
     var tableToExcel = (function () {
         var uri = 'data:application/vnd.ms-excel;base64,'
