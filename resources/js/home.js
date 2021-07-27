@@ -13,11 +13,17 @@ $(document).ready(function () {
     }*/
 
     //generate checklist module//
-    if (p === 'generate_checklist' || m==='generate_checklist') {
+    if (p === 'generate_checklist' || m === 'generate_checklist') {
         var choiceCadt = new Choices(".choices-generate-checklist-cadt", {
             shouldSort: false
         });
         var choiceCycle = new Choices(".choices-generate-checklist-cycle", {
+            shouldSort: false
+        });
+    }
+
+    if (p === 'upload_others') {
+        var choicesOtherFiles = new Choices(".choices-category-other-files", {
             shouldSort: false
         });
     }
@@ -35,6 +41,14 @@ $(document).ready(function () {
             shouldSort: false
         }).disable();
 
+        var choiceTypeOfCity = new Choices(".choices-of-city", {
+            shouldSort: false
+        }).disable();
+
+        var choiceTypeOfBrgy = new Choices(".choices-of-brgy", {
+            shouldSort: false
+        }).disable();
+
         var choiceTypeOfForm = new Choices(".choices-of-form", {
             shouldSort: false
         }).disable();
@@ -45,6 +59,9 @@ $(document).ready(function () {
 
         $('.choices-of-cadt').on('change', function () {
             choiceTypeOfCycle.enable();
+            choiceTypeOfForm.clearStore();
+            choiceTypeOfCity.clearStore();
+            choiceTypeOfBrgy.clearStore();
             var area = $('.choices-of-cadt').val();
             if (area == '') {
                 choiceTypeOfCycle.clearChoices();
@@ -81,7 +98,7 @@ $(document).ready(function () {
             choiceTypeOfForm.clearStore();
             $.ajax({
                 type: 'POST',
-                url: 'resources/ajax/uploadActivityOnChange.php',
+                url: 'resources/ajax/uploadActivityOnChange_2.php',
                 data: {"cycle_id": cycle_id, "area_id": area_id, "activity_id": activity_id},
                 async: true,
                 dataType: 'json',
@@ -91,12 +108,43 @@ $(document).ready(function () {
                     if (data) {
                         choiceTypeOfForm.enable();
                         choiceTypeOfForm.setChoices(data);
+                        choiceTypeOfBrgy.clearStore();
+                        choiceTypeOfCity.clearStore();
+                        choiceTypeOfCity.disable();
+                        choiceTypeOfBrgy.disable();
                     }
                 }
             });
         });
 
         $('.choices-of-form').on('change', function () {
+            var cycle_id = $('.choices-of-cycle').val();
+            var area_id = $('.choices-of-cadt').val();
+            var form_id = $('.choices-of-form').val();
+            $.ajax({
+                type: 'POST',
+                url: 'resources/ajax/uploadActivityOnChange.php',
+                data: {"cycle_id": cycle_id, "area_id": area_id, "form_id": form_id},
+                async: true,
+                dataType: 'json',
+                success: function (data) {
+                    x = data[0].form_type
+                    choiceTypeOfCity.clearStore();
+                    choiceTypeOfBrgy.clearStore();
+                    if (x === 'municipal' || x === 'cadt') {
+                        choiceTypeOfCity.enable();
+                        choiceTypeOfCity.setChoices(data);
+                        choiceTypeOfBrgy.disable();
+                    }
+
+                    if (x === 'barangay') {
+                        choiceTypeOfBrgy.enable();
+                        choiceTypeOfBrgy.setChoices(data);
+                        choiceTypeOfCity.disable();
+                    }
+                }
+            });
+
             $("#fileInfo").prop('hidden', false);
             setTimeout(function () {
                 $('.fileInfo_body').prop('hidden', false)
@@ -174,7 +222,7 @@ $(document).ready(function () {
         var tbl_uploadedFiles = $('#tbl_uploadedFiles').DataTable({
             orderCellsTop: true,
             order: [
-                [5, "desc"]
+                [6, "desc"]
             ],
             columnDefs: [{
                 orderable: false,
@@ -296,71 +344,98 @@ $(document).ready(function () {
         $("form#formFileUpload").submit(function (event) {
             event.preventDefault();
             var btn = this;
-            var form_id = $('.choices-of-form').val();
+            var form_id = $('.choices-of-city').val();
+            if (form_id === null) {
+                form_id = $('.choices-of-brgy').val();
+            }
             $('.btn-upload-file').prop('disabled', true);
             $('.btn-upload-file-text').text(' Uploading...');
             var formData = new FormData($(this)[0]);
-            $.ajax({
-                url: 'resources/ajax/uploadFile.php?form_id=' + form_id,
-                type: 'POST',
-                dataType: 'html',
-                data: formData,
-                async: true,
-                cache: false,
-                processData: false,
-                contentType: false,
-                xhr: function () {
-                    var xhr = new window.XMLHttpRequest();
-                    xhr.upload.addEventListener("progress", function (evt) {
-                        if (evt.lengthComputable) {
-                            var percentComplete = evt.loaded / evt.total;
-                            percentComplete = parseInt(percentComplete * 100);
-                            console.log(percentComplete);
-                            $(".upload_percent").text(+' ' + percentComplete + "%");
+            var rp_id = $('.choices-of-rp').val();
+            if (rp_id === '') {
+                alert('Responsible Person is required');
+                $(".upload_percent").text('');
+                $('.btn-upload-file-text').text(' Upload');
+                $('.btn-upload-file').prop('disabled', false);
+            } else {
+                $.ajax({
+                    url: 'resources/ajax/uploadFile.php?form_id=' + form_id,
+                    type: 'POST',
+                    dataType: 'html',
+                    data: formData,
+                    async: true,
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                    xhr: function () {
+                        var xhr = new window.XMLHttpRequest();
+                        xhr.upload.addEventListener("progress", function (evt) {
+                            if (evt.lengthComputable) {
+                                var percentComplete = evt.loaded / evt.total;
+                                percentComplete = parseInt(percentComplete * 100);
+                                console.log(percentComplete);
+                                $(".upload_percent").text(+' ' + percentComplete + "%");
+                            }
+                        }, false);
+                        return xhr;
+                    },
+                    success: function (returndata) {
+
+                        if (returndata === 'uploaded') {
+                            window.notyf.open({
+                                type: 'success',
+                                message: '<strong>File uploaded </strong>successfully',
+                                duration: '5000',
+                                ripple: true,
+                                dismissible: true,
+                                position: {
+                                    x: 'center',
+                                    y: 'top'
+                                }
+                            });
+
+                            $("#status").text('');
+                            $("#fileToUpload").val('');
+                            $('.btn-upload-file-text').text(' Upload');
+                            $(".upload_percent").text('');
+                            $('.btn-upload-file').prop('disabled', false);
+                            tbl_uploadedFiles.ajax.reload();
+                        } else if (returndata === 'target_reached') {
+                            window.notyf.open({
+                                type: 'error',
+                                message: 'Target met. To adjust targets please contact PEO.',
+                                duration: '5000',
+                                ripple: true,
+                                dismissible: true,
+                                position: {
+                                    x: 'center',
+                                    y: 'top'
+                                }
+                            });
+
+                            $(".upload_percent").text('');
+                            $('.btn-upload-file-text').text(' Upload');
+                            $('.btn-upload-file').prop('disabled', false);
+                        } else {
+                            window.notyf.open({
+                                type: 'error',
+                                message: 'Something went wrong please try again.',
+                                duration: '5000',
+                                ripple: true,
+                                dismissible: true,
+                                position: {
+                                    x: 'center',
+                                    y: 'top'
+                                }
+                            });
+
+                            $(".upload_percent").text('');
+                            $('.btn-upload-file-text').text(' Upload');
+                            $('.btn-upload-file').prop('disabled', false);
                         }
-                    }, false);
-                    return xhr;
-                },
-                success: function (returndata) {
-                    /*alert(returndata);*/
-                    if (returndata === 'uploaded') {
-                        window.notyf.open({
-                            type: 'success',
-                            message: '<strong>File uploaded </strong>successfully',
-                            duration: '5000',
-                            ripple: true,
-                            dismissible: true,
-                            position: {
-                                x: 'center',
-                                y: 'top'
-                            }
-                        });
-
-                        $("#status").text('');
-                        $("#fileToUpload").val('');
-                        $('.btn-upload-file-text').text(' Upload');
-                        $(".upload_percent").text('');
-                        $('.btn-upload-file').prop('disabled', false);
-                        tbl_uploadedFiles.ajax.reload();
-                    } else {
-                        window.notyf.open({
-                            type: 'error',
-                            message: 'Something went wrong please try again.',
-                            duration: '5000',
-                            ripple: true,
-                            dismissible: true,
-                            position: {
-                                x: 'center',
-                                y: 'top'
-                            }
-                        });
-
-                        $(".upload_percent").text('');
-                        $('.btn-upload-file-text').text(' Upload');
-                        $('.btn-upload-file').prop('disabled', false);
                     }
-                }
-            });
+                });
+            }
         });
 
         function clearFileInput() {
