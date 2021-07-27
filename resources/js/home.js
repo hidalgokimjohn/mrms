@@ -403,7 +403,7 @@ $(document).ready(function () {
                         } else if (returndata === 'target_reached') {
                             window.notyf.open({
                                 type: 'error',
-                                message: 'Target met. To adjust targets please contact PEO.',
+                                message: 'Target reached. To adjust targets please contact PEO.',
                                 duration: '5000',
                                 ripple: true,
                                 dismissible: true,
