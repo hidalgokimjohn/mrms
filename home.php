@@ -118,6 +118,7 @@ if (!$auth->loggedIn()) {
                                 ($_GET['p'] == 'user_coverage') ? include('resources/views/userCoverage.php') : '';
                                 ($_GET['p'] == 'user_mngt') ? include('resources/views/userManagement.php') : '';
                                 ($_GET['p'] == 'user_profile') ? include('resources/views/userProfile.php') : '';
+                                ($_GET['p'] == 'upload_others') ? include('resources/views/upload_others.php') : '';
                                 ($_GET['p'] == 'mywork' && $_GET['m']=='main') ? include('resources/views/myWork.php') : '';
                                 ($_GET['p'] == 'mywork' && $_GET['m']=='view_area') ? include('resources/views/view_area_rpmo_lvl.php') : '';
                                 ($_GET['p'] == 'mywork' && $_GET['m']=='view_activity') ? include('resources/views/view_activity_rpmo_lvl.php') : '';
@@ -178,7 +179,7 @@ if (!$auth->loggedIn()) {
                                                 <i class="far fa-fw fa-bell"></i>
                                             </div>
                                             <div class="alert-message">
-                                                <strong>Update!</strong> All MOVs with findings are now accessible to all the members of the team. Please comply as soon as possible. </div>
+                                                <strong>Update!</strong> 1. The MRMS is now to restrict uploading if the target is reached. No more unlimited upload of MOVs. Except for SPCR/CV/ERS/BasicWorkersProfile. 2. Added two new fields (CADT/Municipality, Barangay) in upload module. No more overpopulated list of forms. </div>
                                         </div>';
                                 echo '<div class="row">';
                                 
