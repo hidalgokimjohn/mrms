@@ -629,7 +629,6 @@ class DataQualityAssessment extends App
                 INNER JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
                 INNER JOIN lib_cycle ON lib_cycle.id = cycles.fk_cycle
                 WHERE
-        
                     form_target.fk_cycle='$cycle_id'
                 AND 
                     form_target.fk_cadt = '$cadt_id'

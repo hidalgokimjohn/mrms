@@ -33,7 +33,7 @@
     <div class="modal fade" id="uploadModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-s" role="document">
             <div class="modal-content p-3">
-                <form method="post" name="fileUpload" id="formFileUpload" enctype="multipart/form-data">
+                <form method="post" name="fileUpload" class="needs-validation" novalidate id="formFileUpload" enctype="multipart/form-data">
                     <div class="m-2">
                         <label class="form-label m-0">Area</label>
                         <select class="form-control choices-of-cadt" name="area_id">
@@ -97,6 +97,18 @@
                         </select>
                     </div>
                     <div class="m-2">
+                        <label class="form-label m-0">Cadt/Municipality</label>
+                        <select class="form-control choices-of-city" name="city_id">
+                            <option value="">Select Municipality/City</option>
+                        </select>
+                    </div>
+                    <div class="m-2">
+                        <label class="form-label m-0">Barangay</label>
+                        <select class="form-control choices-of-brgy" name="barangay_id">
+                            <option value="">Select Barangay</option>
+                        </select>
+                    </div>
+                    <div class="m-2">
                         <label class="form-label m-0">Responsible Person<br/> <small><i>(Choose the assigned AC/CEF for this document)</i></small></label>
 
                         <select class="form-control choices-of-rp" name="rp_id">
@@ -143,13 +155,12 @@
                             <input type="file" class="form-control"
                                    required accept="application/pdf"
                                    name="fileToUpload"
-                                   id="fileToUpload"> <label>
+                                   id="fileToUpload">
                         </div>
-                        <div class="m-2">
+                        <div class="mt-3 ml-2">
                             <button class="btn btn-primary btn-upload-file"><span class="btn-upload-file-text">Upload </span><span
                                         class="upload_percent"></span></button>
                         </div>
-
                     </div>
                 </form>
             </div>

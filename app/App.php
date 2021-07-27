@@ -2603,21 +2603,45 @@ WHERE
         }
     }
 
-    public function getCeacForm($cadt_id, $cycle_id, $activity_id)
+    public function getCeacForms($activity_id)
+    {
+        $mysql = $this->connectDatabase();
+        $activity_id = $mysql->real_escape_string($activity_id);
+        $q = "SELECT
+        lib_form.form_name as label,
+        lib_form.form_type,
+        lib_form.form_code as value
+    FROM
+        lib_form
+        INNER JOIN lib_activity ON lib_form.fk_activity = lib_activity.id 
+    WHERE
+        lib_activity.id = '$activity_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return json_encode($data);
+        } else {
+            return false;
+        }
+    }
+    public function getCeacForm($cadt_id, $cycle_id, $form_id)
     {
         $mysql = $this->connectDatabase();
         $cadt_id = $mysql->real_escape_string($cadt_id);
         $cycle_id = $mysql->real_escape_string($cycle_id);
-        $activity_id = $mysql->real_escape_string($activity_id);
+        $form_id = $mysql->real_escape_string($form_id);
         $q = "SELECT
             form_target.ft_guid as value,
-            CONCAT(COALESCE(lib_barangay.brgy_name,lib_municipality.mun_name,lib_cadt.cadt_name),': ',lib_form.form_name) as label,
+            CONCAT(COALESCE(lib_barangay.brgy_name,lib_municipality.mun_name,lib_cadt.cadt_name)) as label,
             lib_barangay.brgy_name,
             form_target.can_upload,
             lib_barangay.psgc_brgy,
             lib_sitio.sitio_name,
             lib_municipality.mun_name,
-            lib_cadt.cadt_name
+            lib_cadt.cadt_name,
+            lib_form.form_type
             FROM
             form_target
             LEFT JOIN lib_barangay ON lib_barangay.psgc_brgy = form_target.fk_psgc_brgy
@@ -2626,7 +2650,7 @@ WHERE
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = form_target.fk_psgc_mun
             LEFT JOIN lib_cadt ON lib_cadt.id = form_target.fk_cadt
             INNER JOIN lib_activity ON lib_form.fk_activity = lib_activity.id
-            WHERE (form_target.fk_psgc_mun = '$cadt_id' OR form_target.fk_cadt = '$cadt_id') AND form_target.fk_cycle = '$cycle_id' AND lib_activity.id = '$activity_id' AND form_target.target>0
+            WHERE (form_target.fk_psgc_mun = '$cadt_id' OR form_target.fk_cadt = '$cadt_id') AND form_target.fk_cycle = '$cycle_id' AND form_target.fk_form = '$form_id' AND form_target.target>0
             ORDER BY lib_form.form_name,lib_barangay.brgy_name ASC";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
@@ -2634,6 +2658,42 @@ WHERE
                 $data[] = $row;
             }
             return json_encode($data);
+        } else {
+            return false;
+        }
+    }
+
+    public function is_target_reach($form_id){
+        $mysql = $this->connectDatabase();
+        $form_id = $mysql->real_escape_string($form_id);
+        $q="SELECT
+            form_target.ft_guid, 
+            IF(target>actual,'no','yes') as is_target_reach
+        FROM
+            form_target
+        WHERE
+            form_target.ft_guid = '$form_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            return $row['is_target_reach'];
+        } else {
+            return false;
+        }
+    }
+
+    public function allowThisForms($form_id){
+        $mysql = $this->connectDatabase();
+        $form_id = $mysql->real_escape_string($form_id);
+        $q="SELECT
+                form_target.ft_guid
+            FROM
+                form_target
+                WHERE form_target.fk_form IN ('ipcdd-drom-s1-063','ipcdd-drom-s2-011','ipcdd-drom-s2-012','ipcdd-drom-s2-010') 
+                AND form_target.ft_guid='$form_id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+          return true;
         } else {
             return false;
         }
@@ -3881,6 +3941,24 @@ WHERE
         if ($result) {
             $row = $result->fetch_assoc();
             return $row['colspan'];
+        } else {
+            return false;
+        }
+    }
+
+    public function getFormsOtherFiles(){
+        $mysql = $this->connectDatabase();
+        $q="SELECT
+	lib_forms_other_files.form_name as label,
+	lib_forms_other_files.id as value
+FROM
+	lib_forms_other_files";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return $data;
         } else {
             return false;
         }
