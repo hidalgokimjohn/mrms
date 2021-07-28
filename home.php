@@ -173,13 +173,21 @@ if (!$auth->loggedIn()) {
                             }
 
                             if($_SESSION['user_lvl']=='ACT'){
-                                echo '<div class="alert alert-primary alert-dismissible" role="alert">
+                                /*echo '<div class="alert alert-primary alert-dismissible" role="alert">
                                             <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
                                             <div class="alert-icon">
                                                 <i class="far fa-fw fa-bell"></i>
                                             </div>
                                             <div class="alert-message">
                                                 <strong>Update!</strong> 1. The MRMS is now to restrict uploading if the target is reached. No more unlimited upload of MOVs. Except for SPCR/CV/ERS/BasicWorkersProfile. 2. Added two new fields (CADT/Municipality, Barangay) in upload module. No more overpopulated list of forms. </div>
+                                        </div>';*/
+                                echo '<div class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                                            <div class="alert-icon">
+                                                <i class="far fa-fw fa-bell"></i>
+                                            </div>
+                                            <div class="alert-message">
+                                                <strong>Notice: </strong> New barangays has beed added to <strong>CADT-070</strong> and <strong>CADT-134.</strong></div>
                                         </div>';
                                 echo '<div class="row">';
                                 
