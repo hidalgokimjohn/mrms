@@ -52,9 +52,15 @@ class App
             $_SESSION['login'] = 'logged_in';
             $_SESSION['username'] = $row['username'];
             $_SESSION['avatar_path'] = $row['avatar_path'];
+            //special_case
+            if($row['username']=='jeespino'){
+                $_SESSION['user_lvl'] = 'RPMO';
+            }else{
+                $_SESSION['user_lvl'] = $row['office_name'];
+            }
+            //special_case
             $_SESSION['user_position'] = $row['position_name'];
             $_SESSION['user_position_desc'] = $row['position_desc'];
-            $_SESSION['user_lvl'] = $row['office_name'];
             $_SESSION['user_fullname'] = $row['first_name'] . ' ' . $row['last_name'];
         } else {
             return false;
@@ -3949,10 +3955,10 @@ WHERE
     public function getFormsOtherFiles(){
         $mysql = $this->connectDatabase();
         $q="SELECT
-	lib_forms_other_files.form_name as label,
-	lib_forms_other_files.id as value
-FROM
-	lib_forms_other_files";
+            lib_forms_other_files.form_name as label,
+            lib_forms_other_files.id as value
+        FROM
+            lib_forms_other_files";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -3963,4 +3969,6 @@ FROM
             return false;
         }
     }
+
+
 }
