@@ -53,7 +53,7 @@ class App
             $_SESSION['username'] = $row['username'];
             $_SESSION['avatar_path'] = $row['avatar_path'];
             //special_case
-            if($row['username']=='jeespino'){
+            if($row['username']=='jeespino' || $row['username']=='lhgcapin'){
                 $_SESSION['user_lvl'] = 'RPMO';
             }else{
                 $_SESSION['user_lvl'] = $row['office_name'];
