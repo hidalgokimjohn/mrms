@@ -356,6 +356,7 @@ class App
     {
         $mysql = $this->connectDatabase();
         $q = $mysql->prepare("SELECT
+        implementing_muni_ncddp.id,
         lib_municipality.mun_name,
         lib_modality.modality_group,
         cycles.`status`
@@ -366,6 +367,40 @@ class App
         INNER JOIN lib_modality ON lib_modality.id = cycles.fk_modality
         WHERE cycles.`status`='$status' AND lib_modality.modality_group='$modalityGroup'
         ORDER BY lib_municipality.mun_name ASC");
+        $q->execute();
+        $result = $q->get_result();
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    public function getAllCity()
+    {
+        $mysql = $this->connectDatabase();
+        $q = $mysql->prepare("SELECT
+	lib_region.reg_name, 
+	lib_municipality.mun_name, 
+	lib_municipality.psgc_mun, 
+	lib_province.prov_name
+FROM
+	lib_municipality
+	INNER JOIN
+	lib_province
+	ON 
+		lib_municipality.psgc_province = lib_province.psgc_province
+	INNER JOIN
+	lib_region
+	ON 
+		lib_province.psgc_region = lib_region.psgc_region
+WHERE
+	lib_region.reg_name = 'REGION XIII [Caraga]'
+ORDER BY
+	lib_municipality.mun_name ASC");
         $q->execute();
         $result = $q->get_result();
         if ($result->num_rows > 0) {
@@ -2223,7 +2258,8 @@ WHERE
             form_uploaded.generated_filename,
             form_uploaded.file_path,
             form_uploaded.date_uploaded,
-            form_uploaded.uploaded_by
+            form_uploaded.uploaded_by,
+            form_uploaded.with_findings
             FROM
             form_target
             INNER JOIN form_uploaded ON form_target.ft_guid = form_uploaded.fk_ft_guid
