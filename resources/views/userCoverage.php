@@ -1,4 +1,12 @@
-<?php $app->personInfo($_GET['id']); ?>
+<?php
+
+
+$app->personInfoExt($_GET['id']);
+
+
+$app->personInfo($_GET['id']);
+
+ ?>
 <h1 class="h3 mb-3">User Management / Coverage</h1>
 <div class="row">
     <div class="col-sm-12 col-lg-5 col-xl-4">

@@ -9,79 +9,6 @@ $app = new \app\App();
 $authen = new \app\Auth();
 
 if ($authen->loggedIn()) {
-    header('location: /mrms/home.php');
-    exit();
-}
-
-require 'vendor/autoload.php';
-
-if(!$_SESSION['mrms_auth']){
-    $provider = new \Stevenmaguire\OAuth2\Client\Provider\Keycloak([
-        'authServerUrl' => 'https://caraga-auth.dswd.gov.ph:8443/auth',
-        'realm' => 'entdswd.local',
-        'clientId' => 'kalahi-apps',
-        'clientSecret' => '139995d3-fa97-4772-8bb8-b8680afc1334',
-        'redirectUri' => 'https://crg-kcapps-svr.entdswd.local/mrms/index.php'
-    ]);
-
-    if (!isset($_GET['code'])) {
-        // If we don't have an authorization code then get one
-        $authUrl = $provider->getAuthorizationUrl();
-        $_SESSION['oauth2state'] = $provider->getState();
-
-        /*header('Location: '.$authUrl);
-        exit();*/
-
-// Check given state against previously stored one to mitigate CSRF attack
-    } elseif (empty($_GET['state']) || ($_GET['state'] !== $_SESSION['oauth2state'])) {
-        echo 'session: '.$_SESSION['oauth2state'];
-        unset($_SESSION['oauth2state']);
-        exit('Invalid state, make sure HTTP sessions are enabled.');
-        die();
-    } else {
-        // Try to get an access token (using the authorization coe grant)
-        try {
-            $token = $provider->getAccessToken('authorization_code', [
-                'code' => $_GET['code']
-            ]);
-        } catch (Exception $e) {
-            exit('Failed to get access token: ' . $e->getMessage());
-        }
-
-        // Optional: Now you have a token you can look up a users profile data
-        try {
-
-            // We got an access token, let's now get the user's details
-            $user_sso = $provider->getResourceOwner($token);
-            $user_sso = $user_sso->toArray();
-
-            if ($app->sso_isExist($user_sso['sub'])) {
-                //$user_sso = $user_sso->toArray();
-                $_SESSION['mrms_auth'] = $user_sso['sub'];
-                $app->login_sso($user_sso['preferred_username']);
-                if($_SESSION['user_lvl']=='ACT'){
-                    header('location: https://crg-kcapps-svr.entdswd.local/mrms/home.php?p=act&m=main');
-                    exit();
-                }
-                if($_SESSION['user_lvl']=='RPMO'){
-                    header('location: https://crg-kcapps-svr.entdswd.local/mrms/home.php?p=dashboards&modality=ipcdd_drom');
-                    exit();
-                }
-
-            } else {
-                $_SESSION['sso_username']=$user_sso['preferred_username'];
-                $_SESSION['sso_oauth']=$user_sso['sub'];
-                $_SESSION['forIDNumber']='true';
-                header('location: https://crg-kcapps-svr.entdswd.local/mrms/register.php');
-                exit();
-            }
-
-        } catch (Exception $e) {
-            exit('Failed to get resource owner: ' . $e->getMessage());
-        }
-        // Use this to interact with an API on the users behalf
-    }
-}else{
     if($_SESSION['user_lvl']=='ACT'){
         header('location: https://crg-kcapps-svr.entdswd.local/mrms/home.php?p=act&m=main');
         exit();
@@ -89,8 +16,9 @@ if(!$_SESSION['mrms_auth']){
     if($_SESSION['user_lvl']=='RPMO'){
         header('location: https://crg-kcapps-svr.entdswd.local/mrms/home.php?p=dashboards&modality=ipcdd_drom');
         exit();
-    }
+        }
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -139,47 +67,53 @@ if(!$_SESSION['mrms_auth']){
                                     <div class="mb-3 text-center">
                                         MRMS is a regionally-managed database which serves as the repository (or storehouse) of the program documents or Means of Verification (MOVs) of the various program activities.
                                     </div>
-                                    <!--<div class="mb-3">
-                                        <label class="form-label">Username</label>
-                                        <input class="form-control form-control-lg" type="text" name="username"
-                                               placeholder="Enter your username"/>
+                                    <div class="mb-3">
+                                        <div class="alert alert-warning" role="alert">
+                                            <div class="alert-message text-center">
+                                                This Login Is <strong>For External Users Only</strong>
+                                            </div>
+                                        </div>
+                                        <label class="form-label">Email</label>
+                                        <input class="form-control form-control-lg" type="text" name="email"
+                                               placeholder="Enter your email"/>
                                     </div>
                                     <div class="mb-3">
                                         <label class="form-label">Password</label>
                                         <input class="form-control form-control-lg" type="password" name="password"
                                                placeholder="Enter your password"/>
                                         <small>
-                                            <a href="pages-reset-password.html">Forgot password?</a>
+                                            <a href="register_ext.php">Create External Account</a>
                                         </small>
-                                    </div>-->
-                                    <!--<div>
+                                        <small class="float-right">
+                                            <a href="/mrms/">Back to Normal Login</a>
+                                        </small>
+                                    </div>
+                                    <div>
                                         <label class="form-check">
                                             <input class="form-check-input" type="checkbox" value="remember-me"
                                                    name="remember-me" checked>
                                             <span class="form-check-label">
 													Remember me next time
-												</span>
+                                            </span>
                                         </label>
-                                    </div>-->
+                                    </div>
                                     <div class="text-center mt-3">
-                                        <a href="<?php echo $authUrl; ?>" class="btn btn-lg btn-success"><i data-feather="pinterest"></i> Login via DSWD ISSO</a> or
-                                        <a href="/mrms/login_extusers.php" class="btn btn-lg btn-info"><i data-feather="pinterest"></i> Login for External Users </a>
+                                         <input type="submit" name="submit" class="btn btn-lg btn-primary" value="Sign in">
                                     </div>
                                     <?php
                                     if (isset($_POST['submit'])) {
-                                        /* if ($app->is_pending($_POST['username'])) {
+                                        /* if ($app->is_pending_ext($_POST['email'])) {
                                              echo '<br><div class="alert alert-warning alert-dismissible" role="alert">
                                              <div class="alert-icon">
                                                  <i data-feather="alert-circle"></i>
                                              </div>
                                              <div class="alert-message">
-                                                 <strong>Hey!</strong> This account is pending for activation.
+                                                 <strong>Ops!</strong> This account is pending for activation.
                                              </div>
                                              </div>';
                                          } else {*/
-                                        if ($z=$app->login($_POST['username'], $_POST['password'])) {
-                                            $app->permission($_SESSION['username']);
-                                            $log = $app->log($_SESSION['username'], 'login', 'has logged in', null, null);
+                                        if ($z=$app->login($_POST['email'], $_POST['password'])) {
+                                            $log = $app->log($_SESSION['email'], 'login', 'has logged in', null, null);
                                             if($_SESSION['user_lvl']=='ACT'){
                                                 header('location: home.php?p=act&m=main');
                                                 exit;
@@ -194,11 +128,11 @@ if(!$_SESSION['mrms_auth']){
 											<div class="alert-icon">
 												<i data-feather="alert-circle"></i>
 											</div>
-											<div class="alert-message">Incorrect username or password. Please try again.</div>
+											<div class="alert-message">Incorrect email or password. Please try again.</div>
 										    </div>';
                                         }
-                                        /*}*/
                                     }
+                                    
                                     ?>
                                 </form>
                             </div>
