@@ -530,7 +530,7 @@ $(document).ready(function () {
             shouldSort: false
         });
         var choiceOfArea = new Choices(".choices-area", {
-            shouldSort: false,
+            shouldSort: true,
             removeItems: true,
             removeItemButton: true,
         });
@@ -663,6 +663,91 @@ $(document).ready(function () {
         });
     }
 
+
+    $('#tbl_users_external thead tr').clone(true).appendTo('#tbl_users_external thead');
+    $('#tbl_users_external thead tr:eq(1) th').each(function (i) {
+        if (i !== 0) {
+            var title = $(this).text();
+            $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+            $('input', this).on('keyup change', function (e) {
+                if (tbl_users_external.column(i).search() !== this.value) {
+                    tbl_users_external.column(i).search(this.value).draw();
+                }
+            });
+        }
+    });
+    var tbl_users_external = $('#tbl_users_external').DataTable({
+        orderCellsTop: true,
+
+        order: [
+            [1, "asc"]
+        ],
+        columnDefs: [{
+            orderable: false,
+            targets: 0
+        }],
+        dom: '<<t>ip>',
+        //dom: '<"html5buttons">bitpr',
+        ajax: {
+            url: "resources/ajax/tbl_users_external.php",
+            type: "POST",
+            processData: false,
+            contentType: false,
+            cache: false,
+            dataType: 'json',
+            error: function () {
+                $("post_list_processing").css("display", "none");
+            }
+        },
+        language: {
+            "emptyTable": "<b>No records <found class=''></found></b>"
+        },
+        initComplete: function (settings, json) {
+            $('.dataTables_paginate').addClass('p-3');
+            $('.dataTables_info').addClass('p-3');
+        },
+        columnDefs: [{
+            "targets": 0,
+            "data": null,
+            "render": function (data, type, row) {
+                //<button class="btn btn-danger btn-sm">Delete</button>
+                return '<div class="btn-group">' +
+                    '<button type="button" class="btn btn-pill btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Action</button>' +
+                    '<div class="dropdown-menu"><a class="dropdown-item" href="home.php?p=user_coverage&id=' + data['id_number'] + '">Coverage</a>' +
+                    '<a class="dropdown-item" href="#">Disable</a>' +
+                    '<div class="dropdown-divider"></div><a class="dropdown-item" href="#">Email: ' + data['id_number'] + '</a></div></div>'
+            },
+        }, {
+            "targets": 1,
+            "data": null,
+            "render": function (data, type, row) {
+                //<button class="btn btn-danger btn-sm">Delete</button>
+                return '<img src="resources/img/avatars/default.jpg" width="48" height="48" class="rounded-circle my-n1"></img> ' + data['fname'] + ' ' + data['lname'];
+            },
+        }, {
+            "targets": 2,
+            "data": null,
+            "render": function (data, type, row) {
+                //<button class="btn btn-danger btn-sm">Delete</button>
+                return data['position_desc'];
+            },
+        }, {
+            "targets": 3,
+            "data": null,
+            "render": function (data, type, row) {
+                //<button class="btn btn-danger btn-sm">Delete</button>
+                return data['office_name'];
+            },
+        }, {
+            "targets": 4,
+            "data": null,
+            "render": function (data, type, row) {
+                //<button class="btn btn-danger btn-sm">Delete</button>
+                return '<div class="badge bg-success"><span class="fa fa-check-circle"></span> ' + data['status_name'] + '</div>';
+            },
+        }
+        ],
+    });
 
     $('#tbl_users thead tr').clone(true).appendTo('#tbl_users thead');
     $('#tbl_users thead tr:eq(1) th').each(function (i) {

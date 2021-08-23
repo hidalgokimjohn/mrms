@@ -93,13 +93,14 @@ class App
             tbl_users.id_number,
             tbl_users.username,
             tbl_users.password,
-            tbl_person_info.avatar_path
+            tbl_person_info.avatar_path,
+            tbl_users.user_type
             FROM
             tbl_users
             INNER JOIN tbl_person_info ON tbl_person_info.fk_id_number = tbl_users.id_number
-            WHERE tbl_users.username = ?");
+            WHERE tbl_users.username = ? OR tbl_users.id_number = ?");
 
-        $q->bind_param('s', $user);
+        $q->bind_param('ss', $user,$user);
         $q->execute();
         $result = $q->get_result();
         if ($result->num_rows > 0) {
@@ -115,6 +116,54 @@ class App
                 $_SESSION['user_lvl'] = $row['office_name'];
                 $_SESSION['user_fullname'] = $row['first_name'] . ' ' . $row['last_name'];
                 $_SESSION['avatar_path'] = $row['avatar_path'];
+                $_SESSION['user_type']=$row['user_type'];
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+
+        }
+    }
+
+    public function login_external($email, $pass)
+    {
+
+        $mysql = $this->connectDatabase();
+        $q = $mysql->prepare("SELECT
+            tbl_users_ext.email_address,
+            tbl_users_ext.password,
+            tbl_users_ext.first_name,
+            tbl_users_ext.last_name,
+            tbl_users_ext.is_active,
+            lib_municipality.mun_name,
+            lib_user_positions.user_position AS position_desc,
+            lib_user_positions.user_position_abbrv AS position_name,
+            tbl_users_ext.avatar_path,
+            tbl_users_ext.office 
+        FROM
+            tbl_users_ext
+            INNER JOIN lib_user_positions ON tbl_users_ext.position = lib_user_positions.id
+            INNER JOIN lib_municipality ON tbl_users_ext.assigned_area = lib_municipality.psgc_mun 
+        WHERE
+            tbl_users_ext.email_address = ? AND tbl_users_ext.is_active='active'");
+        $q->bind_param('s', $email);
+        $q->execute();
+        $result = $q->get_result();
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            if (password_verify($pass, $row['password'])) {
+                session_regenerate_id();
+                $_SESSION['user_status'] = $row['is_active'];
+                $_SESSION['login'] = 'logged_in';
+                $_SESSION['email'] = $row['email_address'];
+                $_SESSION['user_position'] = $row['position_name'];
+                $_SESSION['user_position_desc'] = $row['position_desc'];
+                $_SESSION['user_lvl'] = $row['office'];
+                $_SESSION['user_fullname'] = $row['first_name'] . ' ' . $row['last_name'];
+                $_SESSION['avatar_path'] = $row['avatar_path'];
+                $_SESSION['user_type']='external_user';
                 return true;
             } else {
                 return false;
@@ -693,7 +742,6 @@ WHERE
 				INNER JOIN personal_info ON personal_info.fk_username = users.username
 				INNER JOIN lib_user_positions ON users.fk_position = lib_user_positions.id
 				WHERE lib_user_positions.user_position_abbrv IN ($position)";
-        var_dump($q);
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -704,6 +752,22 @@ WHERE
             return false;
         }
     }
+
+     public function getUserPosition($user_group)
+    {
+        $mysql = $this->connectDatabase();
+        $q = "SELECT * FROM lib_user_positions WHERE lib_user_positions.user_group='$user_group'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
 
     public function getTypeOfFindings()
     {
@@ -1608,6 +1672,21 @@ WHERE
         }
     }
 
+    public function is_pending_ext($email)
+    {
+        $mysql = $this->connectDatabase();
+        $q = $mysql->prepare("SELECT tbl_users_ext.is_active FROM tbl_users_ext WHERE tbl_users_ext.email_address= ? ") or die($mysql->error);
+        $q->bind_param('s', $email);
+        $q->execute();
+        $result = $q->get_result();
+        $row = $result->fetch_assoc();
+        if ($result->num_rows > 0 && $row['is_active'] == 'pending') {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public function permission($user)
     {
         $mysql = $this->connectDatabase();
@@ -2195,6 +2274,54 @@ WHERE
         }
     }
 
+    public function personInfoExt($id_number)
+    {
+        $mysql = $this->connectDatabase();
+        $id_number = $mysql->real_escape_string($id_number);
+        $q = "SELECT
+                tbl_users.username, 
+                tbl_users.user_type, 
+                tbl_person_info.person_id, 
+                tbl_person_info.fk_id_number id_number, 
+                tbl_person_info.first_name fname, 
+                tbl_person_info.mid_name, 
+                tbl_person_info.last_name lname, 
+                tbl_person_info.sector_name, 
+                tbl_person_info.sector_desc, 
+                tbl_person_info.`status` status_name, 
+                tbl_person_info.position_name, 
+                tbl_person_info.position_desc, 
+                tbl_person_info.office_name, 
+                tbl_person_info.office_desc,    
+                tbl_person_info.updated_at, 
+                tbl_person_info.created_at, 
+                tbl_person_info.avatar_path, 
+                tbl_person_info.fk_username
+            FROM
+                tbl_users
+                INNER JOIN
+                tbl_person_info
+                ON 
+                    tbl_users.id_number = tbl_person_info.fk_id_number
+            WHERE
+                tbl_users.user_type = 'external_user' AND tbl_users.id_number='$id_number'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $this->firstName = $row['fname'];
+                $this->lastName = $row['lname'];
+            $this->sectorName = $row['sector_name'];
+            $this->status = $row['status_name'];
+            $this->posName = $row['position_name'];
+            $this->posDesc = $row['position_desc'];
+            $this->officeName = $row['office_name'];
+            $this->officeDesc = $row['office_desc'];
+            return $row;
+        } else {
+            return false;
+        }
+    }
+
     public function sso_isExist($user_sso)
     {
         $mysql = $this->connectDatabase();
@@ -2311,6 +2438,50 @@ WHERE
         $q = "SELECT * FROM kcpis.view_active_staff";
         /*$mysql = $this->connectHREDatabase();
         $q="SELECT * FROM kcpis.view_active_staff";*/
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $row['avatar_path'] = '';
+                // $row['avatar_path'] =$this->getImage($row['id_number']);
+                $data[] = $row;
+            }
+            $json_data = array("data" => $data);
+            echo json_encode($json_data);
+        } else {
+            return false;
+        }
+    }
+
+     public function tbl_users_external()
+    {
+        $mysql = $this->connectDatabase();
+        $q = "SELECT
+                tbl_users.username, 
+                tbl_users.user_type, 
+                tbl_person_info.person_id, 
+                tbl_person_info.fk_id_number id_number, 
+                tbl_person_info.first_name fname, 
+                tbl_person_info.mid_name, 
+                tbl_person_info.last_name lname, 
+                tbl_person_info.sector_name, 
+                tbl_person_info.sector_desc, 
+                tbl_person_info.`status` status_name, 
+                tbl_person_info.position_name, 
+                tbl_person_info.position_desc, 
+                tbl_person_info.office_name, 
+                tbl_person_info.office_desc,    
+                tbl_person_info.updated_at, 
+                tbl_person_info.created_at, 
+                tbl_person_info.avatar_path, 
+                tbl_person_info.fk_username
+            FROM
+                tbl_users
+                INNER JOIN
+                tbl_person_info
+                ON 
+                    tbl_users.id_number = tbl_person_info.fk_id_number
+            WHERE
+                tbl_users.user_type = 'external_user'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
@@ -3134,6 +3305,39 @@ WHERE
             LEFT JOIN lib_municipality ON lib_municipality.psgc_mun = view_tbl_user_coverage.area_id
             LEFT JOIN lib_cadt ON lib_cadt.id = view_tbl_user_coverage.area_id
             WHERE view_tbl_user_coverage.id_number='$_SESSION[id_number]'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc())
+                $data[] = $row;
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+     public function getUserCoverageExt($email)
+    {
+        $mysql = $this->connectDatabase();
+        $q = "SELECT
+    tbl_user_coverage_ncddp.fk_psgc_mun AS area_id,
+    tbl_user_coverage_ncddp.type,
+    tbl_user_coverage_ncddp.fk_cycle_id AS cycle_id,
+    tbl_user_coverage_ncddp.email,
+    lib_municipality.mun_name as area_name,
+    lib_cycle.cycle_name,
+    cycles.batch,
+    cycles.`year`,
+    cycles.`status`,
+    lib_modality.modality_name,
+    lib_modality.modality_group 
+FROM
+    tbl_user_coverage_ncddp
+    INNER JOIN lib_municipality ON tbl_user_coverage_ncddp.fk_psgc_mun = lib_municipality.psgc_mun
+    INNER JOIN cycles ON tbl_user_coverage_ncddp.fk_cycle_id = cycles.id
+    INNER JOIN lib_cycle ON cycles.fk_cycle = lib_cycle.id
+    INNER JOIN lib_modality ON cycles.fk_modality = lib_modality.id 
+        WHERE
+            tbl_user_coverage_ncddp.email = '$email'";
         $result = $mysql->query($q) or die($mysql->error);
         if ($result->num_rows > 0) {
             while ($row = $result->fetch_assoc())

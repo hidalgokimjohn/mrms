@@ -1,7 +1,9 @@
 <div class="col-md-3 col-xl-10">
     <div class="row">
         <?php
+     
         $c = $app->getUserCoverage();
+
         if($c){
             foreach ($c as $i){
                 $progress=  $app->areaProgress($i['cycle_id'],$i['area_id']);
@@ -23,6 +25,7 @@
                             </div>
                             <h5 class="card-title mb-0 text-capitalize"><strong><?php echo $i['area_name']; ?></strong></h5>
                             <div class="badge bg-primary my-2"><?php echo $i['year']; ?></div>
+                            <div class="badge bg-success my-2 text-capitalize"><?php echo strtoupper($i['modality_group']); ?></div>
                             <div class="badge bg-success my-2 text-capitalize"><?php echo $i['batch'].' '.$i['cycle_name']; ?></div>
                             <div class="badge bg-success my-2 text-capitalize"><?php echo $i['status']; ?></div>
                         </div>
@@ -53,7 +56,20 @@
 
                 </div>
             <?php }
-        }
+        }else{
+            ?>
+            <div class="mb-3">
+                                        <div class="alert alert-warning alert-dismissible" role="alert">
+                                            <button type="button" class="btn-close" data-dismiss="alert" aria-label="Close"></button>
+                                            <div class="alert-message">
+                                                <h4 class="alert-heading text-capitalize font-weight-bold">Hi!, <?php  echo $_SESSION['user_fullname']; ?></h4>
+                                                <p></p>
+                                                <hr>
+                                                <p class="mb-0">It looks like you have no coverage yet. Please contact/text PEO Kim Hidalgo to activate your account. <br><span class="fa fa-phone"></span><strong> +63946-062-9974</strong></p>
+                                            </div>
+                                        </div>
+                                    </div>
+        <?php }
         ?>
 
     </div>

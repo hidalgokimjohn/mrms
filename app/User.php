@@ -17,6 +17,7 @@ class User
     public $access_level;
     public $is_checked;
     public $is_checked_ipcdd;
+    public $validation_errors;
 
     public function connectDatabase()
     {
@@ -60,50 +61,6 @@ class User
             //return $_SESSION['user_auth'] = array("permission" => $data, "user_details" => array('username' => $row['fk_username']));
         } else {
             return false;
-        }
-    }
-
-    public function validateRegisterForm()
-    {
-        $error = [];
-        if (empty($_POST['name']) || empty($_POST['last_name']) || empty($_POST['password']) || empty($_POST['username'])) {
-            $error[] = 'All fields are required!';
-        }
-        if (!ctype_alnum($_POST['username'])) {
-            $error[] = "No white space and special characters allowed for username";
-        }
-        if (strlen($_POST['username']) < 6) {
-            $error[] = "Username must be at least 6 characters";
-        }
-        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
-            $error[] = "Invalid email format";
-        }
-        if ($this->is_usernameExist($_POST['username']) == true) {
-            $error[] = "Username is already in use. Try different username.";
-        }
-        if ($this->is_emailExist($_POST['email']) == true) {
-            $error[] = "Email is already taken. Try another email.";
-        }
-        if (strlen($_POST['password']) < 6) {
-            $error[] = "Password must be at least 6 characters";
-        }
-        if ($_POST['password'] !== $_POST['password2']) {
-            $error[] = "Password did not matched!";
-        }
-        $fields = ['First name' => $_POST['name'], 'Last name' => $_POST['last_name']];
-        foreach ($fields as $item => $value) {
-            if (preg_match('/[^a-z\s-]/i', $value)) {
-                $error[] = $item . " <strong>" . $value . "</strong>" . " contains invalid character";
-            }
-        }
-        if (empty($error)) {
-            return true;
-        } else {
-            echo "<div class='alert alert-danger animated fadeInDown'>";
-            foreach ($error as $display_error) {
-                echo "<span class='text-center'>" . $display_error . "</br></span>";
-            }
-            echo "</div>";
         }
     }
 
@@ -609,4 +566,130 @@ class User
         $r = "INSERT INTO `personal_info` (`fk_username`, `first_name`, `last_name`,`pic_url`) VALUES ('$user', '$fname', '$last_name','default.jpg')";
         $execute = $mysql->query($r) or die($mysql->error);
     }
+
+    public function getUserPositions($id)
+    {
+        $mysql = $this->connectDatabase();
+        $q = "SELECT * FROM lib_user_positions WHERE lib_user_positions.id='$id'";
+        $result = $mysql->query($q) or die($mysql->error);
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            return false;
+        }
+    }
+
+    public function create_external_account(){
+        $mysql = $this->connectDatabase();
+        $password = $_POST['password'];
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $email = $mysql->real_escape_string($_POST['email']);
+        $username = strstr($email, '@', true);
+        $first_name = $mysql->real_escape_string($_POST['first_name']);
+        $last_name = $mysql->real_escape_string($_POST['last_name']);
+        $position = $mysql->real_escape_string($_POST['ext_position']);
+        $position=$this->getUserPositions($position);
+        $position_abbrv = $position['user_position_abbrv'];
+        $position_desc = $position['user_position'];
+        $assigned_area = $mysql->real_escape_string($_POST['assigned_area']);
+        $q="INSERT INTO `tbl_users`(`id_number`, `username`, `password`, `created_at`, `user_type`) VALUES ('$email','$username','$hash', NOW(), 'external_user')";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($mysql->affected_rows>0){
+            //insert person info
+            $q1="INSERT INTO `tbl_person_info` ( `fk_id_number`, `first_name`, `last_name`,`status`, `position_name`, `position_desc`, `office_name`, `office_desc`, `created_at`,`avatar_path`,`fk_username`)
+                VALUES
+                    (
+                        '$email',
+                        '$first_name',
+                        '$last_name',
+                        'Active',
+                        '$position_abbrv',
+                        '$position_desc',
+                        'ACT',
+                        'Municipal Coordinating Team',
+                        NOW(),
+                        'https://caraga-portal.dswd.gov.ph/media/picture/default.jpg',
+                        '$username'
+                    )";
+            $result1 = $mysql->query($q1) or die($mysql->error);
+            if($mysql->affected_rows>0){
+                  return true;
+            }
+          
+        }else{
+            return false;
+        }
+
+    }
+
+    public function confirm_password($pass1,$pass2){
+        if($pass1==$pass2){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public function validateRegisterForm()
+    {
+        $errors = [];
+        //start check empty fields
+        $required = array('first_name', 'last_name', 'ext_position', 'assigned_area', 'email', 'password','confirm_password');
+        $error = false;
+        foreach($required as $field) {
+            if (empty($_POST[$field])) {
+                $error = true;
+                echo $field.' is empty';
+            }
+        }
+        //end check empty fields
+
+        if ($error) {
+            $errors[] = 'All fields are required';
+        }
+        if (!filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+            $errors[] = "Invalid email format";
+        }
+        if ($this->emailExist($_POST['email'])) {
+            $errors[] = "Email is already taken. Try another email";
+        }
+        if (strlen($_POST['password']) < 6) {
+            $errors[] = "Password must be at least 6 characters";
+        }
+        if (!$this->confirm_password($_POST['password'],$_POST['confirm_password'])) {
+            $errors[] = "Password did not matched";
+        }
+        $fields = ['First name' => $_POST['first_name'], 'Last name' => $_POST['last_name']];
+        foreach ($fields as $item => $value) {
+            if (preg_match('/[^a-z\s-]/i', $value)) {
+                $errors[] = $item . " <strong>" . $value . "</strong>" . " contains invalid character";
+            }
+        }
+        if (empty($errors)) {
+            return true;
+        } else {
+            $this->validation_errors = $errors;
+            return false;
+        }
+    }
+
+    public function emailExist($email){
+        $mysql = $this->connectDatabase();
+        $email = $mysql->real_escape_string($email);
+        $q="SELECT
+                tbl_users.id_number
+            FROM
+                tbl_users
+                WHERE tbl_users.id_number = '$email' LIMIT 1";
+        $result = $mysql->query($q) or die($mysql->error);
+        if($result->num_rows>0){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
